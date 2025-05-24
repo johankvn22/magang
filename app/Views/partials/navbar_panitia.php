@@ -11,12 +11,12 @@
         aria-expanded="false">Daftar Mahasiswa</a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item text-white" href="<?= base_url('/panitia/daftar_mahasiswa'); ?>">Daftar Mahasiswa</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('panitia/user-requirement'); ?>">User Requirement</a></li>
             <li><a class="dropdown-item text-white" href="<?= base_url('/panitia/logbook-mahasiswa'); ?>">Logbook Bimbingan</a></li>
             <li><a class="dropdown-item text-white" href="<?= base_url('/panitia/logbook-aktivitas'); ?>">Logbook Aktivitas</a></li>
             <li><a class="dropdown-item text-white" href="<?= base_url('/nilai'); ?>">Nilai Mahasiswa</a></li>
           </ul>
         </li>
-        <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('panitia/user-requirement'); ?>">User Requirement</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('panitia/review-kinerja'); ?>">Kuesioner Industri</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('panitia/bagikan-bimbingan'); ?>">Bagikan Bimbingan</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('panitia/daftar-dosen'); ?>">Daftar Dosen</a></li>
