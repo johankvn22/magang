@@ -1,0 +1,152 @@
+<?php
+
+namespace App\Controllers;
+
+use App\Models\Bimbingan;
+use App\Models\LogbookBimbingan;
+use App\Models\DosenPembimbingModel;
+use App\Models\MahasiswaModel;
+use App\Models\PenilaianDosenModel;
+use App\Models\BimbinganIndustriModel;
+use App\Models\LogbookIndustri;
+
+class BimbinganController extends BaseController
+{
+    public function index()
+    {
+        $dosenId = session()->get('user_id');
+        $bimbinganModel = new Bimbingan();
+        $mahasiswaModel = new MahasiswaModel();
+
+        // Ambil semua mahasiswa yang dibimbing oleh dosen ini
+        $bimbingan = $bimbinganModel->where('dosen_id', $dosenId)->findAll();
+
+        $mahasiswaList = [];
+
+        foreach ($bimbingan as $item) {
+            $mahasiswa = $mahasiswaModel->find($item['mahasiswa_id']);
+            if ($mahasiswa) {
+                $mahasiswaList[] = $mahasiswa;
+            }
+        }
+
+        return view('dosen/list_mahasiswa_bimbingan', ['mahasiswaList' => $mahasiswaList]);
+    }
+
+    public function detail($mahasiswaId)
+    {
+        $logbookModel = new LogbookBimbingan();
+        $mahasiswaModel = new MahasiswaModel();
+        $bimbinganModel = new Bimbingan();
+        $penilaianModel = new PenilaianDosenModel();
+
+        $mahasiswa = $mahasiswaModel->find($mahasiswaId);
+        $logbooks = $logbookModel->where('mahasiswa_id', $mahasiswaId)->findAll();
+
+        $disetujuiCount = $logbookModel->where('mahasiswa_id', $mahasiswaId)
+            ->where('status_validasi', 'disetujui')
+            ->countAllResults();
+        $totalCount = $logbookModel->where('mahasiswa_id', $mahasiswaId)->countAllResults();
+
+        // Ambil bimbingan_id berdasarkan mahasiswa dan dosen yang login
+        $dosenId = session()->get('user_id');
+        $bimbingan = $bimbinganModel->where([
+            'mahasiswa_id' => $mahasiswaId,
+            'dosen_id' => $dosenId
+        ])->first();
+
+        $bimbingan_id = $bimbingan['bimbingan_id'] ?? null;
+
+        // 🔍 Cek apakah penilaian sudah ada
+        $penilaian_sudah_ada = false;
+        if ($bimbingan_id) {
+            $penilaian_sudah_ada = $penilaianModel
+                ->where('bimbingan_id', $bimbingan_id)
+                ->first() ? true : false;
+        }
+
+        return view('dosen/bimbingan_logbook', [
+            'mahasiswa' => $mahasiswa,
+            'logbooks' => $logbooks,
+            'disetujuiCount' => $disetujuiCount,
+            'totalCount' => $totalCount,
+            'bimbingan_id' => $bimbingan_id, // ✅ Kirim ke view
+            'penilaian_sudah_ada' => $penilaian_sudah_ada // ✅ Kirim ke view
+        ]);
+    }
+
+    public function setujui($logbookId)
+    {
+        $logbookModel = new LogbookBimbingan();
+
+        // Tambahkan pengecekan data
+        $logbook = $logbookModel->find($logbookId);
+        if (!$logbook) {
+            return redirect()->back()->with('error', 'Logbook tidak ditemukan.');
+        }
+
+        $logbookModel->update($logbookId, ['status_validasi' => 'disetujui']);
+        return redirect()->back()->with('success', 'Logbook disetujui.');
+    }
+
+    public function tolak($logbookId)
+    {
+        $logbookModel = new LogbookBimbingan();
+
+        $logbook = $logbookModel->find($logbookId);
+        if (!$logbook) {
+            return redirect()->back()->with('error', 'Logbook tidak ditemukan.');
+        }
+
+        $logbookModel->update($logbookId, ['status_validasi' => 'ditolak']);
+        return redirect()->back()->with('success', 'Logbook ditolak.');
+    }
+
+    //menampilkan logbook aktivitas mahasiswa
+    public function aktivitasMahasiswaBimbingan()
+    {
+        $dosenId = session()->get('user_id');
+
+        $bimbinganModel = new Bimbingan(); // atau BimbinganModel, sesuaikan
+        $mahasiswaModel = new MahasiswaModel();
+
+        $bimbinganList = $bimbinganModel->where('dosen_id', $dosenId)->findAll();
+
+        $mahasiswaList = [];
+
+        foreach ($bimbinganList as $bimbingan) {
+            $mahasiswa = $mahasiswaModel->find($bimbingan['mahasiswa_id']);
+            if ($mahasiswa) {
+                $mahasiswaList[] = $mahasiswa;
+            }
+        }
+
+        return view('dosen/logbook_aktivitas_mahasiswa', [
+            'mahasiswaList' => $mahasiswaList
+        ]);
+    }
+
+    public function detailAktivitasMahasiswa($mahasiswaId)
+    {
+       $logbookModel   = new LogbookIndustri();
+        $mahasiswaModel = new MahasiswaModel();
+
+        $mahasiswa = $mahasiswaModel->find($mahasiswaId);
+        if (!$mahasiswa) {
+            return redirect()->back()->with('error', 'Mahasiswa tidak ditemukan.');
+        }
+
+        $logbooks = $logbookModel
+            ->where('mahasiswa_id', $mahasiswaId)
+            ->orderBy('tanggal', 'DESC')
+            ->findAll();
+
+        return view('dosen/detail_logbook_aktivitas', [
+            'mahasiswa' => $mahasiswa,
+            'logbooks'  => $logbooks
+        ]);
+
+    }
+
+
+}

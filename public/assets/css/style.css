@@ -1,0 +1,156 @@
+/* Custom colors to match the design */
+.bg-dark-green {
+  background-color: #0a4734;
+}
+
+.bg-medium-green {
+  background-color: #0a5d42;
+}
+
+.bg-light {
+  background-color: #f0f2f5;
+}
+
+/* Logo styling */
+.logo {
+  width: 60px;
+  height: 60px;
+}
+
+/* Profile circle */
+.profile-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+/* Navbar styling */
+.navbar {
+  padding: 0;
+}
+
+.nav-link {
+  padding: 0.8rem 1.5rem;
+  position: relative;
+}
+
+/* Highlight effect for navbar items */
+.nav-link:hover,
+.nav-link:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Dropdown styling */
+.dropdown-menu {
+  margin-top: 0;
+  border-radius: 0;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #0a4734;
+}
+
+/* Profile dropdown menu */
+.profile-menu {
+  min-width: 200px;
+  padding: 0.5rem 0;
+  right: 0;
+  left: auto;
+}
+
+.profile-dropdown {
+  background: none;
+  border: none;
+}
+
+.profile-dropdown:focus,
+.profile-dropdown:active {
+  box-shadow: none;
+}
+
+/* Dropdown items styling */
+.dropdown-item {
+  padding: 0.5rem 1.5rem;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: #0a5d42;
+}
+
+/* Make navbar dropdown appear on hover */
+.navbar .nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+/* Sticky Navbar */
+.navbar {
+  position: -webkit-sticky; /* Untuk Safari */
+  position: sticky; /* Untuk browser lain */
+  top: 76px; /* Tetap berada di atas saat scroll */
+  z-index: 1050; /* Agar navbar berada di atas konten lainnya */
+  background-color: #0a5d42; /* Sesuaikan dengan warna navbar */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Tambahkan bayangan agar navbar terlihat terpisah */
+}
+/* Make header sticky */
+header.bg-dark-green {
+  position: sticky;
+  top: 0;
+  z-index: 1100; /* Pastikan di atas navbar */
+}
+
+/* Navbar item hover */
+.nav-link:hover,
+.nav-link:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Dropdown styling */
+.dropdown-menu {
+  margin-top: 0;
+  border-radius: 0;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* For responsive layout */
+@media (max-width: 768px) {
+  .navbar-nav {
+    text-align: center;
+  }
+}
+.navbar-nav .nav-link.active,
+.navbar-nav .dropdown-item.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff !important;
+}
+
+/* pagination */
+.pagination-circle .page-link {
+  border-radius: 50% !important;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: #4a4a4a;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.pagination-circle .page-item.active .page-link {
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
+
+.pagination-circle .page-link:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.pagination-circle .page-item.disabled .page-link {
+  color: #ccc;
+  pointer-events: none;
+  background-color: transparent;
+}
