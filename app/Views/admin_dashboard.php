@@ -14,8 +14,8 @@
        style="background: rgba(0, 0, 0, 0.5);">
     <!-- Card menempel kiri dengan sedikit margin -->
     <div class="bg-success bg-opacity-75 p-4 rounded-4 shadow text-white ms-3" style="max-width: 550px;">
-      <h1 class="fw-bold display-5 mb-2">Dashboard Admin</h1>
-      <p class="fs-5 mb-0">Kelola layanan magang Politeknik Negeri Jakarta</p>
+      <h1 class="fw-bold display-5 mb-0">Dashboard Admin</h1>
+      <p class="fs-10 mb-0">Kelola layanan magang Politeknik Negeri Jakarta</p>
     </div>
   </div>
 </div>
