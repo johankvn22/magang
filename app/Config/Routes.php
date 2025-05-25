@@ -137,9 +137,11 @@ $routes->group('kps', ['filter' => 'kpsauth'], function ($routes) {
 
     $routes->get('bagikan-bimbingan', 'KpsController::bagikanBimbingan');
     $routes->post('bagikan-bimbingan', 'KpsController::bagikanBimbingan');
-
     $routes->post('simpan-bimbingan', 'KpsController::simpanBimbingan');
+    
     $routes->get('daftar-dosen', 'KpsController::daftarDosen');
+    $routes->get('edit-dosen/(:num)', 'KpsController::editDosen/$1');
+    $routes->post('update-dosen', 'KpsController::updateDosen');
 
     $routes->get('daftar_mahasiswa', 'KpsController::daftarMahasiswa');
 

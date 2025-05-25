@@ -224,7 +224,7 @@ class AdminController extends BaseController
         return redirect()->to('/login')->with('error', 'Akses ditolak.');
         }
         $mahasiswaModel = new \App\Models\MahasiswaModel();
-        $perPage = 1;
+        $perPage = 10;
 
         $currentPage = $this->request->getVar('page') ?? 1;
         $offset = ($currentPage - 1) * $perPage;

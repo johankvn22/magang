@@ -131,7 +131,7 @@ class AuthController extends BaseController
                         'no_hp' => $this->request->getPost('no_hp'),
                         'nama_perusahaan' => $this->request->getPost('nama_perusahaan'),
                         'divisi' => $this->request->getPost('divisi'),
-                        'durasi_magang' => 0,
+                        'durasi_magang' => null,
                         'tanggal_mulai' => null,
                         'tanggal_selesai' => null,
                         'nama_pembimbing_perusahaan' => $this->request->getPost('nama_pembimbing_perusahaan'),

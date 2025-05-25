@@ -69,8 +69,8 @@ class UploadUserController extends BaseController
                     'nama_lengkap' => $nama,
                     'email'        => $email,
                     'program_studi' => 'Sistem Informasi', // Contoh default
-                    'kelas'        => 'A', // Contoh default
-                    'no_hp'        => 'N/A', // Default value
+                    'kelas'        => '', // Contoh default
+                    'no_hp'        => '', // Default value
                     // Tambahkan field lain sesuai alur data mahasiswa
                 ]);
             }
@@ -83,7 +83,7 @@ class UploadUserController extends BaseController
                     'nip'           => $nomor_induk, // Simpan NIP
                     'no_telepon'    => $this->request->getPost('no_telepon'), // Pastikan ini diambil dari input
                     'email'         => $email,
-                    'link_whatsapp' => 'N/A' // Default value
+                    'link_whatsapp' => '' // Default value
                 ]);
             }
 

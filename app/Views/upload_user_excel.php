@@ -27,13 +27,21 @@
 
       <hr class="my-4">
 
-      <p><strong>Format Kolom Excel yang Diharapkan:</strong></p>
-      <ol class="ps-3">
-        <li>Nama Lengkap</li>
-        <li>Nomor Induk</li>
-        <li>Password</li>
-        <li>Role (mahasiswa, dosen, panitia, kps, pembimbing_industri)</li>
-      </ol>
+        <p><strong>Format Kolom Excel yang Diharapkan:</strong></p>
+
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>Nama</th>
+              <th>Email</th>
+              <th>Password</th>
+              <th>Role</th>
+              <th>Nomor Induk</th>
+
+            </tr>
+          </thead>
+        </table>
+
     </div>
   </div>
 </div>

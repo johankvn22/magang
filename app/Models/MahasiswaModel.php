@@ -79,13 +79,25 @@ class MahasiswaModel extends Model
         return $builder->get()->getResultArray();
     }
 
-    public function getMahasiswaByDosen($dosen_id)
+    // public function getMahasiswaWithDosen()
+    // {
+    //     return $this->select('mahasiswa.*, GROUP_CONCAT(dosen_pembimbing.nama_lengkap SEPARATOR ", ") AS nama_dosen')
+    //                 ->join('bimbingan', 'bimbingan.mahasiswa_id = mahasiswa.mahasiswa_id', 'left')
+    //                 ->join('dosen_pembimbing', 'dosen_pembimbing.dosen_id = bimbingan.dosen_id', 'left')
+    //                 ->groupBy('mahasiswa.mahasiswa_id');
+    // }
+
+    public function getMahasiswaWithDosen()
     {
-        return $this->select('mahasiswa.*')
-                    ->join('bimbingan', 'bimbingan.mahasiswa_id = mahasiswa.mahasiswa_id')
-                    ->where('bimbingan.dosen_id', $dosen_id)
-                    ->findAll();
+        return $this->select('mahasiswa.*, GROUP_CONCAT(dosen_pembimbing.nama_lengkap SEPARATOR ", ") AS nama_dosen')
+                    ->join('bimbingan', 'bimbingan.mahasiswa_id = mahasiswa.mahasiswa_id', 'left')
+                    ->join('dosen_pembimbing', 'dosen_pembimbing.dosen_id = bimbingan.dosen_id', 'left')
+                    ->groupBy('mahasiswa.mahasiswa_id');
     }
+
+    
+
+
 
     protected bool $allowEmptyInserts = true;
     protected bool $updateOnlyChanged = true;

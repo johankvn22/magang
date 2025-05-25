@@ -6,25 +6,25 @@
 
 <main class="container-fluid "> <!-- ganti py-3 jadi pt-2, hilangkan padding bawah -->
   
-<div class="position-relative w-100 overflow-hidden" style="height: 380px;">
+<div class="position-relative w-100 overflow-hidden mb-3" style="height: 300px;">
   <img src="<?= base_url('assets/img/pnj.jpg') ?>" alt="Banner PNJ" class="w-100 h-100 object-fit-cover">
 
   <!-- Overlay tanpa padding kiri -->
   <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center ps-0"
        style="background: rgba(0, 0, 0, 0.5);">
     <!-- Card menempel kiri dengan sedikit margin -->
-    <div class="bg-success bg-opacity-75 p-4 rounded-4 shadow text-white ms-3" style="max-width: 550px;">
-      <h1 class="fw-bold display-5 mb-0">Dashboard Admin</h1>
-      <p class="fs-10 mb-0">Kelola layanan magang Politeknik Negeri Jakarta</p>
+    <div class="bg-success bg-opacity-75 p-4 rounded-4 shadow text-white ms-3" style="max-width: 500px;">
+      <h1 class="fw-bold display-5 mb-2">Dashboard Admin</h1>
+      <p class="fs-6 mb-0">Kelola layanan magang Politeknik Negeri Jakarta</p>
     </div>
   </div>
 </div>
 
 <!-- Main Content -->
-<main class="container-fluid px-4 py-5">
+<main class="container-fluid">
 
   <!-- Statistik Section -->
-  <div class="row justify-content-center g-4 mb-5">
+  <div class="row justify-content-center g-4 mb-3">
     <div class="col-sm-6 col-md-4">
       <div class="card text-center border-0 shadow-sm p-4">
         <div class="card-body">
