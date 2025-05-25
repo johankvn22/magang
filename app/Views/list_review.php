@@ -26,7 +26,7 @@
 
             <div class="table-responsive">
                 <table class="table table-hover align-middle" id="reviewTable">
-                    <thead class="table-light text-center">
+                    <thead class="table-light">
                         <tr>
                             <th>No</th>
                             <th>Nama Mahasiswa</th>
@@ -39,7 +39,7 @@
                         <?php if (!empty($reviews)): ?>
                             <?php $no = 1; foreach ($reviews as $review): ?>
                                 <tr>
-                                    <td class="text-center"><?= $no++ ?></td>
+                                    <td><?= $no++ ?></td>
                                     <td><?= esc($review['nama_mahasiswa']) ?></td>
                                     <td><?= esc($review['nama_perusahaan']) ?></td>
                                     <td><?= esc($review['nama_pembimbing_perusahaan'] ?? '-') ?></td>

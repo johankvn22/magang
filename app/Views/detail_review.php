@@ -144,7 +144,7 @@
         </tr>
     </table>
 
-    <a href="<?= base_url('/admin/review-kinerja') ?>" class="btn btn-secondary">← Kembali ke Daftar</a>
+<a href="<?= base_url('/kps/review-kinerja') ?>" class="btn btn-secondary">← Kembali ke Daftar</a>
 
 </body>
 <?= $this->endSection(); ?>
