@@ -59,6 +59,6 @@ class PenilaianDosenModel extends Model
         return $this->select('penilaian_dosen.*')
             ->join('bimbingan', 'bimbingan.bimbingan_id = penilaian_dosen.bimbingan_id')
             ->where('bimbingan.mahasiswa_id', $mahasiswa_id)
-            ->first();
+            ->first(); // Gunakan ->first() jika hanya satu nilai dosen per mahasiswa
     }
 }

@@ -80,8 +80,8 @@ class PenilaianIndustriModel extends Model
     public function getNilaiByMahasiswa($mahasiswa_id)
     {
         return $this->select('penilaian_industri.*')
-            ->join('bimbingan', 'bimbingan.bimbingan_id = penilaian_dosen.bimbingan_id')
-            ->where('bimbingan.mahasiswa_id', $mahasiswa_id)
-            ->first();
+            ->join('bimbingan', 'bimbingan.mahasiswa_id = penilaian_industri.mahasiswa_id') // asumsi penilaian_industri punya kolom mahasiswa_id
+            ->where('penilaian_industri.mahasiswa_id', $mahasiswa_id)
+            ->first(); // Gunakan ->first() jika hanya satu nilai industri per mahasiswa
     }
 }

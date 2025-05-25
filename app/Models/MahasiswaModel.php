@@ -90,13 +90,25 @@ class MahasiswaModel extends Model
     public function getMahasiswaWithDosen()
     {
         return $this->select('mahasiswa.*, GROUP_CONCAT(dosen_pembimbing.nama_lengkap SEPARATOR ", ") AS nama_dosen')
-                    ->join('bimbingan', 'bimbingan.mahasiswa_id = mahasiswa.mahasiswa_id', 'left')
-                    ->join('dosen_pembimbing', 'dosen_pembimbing.dosen_id = bimbingan.dosen_id', 'left')
-                    ->groupBy('mahasiswa.mahasiswa_id');
+            ->join('bimbingan', 'bimbingan.mahasiswa_id = mahasiswa.mahasiswa_id', 'left')
+            ->join('dosen_pembimbing', 'dosen_pembimbing.dosen_id = bimbingan.dosen_id', 'left')
+            ->groupBy('mahasiswa.mahasiswa_id');
     }
 
-    
 
+    public function getAllPenilaianByMahasiswa($mahasiswa_id)
+    {
+        return $this->db->table('mahasiswa')
+            ->select('mahasiswa.*, 
+                  penilaian_dosen.total_nilai AS nilai_dosen, 
+                  penilaian_industri.total_nilai AS nilai_industri')
+            ->join('bimbingan', 'bimbingan.mahasiswa_id = mahasiswa.mahasiswa_id')
+            ->join('penilaian_dosen', 'penilaian_dosen.bimbingan_id = bimbingan.bimbingan_id', 'left')
+            ->join('penilaian_industri', 'penilaian_industri.mahasiswa_id = mahasiswa.mahasiswa_id', 'left')
+            ->where('mahasiswa.mahasiswa_id', $mahasiswa_id)
+            ->get()
+            ->getRowArray();
+    }
 
 
     protected bool $allowEmptyInserts = true;
