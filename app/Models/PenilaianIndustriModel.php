@@ -70,11 +70,18 @@ class PenilaianIndustriModel extends Model
             ->where('penilaian_industri.mahasiswa_id', $mahasiswa_id)
             ->first();
     }
-    
+
     public function getWithMahasiswa()
     {
         return $this->select('penilaian_industri.*, mahasiswa.nama_lengkap, mahasiswa.nim')
             ->join('mahasiswa', 'mahasiswa.mahasiswa_id = penilaian_industri.mahasiswa_id')
             ->findAll();
+    }
+    public function getNilaiByMahasiswa($mahasiswa_id)
+    {
+        return $this->select('penilaian_industri.*')
+            ->join('bimbingan', 'bimbingan.bimbingan_id = penilaian_dosen.bimbingan_id')
+            ->where('bimbingan.mahasiswa_id', $mahasiswa_id)
+            ->first();
     }
 }

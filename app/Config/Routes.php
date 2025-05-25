@@ -18,14 +18,14 @@ $routes->get('/admin', 'AdminController::index', ['filter' => 'auth']); // Menam
 $routes->get('/admin/daftarmahasiswa', 'MahasiswaController::index'); // Rute untuk daftar mahasiswa
 $routes->get('/logout', 'AuthController::logout'); // Menangani logout
 
-$routes->get('/admin/logbook', 'AdminLogbookController::index');// Menampilkan logbook mahasiswa
+$routes->get('/admin/logbook', 'AdminLogbookController::index'); // Menampilkan logbook mahasiswa
 $routes->get('/admin/logbook/(:num)', 'AdminLogbookController::detail/$1');
 
 $routes->get('/admin/tambah-bimbingan', 'AdminController::tambahBimbingan'); // Menampilkan form untuk menambahkan bimbingan
 $routes->post('/admin/save-bimbingan', 'AdminController::saveBimbingan');
 
-$routes->get('/admin/bimbingan-industri', 'AdminController::tambahBimbinganIndustri');//atur bimbingan industri
-$routes->post('/admin/bimbingan-industri/save', 'AdminController::saveBimbinganIndustri');// Menyimpan bimbingan industri
+$routes->get('/admin/bimbingan-industri', 'AdminController::tambahBimbinganIndustri'); //atur bimbingan industri
+$routes->post('/admin/bimbingan-industri/save', 'AdminController::saveBimbinganIndustri'); // Menyimpan bimbingan industri
 
 $routes->get('admin/daftar_user', 'AdminController::daftarUser'); // Menampilkan daftar user
 $routes->post('/admin/deleteUser/(:num)', 'AdminController::deleteUser/$1');
@@ -33,7 +33,7 @@ $routes->post('/admin/deleteUser/(:num)', 'AdminController::deleteUser/$1');
 $routes->get('/admin/nilai-mahasiswa', 'AdminPenilaianController::index');
 $routes->get('/admin/nilai-mahasiswa/(:num)', 'AdminPenilaianController::detail/$1');
 
-$routes->get('/admin/aktivitas', 'AdminLogbookController::aktivitas');// Menampilkan logbook aktivitas mahasiswa
+$routes->get('/admin/aktivitas', 'AdminLogbookController::aktivitas'); // Menampilkan logbook aktivitas mahasiswa
 $routes->get('admin/aktivitas/(:num)', 'AdminLogbookController::detailAktivitas/$1');
 $routes->get('admin/daftar_mahasiswa', 'AdminController::daftarMahasiswa');
 
@@ -42,6 +42,10 @@ $routes->get('/admin/user-requirement/detail/(:num)', 'AdminLogbookController::d
 
 $routes->get('/admin/review-kinerja', 'AdminLogbookController::listreview');
 $routes->get('/admin/review-kinerja/detail/(:num)', 'AdminLogbookController::detailReview/$1');
+$routes->get('/admin/nilai', 'AdminController::listNilaiMahasiswa');
+
+$routes->get('admin/nilai/detail/(:num)', 'AdminController::detail_nilai/$1');
+
 
 
 
@@ -60,7 +64,7 @@ $routes->group('mahasiswa', function ($routes) {
     // Logbook Aktivitas Industri Mahasiswa
     $routes->get('logbook_industri', 'LogbookIndustriController::index');
     $routes->post('logbook_industri/create', 'LogbookIndustriController::create');
-    $routes->get('logbook_industri/edit/(:num)', 'LogbookIndustriController::edit/$1'); 
+    $routes->get('logbook_industri/edit/(:num)', 'LogbookIndustriController::edit/$1');
     $routes->post('logbook_industri/update/(:num)', 'LogbookIndustriController::update/$1');
     $routes->get('logbook_industri/delete/(:num)', 'LogbookIndustriController::delete/$1');
 
@@ -72,7 +76,7 @@ $routes->group('mahasiswa', function ($routes) {
     $routes->post('user-requirement/delete/(:num)', 'UserRequirementController::delete/$1');
 
     // Profile dan Ganti Password
-    $routes->get('edit', 'MahasiswaController::edit');// memanggil halaman edit
+    $routes->get('edit', 'MahasiswaController::edit'); // memanggil halaman edit
     $routes->post('update', 'MahasiswaController::update'); // menyimpan data mahasiswa
     $routes->get('ganti-password', 'MahasiswaController::ganti_password');
 
@@ -114,14 +118,13 @@ $routes->group('dosen', ['filter' => 'auth'], function ($routes) {
     // Rute untuk User Requirement
     $routes->get('user-requirement', 'UserRequirementDosenController::index');
     $routes->get('user-requirement/detail/(:num)', 'UserRequirementDosenController::detail/$1');
+});
 
-    });
-    
-    $routes->get('/admin/form-tambah-akun', 'Admin::formTambahAkun');
-    $routes->get('/upload-excel', 'UploadExcelController::index');
-    $routes->post('/upload-excel', 'UploadExcelController::upload');
-    $routes->get('/upload-user-excel', 'UploadUserController::index');
-    $routes->post('/upload-user-excel', 'UploadUserController::upload');
+$routes->get('/admin/form-tambah-akun', 'Admin::formTambahAkun');
+$routes->get('/upload-excel', 'UploadExcelController::index');
+$routes->post('/upload-excel', 'UploadExcelController::upload');
+$routes->get('/upload-user-excel', 'UploadUserController::index');
+$routes->post('/upload-user-excel', 'UploadUserController::upload');
 
 
 
@@ -153,8 +156,6 @@ $routes->group('kps', ['filter' => 'kpsauth'], function ($routes) {
 
     $routes->get('review-kinerja', 'KpsController::listReview');
     $routes->get('review-kinerja/detail/(:num)', 'KpsController::detailReview/$1');
-
-
 });
 
 $routes->group('panitia', ['filter' => 'auth'], function ($routes) {
@@ -184,7 +185,7 @@ $routes->group('panitia', ['filter' => 'auth'], function ($routes) {
     $routes->get('review-kinerja/detail/(:num)', 'PanitiaController::detailReview/$1');
 
     // Rute untuk atur pembimbingan industri
-    
+
 
 });
 
@@ -208,7 +209,7 @@ $routes->group('industri', ['filter' => 'auth'], function ($routes) {
     // Bimbingan Industri
     $routes->get('bimbingan', 'BimbinganIndustriController::index');
     $routes->get('bimbingan/detail/(:num)', 'BimbinganIndustriController::detail/$1');
-    
+
     $routes->post('bimbingan/setujui/(:num)', 'BimbinganIndustriController::setujui/$1');
     $routes->post('bimbingan/tolak/(:num)', 'BimbinganIndustriController::tolak/$1');
 
@@ -218,7 +219,7 @@ $routes->group('industri', ['filter' => 'auth'], function ($routes) {
 
     $routes->get('list-nilai', 'PenilaianIndustri::listNilaiMahasiswa');
     $routes->get('penilaianindustri', 'PenilaianIndustri::index');
-    $routes->get('penilaian-industri/detail/(:num)', 'PenilaianIndustri::detail/$1'); 
+    $routes->get('penilaian-industri/detail/(:num)', 'PenilaianIndustri::detail/$1');
 
     // review kinerja
     $routes->get('review-kinerja/berikan/(:num)', 'ReviewKinerjaController::berikanNilai/$1');
@@ -232,17 +233,4 @@ $routes->group('industri', ['filter' => 'auth'], function ($routes) {
     $routes->get('user-requirement/detail/(:num)', 'UserRequirementIndustriController::detail/$1');
     $routes->post('user-requirement/setujui/(:num)', 'UserRequirementIndustriController::setujui/$1');
     $routes->post('user-requirement/tolak/(:num)', 'UserRequirementIndustriController::tolak/$1');
-
-
-
-});
-
-
-
-
-$routes->get('/dashboard', function () {
-    if (!session()->get('isLoggedIn')) {
-        return redirect()->to('/login');
-    }
-    return "Halo, " . session()->get('username') . "! Anda sudah login.";
 });

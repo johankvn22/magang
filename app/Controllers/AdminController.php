@@ -9,6 +9,8 @@ use App\Models\PembimbingIndustriModel;
 use App\Models\Bimbingan; // untuk dosen
 use App\Models\BimbinganIndustriModel; // untuk industri
 use App\Models\PembimbingIndustri;
+use App\Models\PenilaianDosenModel;
+use App\Models\PenilaianIndustriModel;
 
 class AdminController extends BaseController
 {
@@ -19,11 +21,11 @@ class AdminController extends BaseController
         }
 
         return view('admin_dashboard', [
-        'title' => 'Dashboard Mahasiswa',
-    ]);
+            'title' => 'Dashboard Mahasiswa',
+        ]);
     }
 
-   // FORM BIMBINGAN DOSEN
+    // FORM BIMBINGAN DOSEN
     public function tambahBimbingan()
     {
         $mahasiswaModel = new MahasiswaModel();
@@ -119,87 +121,13 @@ class AdminController extends BaseController
     }
 
 
-    // public function tambahBimbingan()
-    // {
-    //     $mahasiswaModel = new MahasiswaModel();
-    //     $dosenModel = new DosenPembimbingModel();
-
-    //     $mahasiswa = $mahasiswaModel->findAll(); // Ambil semua mahasiswa
-    //     $dosen = $dosenModel->findAll(); // Ambil semua dosen
-
-    //     return view('/atur_bimbingan', ['mahasiswa' => $mahasiswa, 'dosen' => $dosen]);
-    // }
-
-    // public function saveBimbingan()
-    // {
-    //     $bimbinganModel = new Bimbingan(); // gunakan model relasi bimbingan_dosen
-
-    //     $data = [
-    //         'mahasiswa_id' => $this->request->getPost('mahasiswa_id'), // ID mahasiswa
-    //         'dosen_id'     => $this->request->getPost('dosen_id'), // ID dosen
-    //     ];
-
-    //     // Simpan data ke dalam tabel bimbingan
-    //     if ($bimbinganModel->insert($data)) {
-    //         return redirect()->to('/admin')->with('success', 'Bimbingan berhasil ditentukan.');
-    //     } else {
-    //         return redirect()->back()->with('error', 'Gagal menentukan bimbingan.');
-    //     }
-    // }
-
-    //  // FORM BIMBINGAN INDUSTRI
-    //  public function tambahBimbinganIndustri()
-    //  {
-    //      $mahasiswaModel = new MahasiswaModel();
-    //      $pembimbingModel = new PembimbingIndustri();
- 
-    //      $mahasiswa = $mahasiswaModel->findAll();
-    //      $pembimbing = $pembimbingModel->findAll();
- 
-    //      return view('atur_bimbingan_industri', [
-    //          'mahasiswa' => $mahasiswa,
-    //          'pembimbing' => $pembimbing
-    //      ]);
-    //  }
- 
-    //  public function saveBimbinganIndustri()
-    //  {
-    //      $mahasiswa_id = $this->request->getPost('mahasiswa_id');
-    //      $pembimbing_id = $this->request->getPost('pembimbing_id');
- 
-    //      $mahasiswaModel = new MahasiswaModel();
-    //      $pembimbingModel = new PembimbingIndustri();
-    //      $bimbinganModel = new BimbinganIndustriModel();
- 
-    //      $mahasiswa = $mahasiswaModel->find($mahasiswa_id);
-    //      $pembimbing = $pembimbingModel->find($pembimbing_id);
- 
-    //      if (!$mahasiswa || !$pembimbing) {
-    //          return redirect()->back()->with('error', 'Data tidak valid');
-    //      }
- 
-    //     // Validasi kecocokan perusahaan
-    //     // if (strtolower($mahasiswa->nama_perusahaan) !== strtolower($pembimbing->perusahaan)) {
-    //     //      return redirect()->back()->with('error', 'Perusahaan tidak cocok antara mahasiswa dan pembimbing industri.');
-    //     //  }
- 
-    //      // Simpan relasi ke tabel bimbingan_industri
-    //      if ($bimbinganModel->insert([
-    //          'mahasiswa_id' => $mahasiswa_id,
-    //          'pembimbing_id' => $pembimbing_id
-    //      ])) {
-    //          return redirect()->to('/admin')->with('success', 'Bimbingan industri berhasil ditentukan.');
-    //      } else {
-    //          return redirect()->back()->with('error', 'Gagal menyimpan data bimbingan industri.');
-    //      }
-    //  }
 
     public function daftarUser()
     {
         $userModel = new \App\Models\UserModel();
         $data['users'] = $userModel->findAll();
         return view('daftar_user', $data);
-    }   
+    }
 
     public function deleteUser($id)
     {
@@ -221,7 +149,7 @@ class AdminController extends BaseController
     public function daftarMahasiswa()
     {
         if (session()->get('role') !== 'admin') {
-        return redirect()->to('/login')->with('error', 'Akses ditolak.');
+            return redirect()->to('/login')->with('error', 'Akses ditolak.');
         }
         $mahasiswaModel = new \App\Models\MahasiswaModel();
         $perPage = 1;
@@ -238,9 +166,55 @@ class AdminController extends BaseController
 
 
 
+    public function detail_nilai($mahasiswa_id)
+    {
+        // Validasi role admin
+        if (session()->get('role') !== 'admin') {
+            return redirect()->to('/login')->with('error', 'Akses ditolak.');
+        }
 
-    
+        $mahasiswaModel = new MahasiswaModel();
+        $nilaiIndustriModel = new PenilaianIndustriModel();
+        $nilaiDosenModel = new PenilaianDosenModel();
 
+        $mahasiswa = $mahasiswaModel->find($mahasiswa_id);
+        $nilai_industri = $nilaiIndustriModel->getNilaiByMahasiswa($mahasiswa_id);
+        $nilai_dosen = $nilaiDosenModel->getNilaiByMahasiswa($mahasiswa_id);
 
+        if (!$mahasiswa) {
+            return redirect()->to('/admin/nilai')->with('error', 'Mahasiswa tidak ditemukan.');
+        }
 
+        return view('detail_nilai_mahasiswa', [
+            'mahasiswa' => $mahasiswa,
+            'nilai_industri' => $nilai_industri,
+            'nilai_dosen' => $nilai_dosen
+        ]);
+    }
+    public function listNilaiMahasiswa()
+    {
+        // Pastikan hanya admin yang bisa akses
+        if (session()->get('role') !== 'admin') {
+            return redirect()->to('/login')->with('error', 'Akses ditolak.');
+        }
+
+        $mahasiswaModel = new MahasiswaModel();
+        $penilaianDosenModel = new PenilaianDosenModel();
+        $penilaianIndustriModel = new PenilaianIndustriModel();
+
+        // Ambil semua data mahasiswa
+        $mahasiswaList = $mahasiswaModel
+            ->select('mahasiswa_id, nama_lengkap, nim, program_studi, nama_perusahaan')
+            ->findAll();
+
+        // Gabungkan dengan nilai dosen dan industri
+        foreach ($mahasiswaList as &$mhs) {
+            $mhs['nilai_dosen'] = $penilaianDosenModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
+            $mhs['nilai_industri'] = $penilaianIndustriModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
+        }
+
+        $data['mahasiswa_list'] = $mahasiswaList;
+
+        return view('list_nilai_mahasiswa', $data);
+    }
 }

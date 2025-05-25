@@ -54,4 +54,11 @@ class PenilaianDosenModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+    public function getNilaiByMahasiswa($mahasiswa_id)
+    {
+        return $this->select('penilaian_dosen.*')
+            ->join('bimbingan', 'bimbingan.bimbingan_id = penilaian_dosen.bimbingan_id')
+            ->where('bimbingan.mahasiswa_id', $mahasiswa_id)
+            ->first();
+    }
 }
