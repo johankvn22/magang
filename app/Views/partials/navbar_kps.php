@@ -7,13 +7,13 @@
       <ul class="navbar-nav">
         <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('/kps/dashboard'); ?>">Dashboard</a></li>
         <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle text-white" role="button" data-bs-toggle="dropdown" 
-        aria-expanded="false">Daftar Mahasiswa</a>
+          <a class="nav-link dropdown-toggle text-white" role="button" data-bs-toggle="dropdown"
+            aria-expanded="false">Daftar Mahasiswa</a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item text-white" href="<?= base_url('/kps/daftar_mahasiswa'); ?>">Daftar Mahasiswa</a></li>
             <li><a class="dropdown-item text-white" href="<?= base_url('/kps/logbook'); ?>">Logbook Bimbingan</a></li>
             <li><a class="dropdown-item text-white" href="<?= base_url('/kps/logbook-aktivitas'); ?>">Logbook Aktivitas</a></li>
-            <li><a class="dropdown-item text-white" href="<?= base_url('/nilai'); ?>">Nilai Mahasiswa</a></li>
+            <li><a class="dropdown-item text-white" href="<?= base_url('/kps/list_nilai_mahasiswa'); ?>">Nilai Mahasiswa</a></li>
           </ul>
         </li>
         <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('kps/user-requirement'); ?>">User Requirement</a></li>
@@ -25,5 +25,3 @@
     </div>
   </div>
 </nav>
-
-

@@ -8,6 +8,8 @@ use App\Models\DosenPembimbingModel;
 use App\Models\Bimbingan;
 use App\Models\LogbookBimbingan;
 use App\Models\LogbookIndustri;
+use App\Models\PenilaianDosenModel;
+use App\Models\PenilaianIndustriModel;
 use App\Models\UserRequirement;
 use App\Models\ReviewKinerjaModel;
 
@@ -60,7 +62,7 @@ class KpsController extends BaseController
 
     public function updateProfile()
     {
-       $kpsModel = new Kps();
+        $kpsModel = new Kps();
         $userId = session()->get('user_id');
 
         $validation = \Config\Services::validation();
@@ -188,54 +190,31 @@ class KpsController extends BaseController
         return view('kps/daftar_dosen', $data);
     }
 
-    // public function updateDosen()
-    // {
-    //     $mahasiswaIds = $this->request->getPost('mahasiswa_id');
-    //     $bimbinganModel = new Bimbingan();
-
-    //     if (is_array($mahasiswaIds)) {
-    //         foreach ($mahasiswaIds as $mahasiswaId) {
-    //             // Hapus pembimbing lama
-    //             $bimbinganModel->where('mahasiswa_id', $mahasiswaId)->delete();
-
-    //             // Ambil dosen baru dari input
-    //             $dosenId = $this->request->getPost('dosen_id_' . $mahasiswaId);
-    //             if (!empty($dosenId)) {
-    //                 $bimbinganModel->insert([
-    //                     'mahasiswa_id' => $mahasiswaId,
-    //                     'dosen_id' => $dosenId
-    //                 ]);
-    //             }
-    //         }
-    //     }
-
-    //     return redirect()->to('kps/daftar-dosen')->with('success', 'Semua data pembimbing diperbarui.');
-    // }
 
     public function updateDosen()
-{
-    $mahasiswaIds = $this->request->getPost('mahasiswa_id');
-    $bimbinganModel = new Bimbingan();
+    {
+        $mahasiswaIds = $this->request->getPost('mahasiswa_id');
+        $bimbinganModel = new Bimbingan();
 
-    if (is_array($mahasiswaIds)) {
-        foreach ($mahasiswaIds as $mahasiswaId) {
-            $dosenId = $this->request->getPost('dosen_id_' . $mahasiswaId);
+        if (is_array($mahasiswaIds)) {
+            foreach ($mahasiswaIds as $mahasiswaId) {
+                $dosenId = $this->request->getPost('dosen_id_' . $mahasiswaId);
 
-            if ($dosenId) {
-                // Hapus pembimbing lama hanya untuk mahasiswa ini
-                $bimbinganModel->where('mahasiswa_id', $mahasiswaId)->delete();
+                if ($dosenId) {
+                    // Hapus pembimbing lama hanya untuk mahasiswa ini
+                    $bimbinganModel->where('mahasiswa_id', $mahasiswaId)->delete();
 
-                // Simpan dosen baru
-                $bimbinganModel->insert([
-                    'mahasiswa_id' => $mahasiswaId,
-                    'dosen_id'     => $dosenId
-                ]);
+                    // Simpan dosen baru
+                    $bimbinganModel->insert([
+                        'mahasiswa_id' => $mahasiswaId,
+                        'dosen_id'     => $dosenId
+                    ]);
+                }
             }
         }
-    }
 
-    return redirect()->to('kps/daftar-dosen')->with('success', 'Data pembimbing berhasil diperbarui.');
-}
+        return redirect()->to('kps/daftar-dosen')->with('success', 'Data pembimbing berhasil diperbarui.');
+    }
 
 
 
@@ -308,12 +287,12 @@ class KpsController extends BaseController
 
         $data['mahasiswa'] = $mahasiswaModel->find($mahasiswa_id);
         $data['user_requirements'] = $requirementModel->where('mahasiswa_id', $mahasiswa_id)
-        ->orderBy('created_at', 'DESC')->findAll();
+            ->orderBy('created_at', 'DESC')->findAll();
 
-        return view('kps/detail_user_requirement', $data);  
+        return view('kps/detail_user_requirement', $data);
     }
 
-        public function listReview()
+    public function listReview()
     {
         $reviewModel = new ReviewKinerjaModel();
         $listReview = $reviewModel->getAll(); // pastikan ini sudah join ke mahasiswa
@@ -332,6 +311,54 @@ class KpsController extends BaseController
 
         return view('kps/detail_review', ['review_id' => $review]); // fix: gunakan key 'review_id'
     }
+    // Di dalam KpsController
+    public function listNilaiMahasiswa()
+    {
+        if (session()->get('role') !== 'kps') {
+            return redirect()->to('/login')->with('error', 'Akses ditolak.');
+        }
+
+        $mahasiswaModel = new MahasiswaModel();
+        $penilaianDosenModel = new PenilaianDosenModel();
+        $penilaianIndustriModel = new PenilaianIndustriModel();
+
+        $mahasiswaList = $mahasiswaModel
+            ->select('mahasiswa_id, nama_lengkap, nim, program_studi, nama_perusahaan')
+            ->findAll();
+
+        foreach ($mahasiswaList as &$mhs) {
+            $mhs['nilai_dosen'] = $penilaianDosenModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
+            $mhs['nilai_industri'] = $penilaianIndustriModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
+        }
+
+        return view('kps/list_nilai_mahasiswa', ['mahasiswa_list' => $mahasiswaList]);
+    }
+
+    public function detail_nilai($mahasiswa_id)
+    {
+        if (session()->get('role') !== 'kps') {
+            return redirect()->to('/login')->with('error', 'Akses ditolak.');
+        }
+
+        $mahasiswaModel = new MahasiswaModel();
+        $nilaiIndustriModel = new PenilaianIndustriModel();
+        $nilaiDosenModel = new PenilaianDosenModel();
+
+        $mahasiswa = $mahasiswaModel->find($mahasiswa_id);
+        $nilai_industri = $nilaiIndustriModel->getNilaiByMahasiswa($mahasiswa_id);
+        $nilai_dosen = $nilaiDosenModel->getNilaiByMahasiswa($mahasiswa_id);
+
+        if (!$mahasiswa) {
+            return redirect()->to('/kps/nilai')->with('error', 'Mahasiswa tidak ditemukan.');
+        }
+
+        return view('kps/detail_nilai_mahasiswa', [
+            'mahasiswa' => $mahasiswa,
+            'nilai_industri' => $nilai_industri,
+            'nilai_dosen' => $nilai_dosen
+        ]);
+    }
+
 
 
     public function logout()
@@ -339,5 +366,4 @@ class KpsController extends BaseController
         session()->destroy();
         return redirect()->to('/login');
     }
-    
 }

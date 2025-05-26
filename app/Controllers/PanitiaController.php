@@ -9,6 +9,8 @@ use App\Models\DosenPembimbingModel;
 use App\Models\Bimbingan;
 use App\Models\LogbookBimbingan;
 use App\Models\LogbookIndustri;
+use App\Models\PenilaianDosenModel;
+use App\Models\PenilaianIndustriModel;
 use App\Models\UserRequirement;
 use App\Models\ReviewKinerjaModel;
 
@@ -228,6 +230,53 @@ public function detailAktivitas($mahasiswa_id)
         return view('panitia/detail_review', ['review_id' => $review]); 
     }
 
+// Di dalam PanitiaController
+public function listNilaiMahasiswa()
+{
+    if (session()->get('role') !== 'panitia') {
+        return redirect()->to('/login')->with('error', 'Akses ditolak.');
+    }
+
+    $mahasiswaModel = new MahasiswaModel();
+    $penilaianDosenModel = new PenilaianDosenModel();
+    $penilaianIndustriModel = new PenilaianIndustriModel();
+
+    $mahasiswaList = $mahasiswaModel
+        ->select('mahasiswa_id, nama_lengkap, nim, program_studi, nama_perusahaan')
+        ->findAll();
+
+    foreach ($mahasiswaList as &$mhs) {
+        $mhs['nilai_dosen'] = $penilaianDosenModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
+        $mhs['nilai_industri'] = $penilaianIndustriModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
+    }
+
+    return view('panitia/list_nilai_mahasiswa', ['mahasiswa_list' => $mahasiswaList]);
+}
+
+public function detail_nilai($mahasiswa_id)
+{
+    if (session()->get('role') !== 'panitia') {
+        return redirect()->to('/login')->with('error', 'Akses ditolak.');
+    }
+
+    $mahasiswaModel = new MahasiswaModel();
+    $nilaiIndustriModel = new PenilaianIndustriModel();
+    $nilaiDosenModel = new PenilaianDosenModel();
+
+    $mahasiswa = $mahasiswaModel->find($mahasiswa_id);
+    $nilai_industri = $nilaiIndustriModel->getNilaiByMahasiswa($mahasiswa_id);
+    $nilai_dosen = $nilaiDosenModel->getNilaiByMahasiswa($mahasiswa_id);
+
+    if (!$mahasiswa) {
+        return redirect()->to('/panitia/nilai')->with('error', 'Mahasiswa tidak ditemukan.');
+    }
+
+    return view('panitia/detail_nilai_mahasiswa', [
+        'mahasiswa' => $mahasiswa,
+        'nilai_industri' => $nilai_industri,
+        'nilai_dosen' => $nilai_dosen
+    ]);
+}
 
 
 
