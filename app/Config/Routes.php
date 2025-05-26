@@ -137,13 +137,8 @@ $routes->group('kps', ['filter' => 'kpsauth'], function ($routes) {
 
     $routes->match(['GET', 'POST'], 'gantiPassword', 'KpsController::gantiPassword');
     $routes->get('logout', 'KpsController::logout');
-
-    $routes->get('bagikan-bimbingan', 'KpsController::bagikanBimbingan');
-    $routes->post('bagikan-bimbingan', 'KpsController::bagikanBimbingan');
-    $routes->post('simpan-bimbingan', 'KpsController::simpanBimbingan');
     
     $routes->get('daftar-dosen', 'KpsController::daftarDosen');
-    $routes->get('edit-dosen/(:num)', 'KpsController::editDosen/$1');
     $routes->post('update-dosen', 'KpsController::updateDosen');
 
     $routes->get('daftar_mahasiswa', 'KpsController::daftarMahasiswa');
@@ -174,6 +169,10 @@ $routes->group('panitia', ['filter' => 'auth'], function ($routes) {
     $routes->get('detail-logbook/(:num)', 'PanitiaController::detailLogbook/$1');
     $routes->get('logbook-aktivitas', 'PanitiaController::logbookAktivitas');
     $routes->get('detail-aktivitas/(:num)', 'PanitiaController::detailAktivitas/$1');
+
+    $routes->get('daftar-dosen', 'PanitiaController::daftarDosen');
+    $routes->post('update-dosen', 'PanitiaController::updateDosen');
+
 
     $routes->get('kuisioner', 'PanitiaController::kuisionerIndustri');
     $routes->get('bagikan-bimbingan', 'PanitiaController::bagikanBimbingan');

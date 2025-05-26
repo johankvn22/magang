@@ -64,61 +64,75 @@ public function gantiPassword()
     ]);
 }
 
-public function bagikanBimbingan()
-{
-    $mahasiswaModel = new MahasiswaModel();
-    $dosenModel = new DosenPembimbingModel();
-
-    $data = [
-        'title' => 'Bagikan Dosen Pembimbing',
-        'mahasiswa' => $mahasiswaModel->findAll(),
-        'dosen' => $dosenModel->findAll()
-    ];
-
-    return view('panitia/bagikan_bimbingan', $data);
-}
-
-public function simpanBimbingan()
-{
-    $bimbinganModel = new Bimbingan();
-
-    $mahasiswa_id = $this->request->getPost('mahasiswa_id');
-    $dosen_id     = $this->request->getPost('dosen_id');
-
-    // Cek apakah mahasiswa sudah memiliki dosen pembimbing
-    $cekMahasiswa = $bimbinganModel->where('mahasiswa_id', $mahasiswa_id)->first();
-    if ($cekMahasiswa) {
-        return redirect()->to('/panitia/bagikan-bimbingan')
-            ->with('error', 'Mahasiswa ini sudah memiliki dosen pembimbing.');
-    }
-
-    // Insert data karena mahasiswa belum punya pembimbing
-    $data = [
-        'mahasiswa_id' => $mahasiswa_id,
-        'dosen_id'     => $dosen_id,
-    ];
-
-    $bimbinganModel->insert($data);
-
-    return redirect()->to('/panitia/bagikan-bimbingan')
-        ->with('success', 'Dosen pembimbing berhasil dibagikan!');
-}
-
 public function daftarDosen()
 {
-    $db = \Config\Database::connect();
+    $mahasiswaModel = new MahasiswaModel();
+    $bimbinganModel = new Bimbingan();
+    $dosenModel = new DosenPembimbingModel();
 
-    // Join tabel dosen_pembimbing, bimbingan, dan mahasiswa
-    $builder = $db->table('dosen_pembimbing');
-    $builder->select('dosen_pembimbing.nama_lengkap AS nama_dosen, dosen_pembimbing.nip, mahasiswa.nama_lengkap AS nama_mahasiswa, mahasiswa.nim');
-    $builder->join('bimbingan', 'bimbingan.dosen_id = dosen_pembimbing.dosen_id');
-    $builder->join('mahasiswa', 'mahasiswa.mahasiswa_id = bimbingan.mahasiswa_id');
-    $builder->orderBy('dosen_pembimbing.nama_lengkap');
+    // Pagination setup
+    $perPage = 10;
+    $data['mahasiswa'] = $mahasiswaModel->getMahasiswaWithDosen()->paginate($perPage, 'default');
+    $data['pager'] = $mahasiswaModel->pager;
 
-    $data['bimbingan'] = $builder->get()->getResultArray();
+    // Hitung offset
+    $currentPage = $data['pager']->getCurrentPage('default');
+    $data['offset'] = ($currentPage - 1) * $perPage;
 
-    return view('panitia/daftar_dosen', $data);
+    // Ambil semua dosen
+    $data['listDosen'] = $dosenModel->findAll();
+
+    // Ambil dosen pembimbing masing-masing mahasiswa
+    foreach ($data['mahasiswa'] as &$m) {
+        $m['dosen_terpilih'] = array_column(
+            $bimbinganModel->where('mahasiswa_id', $m['mahasiswa_id'])->findAll(),
+            'dosen_id'
+        );
+    }
+
+    // Hitung total bimbingan per dosen
+    $bimbinganCount = $bimbinganModel->select('dosen_id, COUNT(*) as total')
+        ->groupBy('dosen_id')
+        ->findAll();
+
+    $bimbinganMap = [];
+    foreach ($bimbinganCount as $bc) {
+        $bimbinganMap[$bc['dosen_id']] = $bc['total'];
+    }
+
+    foreach ($data['listDosen'] as &$d) {
+        $d['total_bimbingan'] = $bimbinganMap[$d['dosen_id']] ?? 0;
+    }
+
+    return view('panitia/daftar_dosen', $data); // Ganti sesuai nama view untuk panitia
 }
+
+public function updateDosen()
+{
+    $mahasiswaIds = $this->request->getPost('mahasiswa_id');
+    $bimbinganModel = new Bimbingan();
+
+    if (is_array($mahasiswaIds)) {
+        foreach ($mahasiswaIds as $mahasiswaId) {
+            $dosenId = $this->request->getPost('dosen_id_' . $mahasiswaId);
+
+            if ($dosenId) {
+                // Hapus pembimbing lama hanya untuk mahasiswa ini
+                $bimbinganModel->where('mahasiswa_id', $mahasiswaId)->delete();
+
+                // Simpan dosen baru
+                $bimbinganModel->insert([
+                    'mahasiswa_id' => $mahasiswaId,
+                    'dosen_id'     => $dosenId
+                ]);
+            }
+        }
+    }
+
+    return redirect()->to('panitia/daftar-dosen')->with('success', 'Data pembimbing berhasil diperbarui.');
+}
+
+
 
 public function daftarMahasiswa()
 {

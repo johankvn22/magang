@@ -11,6 +11,8 @@ use App\Models\BimbinganIndustriModel; // untuk industri
 use App\Models\PembimbingIndustri;
 use App\Models\PenilaianDosenModel;
 use App\Models\PenilaianIndustriModel;
+use App\Models\UserModel; // Untuk mengambil data user
+
 
 class AdminController extends BaseController
 {
@@ -124,14 +126,14 @@ class AdminController extends BaseController
 
     public function daftarUser()
     {
-        $userModel = new \App\Models\UserModel();
+        $userModel = new UserModel();
         $data['users'] = $userModel->findAll();
         return view('daftar_user', $data);
     }
 
     public function deleteUser($id)
     {
-        $userModel = new \App\Models\UserModel();
+        $userModel = new UserModel();
 
         // Cek apakah user ada
         $user = $userModel->find($id);

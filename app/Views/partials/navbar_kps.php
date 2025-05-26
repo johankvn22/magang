@@ -18,7 +18,6 @@
         </li>
         <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('kps/user-requirement'); ?>">User Requirement</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('kps/review-kinerja'); ?>">Kuesioner Industri</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('kps/bagikan-bimbingan'); ?>">Bagikan Bimbingan</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('kps/daftar-dosen'); ?>">Daftar Dosen</a></li>
 
       </ul>
