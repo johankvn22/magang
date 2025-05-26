@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\BimbinganIndustriModel;
 use App\Models\LogbookIndustri;
 use App\Models\MahasiswaModel;
+use App\Models\PenilaianIndustriModel;
 
 class BimbinganIndustriController extends BaseController
 {
@@ -63,12 +64,19 @@ class BimbinganIndustriController extends BaseController
         // Ambil ID bimbingan jika ada
         $bimbingan_id = $bimbingan['bimbingan_industri_id'] ?? null;
 
+        // Cek apakah penilaian sudah ada untuk mahasiswa ini
+        $penilaianModel = new PenilaianIndustriModel();
+        $penilaian_sudah_ada = $penilaianModel
+            ->where('mahasiswa_id', $mahasiswaId)
+            ->first() !== null;
+
         return view('industri/aktivitas_logbook', [
-            'mahasiswa'       => $mahasiswa,
-            'logbooks'        => $logbooks,
-            'disetujuiCount'  => $disetujuiCount,
-            'totalCount'      => $totalCount,
-            'bimbingan_id'    => $bimbingan_id
+            'mahasiswa'           => $mahasiswa,
+            'logbooks'            => $logbooks,
+            'disetujuiCount'      => $disetujuiCount,
+            'totalCount'          => $totalCount,
+            'bimbingan_id'        => $bimbingan_id,
+            'penilaian_sudah_ada' => $penilaian_sudah_ada,
         ]);
     }
 

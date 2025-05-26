@@ -38,36 +38,46 @@ class PenilaianIndustri extends Controller
 
 
     // Proses simpan data
-    public function store()
-    {
-        $input = $this->request->getPost();
+ public function store()
+{
+    $input = $this->request->getPost();
 
-        // Hitung total nilai
-        $total = (
-            $input['komunikasi'] + $input['berpikir_kritis'] + $input['kerja_tim'] +
-            $input['inisiatif'] + $input['literasi_digital'] + $input['deskripsi_produk'] +
-            $input['spesifikasi_produk'] + $input['desain_produk'] +
-            $input['implementasi_produk'] + $input['pengujian_produk']
-        ) / 10;
+    // Cek apakah penilaian untuk mahasiswa ini sudah ada
+    $existing = $this->penilaianModel
+        ->where('mahasiswa_id', $input['mahasiswa_id'])
+        ->first();
 
-        $data = [
-            'mahasiswa_id' => $input['mahasiswa_id'],
-            'komunikasi' => $input['komunikasi'],
-            'berpikir_kritis' => $input['berpikir_kritis'],
-            'kerja_tim' => $input['kerja_tim'],
-            'inisiatif' => $input['inisiatif'],
-            'literasi_digital' => $input['literasi_digital'],
-            'deskripsi_produk' => $input['deskripsi_produk'],
-            'spesifikasi_produk' => $input['spesifikasi_produk'],
-            'desain_produk' => $input['desain_produk'],
-            'implementasi_produk' => $input['implementasi_produk'],
-            'pengujian_produk' => $input['pengujian_produk'],
-            'total_nilai_industri' => $total
-        ];
-
-        $this->penilaianModel->insert($data);
-        return redirect()->to('industri/list_mahasiswa_bimbingan')->with('success', 'Data penilaian berhasil disimpan!');
+    if ($existing) {
+        return redirect()->to('industri/list_mahasiswa_bimbingan')->with('error', 'Penilaian untuk mahasiswa ini sudah pernah diberikan.');
     }
+
+    // Hitung total nilai
+    $total = (
+        $input['komunikasi'] + $input['berpikir_kritis'] + $input['kerja_tim'] +
+        $input['inisiatif'] + $input['literasi_digital'] + $input['deskripsi_produk'] +
+        $input['spesifikasi_produk'] + $input['desain_produk'] +
+        $input['implementasi_produk'] + $input['pengujian_produk']
+    ) / 10;
+
+    $data = [
+        'mahasiswa_id' => $input['mahasiswa_id'],
+        'komunikasi' => $input['komunikasi'],
+        'berpikir_kritis' => $input['berpikir_kritis'],
+        'kerja_tim' => $input['kerja_tim'],
+        'inisiatif' => $input['inisiatif'],
+        'literasi_digital' => $input['literasi_digital'],
+        'deskripsi_produk' => $input['deskripsi_produk'],
+        'spesifikasi_produk' => $input['spesifikasi_produk'],
+        'desain_produk' => $input['desain_produk'],
+        'implementasi_produk' => $input['implementasi_produk'],
+        'pengujian_produk' => $input['pengujian_produk'],
+        'total_nilai_industri' => $total
+    ];
+
+    $this->penilaianModel->insert($data);
+    return redirect()->to('industri/bimbingan')->with('success', 'Data penilaian berhasil disimpan!');
+}
+
 
     public function detail($mahasiswa_id)
     {
@@ -89,4 +99,6 @@ class PenilaianIndustri extends Controller
 
         return view('industri/list_nilai_mahasiswa', ['mahasiswaList' => $mahasiswaList]);
     }
+
+
 }

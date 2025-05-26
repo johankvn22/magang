@@ -67,13 +67,14 @@
                 </tbody>
             </table>
 
-            <?php if ($disetujuiCount >= 2 && !empty($bimbingan_id)): ?>
-                <div class="mt-3">
-                    <a href="<?= site_url('industri/penilaian-industri/' . $bimbingan_id) ?>" class="btn btn-primary">
-                        Beri Penilaian
-                    </a>
-                </div>
-            <?php endif; ?>
+        <?php if ($disetujuiCount >= 2 && !empty($bimbingan_id) && !$penilaian_sudah_ada): ?>
+            <div class="mt-3">
+                <a href="<?= site_url('industri/penilaian-industri/' . $bimbingan_id) ?>" class="btn btn-primary">
+                    Beri Penilaian
+                </a>
+            </div>
+        <?php endif; ?>
+
         <?php else: ?>
             <p>Belum ada data logbook.</p>
         <?php endif ?>
