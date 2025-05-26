@@ -104,48 +104,7 @@ class KpsController extends BaseController
         ]);
     }
 
-
-    public function bagikanBimbingan()
-    {
-        $mahasiswaModel = new MahasiswaModel();
-        $dosenModel = new DosenPembimbingModel();
-
-        $data = [
-            'title' => 'Bagikan Dosen Pembimbing',
-            'mahasiswa' => $mahasiswaModel->findAll(),
-            'dosen' => $dosenModel->findAll()
-        ];
-
-        return view('kps/bagikan_bimbingan', $data);
-    }
-
-    public function simpanBimbingan()
-    {
-        $bimbinganModel = new Bimbingan();
-
-        $mahasiswa_id = $this->request->getPost('mahasiswa_id');
-        $dosen_id     = $this->request->getPost('dosen_id');
-
-        // Cek apakah mahasiswa sudah memiliki dosen pembimbing
-        $cekMahasiswa = $bimbinganModel->where('mahasiswa_id', $mahasiswa_id)->first();
-        if ($cekMahasiswa) {
-            return redirect()->to('/kps/bagikan-bimbingan')
-                ->with('error', 'Mahasiswa ini sudah memiliki dosen pembimbing.');
-        }
-
-        // Insert data karena mahasiswa belum punya pembimbing
-        $data = [
-            'mahasiswa_id' => $mahasiswa_id,
-            'dosen_id'     => $dosen_id,
-        ];
-
-        $bimbinganModel->insert($data);
-
-        return redirect()->to('/kps/bagikan-bimbingan')
-            ->with('success', 'Dosen pembimbing berhasil dibagikan!');
-    }
-
-
+    // Tampilkan daftar dosen pembimbing   
     public function daftarDosen()
     {
         $mahasiswaModel = new MahasiswaModel();
@@ -190,6 +149,29 @@ class KpsController extends BaseController
         return view('kps/daftar_dosen', $data);
     }
 
+    // public function updateDosen()
+    // {
+    //     $mahasiswaIds = $this->request->getPost('mahasiswa_id');
+    //     $bimbinganModel = new Bimbingan();
+
+    //     if (is_array($mahasiswaIds)) {
+    //         foreach ($mahasiswaIds as $mahasiswaId) {
+    //             // Hapus pembimbing lama
+    //             $bimbinganModel->where('mahasiswa_id', $mahasiswaId)->delete();
+
+    //             // Ambil dosen baru dari input
+    //             $dosenId = $this->request->getPost('dosen_id_' . $mahasiswaId);
+    //             if (!empty($dosenId)) {
+    //                 $bimbinganModel->insert([
+    //                     'mahasiswa_id' => $mahasiswaId,
+    //                     'dosen_id' => $dosenId
+    //                 ]);
+    //             }
+    //         }
+    //     }
+
+    //     return redirect()->to('kps/daftar-dosen')->with('success', 'Semua data pembimbing diperbarui.');
+    // }
 
     public function updateDosen()
     {
@@ -216,9 +198,7 @@ class KpsController extends BaseController
         return redirect()->to('kps/daftar-dosen')->with('success', 'Data pembimbing berhasil diperbarui.');
     }
 
-
-
-
+    // Tampilkan daftar mahasiswa
     public function daftarMahasiswa()
     {
         if (session()->get('role') !== 'kps') {
