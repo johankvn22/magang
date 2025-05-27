@@ -5,6 +5,23 @@
 <div class="container py-5">
     <h4 class="text-center mb-5 fw-bold">Detail Nilai Mahasiswa</h4>
 
+    <!-- Informasi Mahasiswa -->
+<div class="card mb-4 border border-secondary shadow-sm">
+    <div class="card-header bg-secondary text-white fw-semibold">Informasi Mahasiswa</div>
+    <div class="card-body">
+        <p><strong>Nama:</strong> <?= esc($mahasiswa['nama_lengkap']) ?></p>
+        <p><strong>NIM:</strong> <?= esc($mahasiswa['nim']) ?></p>
+        <p><strong>Program Studi:</strong> <?= esc($mahasiswa['program_studi']) ?></p>
+        <p><strong>Kelas:</strong> <?= esc($mahasiswa['kelas']) ?></p>
+        <p><strong>Perusahaan:</strong> <?= esc($mahasiswa['nama_perusahaan']) ?></p>
+        <p><strong>Divisi:</strong> <?= esc($mahasiswa['divisi']) ?></p>
+        <p><strong>Tanggal Magang:</strong> <?= esc($mahasiswa['tanggal_mulai']) ?> s/d <?= esc($mahasiswa['tanggal_selesai']) ?></p>
+        <p><strong>Judul Magang:</strong> <?= esc($mahasiswa['judul_magang']) ?></p>
+
+    </div>
+</div>
+
+
     <!-- ✅ Nilai dari Industri -->
     <?php if (isset($nilaiIndustri) && $nilaiIndustri): ?>
         <div class="card mb-5 border border-primary shadow-sm">

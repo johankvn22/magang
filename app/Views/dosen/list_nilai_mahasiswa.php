@@ -26,7 +26,7 @@
                             <td><?= esc($mhs['program_studi']) ?></td>
                             <td>
                                 <?php if ($mhs['sudah_dinilai']): ?>
-                                    <a href="<?= site_url('dosen/penilaian-dosen/nilai/' . $mhs['bimbingan_id']) ?>" class="btn btn-info btn-sm">Detail</a>
+                                    <a href="<?= site_url('dosen/penilaian-dosen/detail/' . $mhs['bimbingan_id']) ?>" class="btn btn-info btn-sm">Detail</a>
                                 <?php else: ?>
                                     <span class="text-muted">Mahasiswa Belum Melengkapi Logbook Bimbingan</span>
                                 <?php endif; ?>                            

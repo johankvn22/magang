@@ -107,7 +107,7 @@ $routes->group('dosen', ['filter' => 'auth'], function ($routes) {
 
     $routes->post('penilaian-dosen/save', 'PenilaianDosenController::save');
 
-    $routes->get('penilaian-dosen/nilai/(:num)', 'PenilaianDosenController::showNilai/$1');
+    $routes->get('penilaian-dosen/detail/(:num)', 'PenilaianDosenController::showNilai/$1');
     $routes->get('penilaian-dosen/listNilai', 'PenilaianDosenController::listNilai');
 
     // Rute untuk Validasi Logbook Mahasiswa
