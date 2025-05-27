@@ -28,7 +28,6 @@
                         <th>Kegiatan</th>
                         <th>Catatan</th>
                         <th>Status</th>
-                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,29 +35,30 @@
                         <tr>
                             <td><?= esc($log['tanggal']) ?></td>
                             <td><?= esc($log['aktivitas']) ?></td>
-                            <td><?= esc($log['catatan_industri']) ?></td>
                             <td>
-                                <?php if ($log['status_validasi'] == 'disetujui'): ?>
-                                    <span class="badge badge-success">Disetujui</span>
-                                <?php elseif ($log['status_validasi'] == 'ditolak'): ?>
-                                    <span class="badge badge-danger">Ditolak</span>
-                                <?php else: ?>
-                                    <span class="badge badge-warning">Menunggu</span>
+                                <?php if ($log['status_validasi'] === 'menunggu') : ?>
+                                    <form action="<?= site_url('industri/bimbingan/update-catatan/' . $log['logbook_id']) ?>" method="post">
+                                        <textarea name="catatan_industri" class="form-control form-control-sm" rows="2" required><?= esc($log['catatan_industri']) ?></textarea>
+                                        <button type="submit" class="btn btn-primary btn-sm mt-1">Simpan</button>
+                                    </form>
+                                <?php else : ?>
+                                    <?= esc($log['catatan_industri']) ?: '<em>Belum ada catatan</em>' ?>
                                 <?php endif; ?>
                             </td>
+
+
                             <td>
-                                <?php if ($log['status_validasi'] != 'disetujui'): ?>
+                                <?php if ($log['status_validasi'] === 'menunggu') : ?>
                                     <form action="<?= site_url('industri/bimbingan/setujui/' . $log['logbook_id']) ?>" method="post" style="display:inline;">
-                                        <?= csrf_field() ?>
                                         <button type="submit" class="btn btn-success btn-sm">Setujui</button>
                                     </form>
-                                <?php endif; ?>
-
-                                <?php if ($log['status_validasi'] != 'ditolak'): ?>
                                     <form action="<?= site_url('industri/bimbingan/tolak/' . $log['logbook_id']) ?>" method="post" style="display:inline;">
-                                        <?= csrf_field() ?>
-                                        <button type="submit" class="btn btn-danger btn-sm">Tolak</button>
+                                        <button type="submit" class="btn btn-warning btn-sm">Tolak</button>
                                     </form>
+                                <?php elseif ($log['status_validasi'] === 'disetujui') : ?>
+                                    <span class="badge bg-success">Disetujui</span>
+                                <?php elseif ($log['status_validasi'] === 'ditolak') : ?>
+                                    <span class="badge bg-danger">Ditolak</span>
                                 <?php endif; ?>
                             </td>
 
@@ -67,13 +67,14 @@
                 </tbody>
             </table>
 
-            <?php if ($disetujuiCount >= 2 && !empty($bimbingan_id)): ?>
-                <div class="mt-3">
-                    <a href="<?= site_url('industri/penilaian-industri/' . $bimbingan_id) ?>" class="btn btn-primary">
-                        Beri Penilaian
-                    </a>
-                </div>
-            <?php endif; ?>
+        <?php if ($disetujuiCount >= 2 && !empty($bimbingan_id) && !$penilaian_sudah_ada): ?>
+            <div class="mt-3">
+            <a href="<?= site_url('industri/penilaian-industri/' . $mahasiswa['mahasiswa_id']) ?>" class="btn btn-primary">
+                Beri Penilaian
+            </a>
+            </div>
+        <?php endif; ?>
+
         <?php else: ?>
             <p>Belum ada data logbook.</p>
         <?php endif ?>

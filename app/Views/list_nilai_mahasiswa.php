@@ -1,54 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Nilai Mahasiswa</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .card-header-gradient {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: white;
-        }
-
-        .table-hover tbody tr:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .score-badge {
-            min-width: 60px;
-            font-size: 0.85rem;
-            padding: 5px 8px;
-        }
-
-        .score-dosen {
-            background-color: rgba(13, 110, 253, 0.1);
-            color: #0d6efd;
-        }
-
-        .score-industri {
-            background-color: rgba(25, 135, 84, 0.1);
-            color: #198754;
-        }
-
-        .action-btn {
-            min-width: 100px;
-        }
-
-        @media (max-width: 992px) {
-            .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-        }
-    </style>
-</head>
+  <?php
+  /** @var \CodeIgniter\View\View $this */
+  ?>
+  <?= $this->extend('layouts/template_admin'); ?>
+  <?= $this->section('content'); ?>
 
 <body>
     <div class="container py-4">
@@ -90,8 +44,8 @@
                                             <div class="flex-shrink-0">
                                                 <i class="fas fa-user-circle fa-lg text-primary me-2"></i>
                                             </div>
-                                            <div class="flex-grow-1 ms-2">
-                                                <a href="<?= base_url('admin/nilai/detail/' . $mhs['mahasiswa_id']) ?>" class="text-decoration-none fw-bold">
+                                            <div class="flex-grow-1 ms-1">
+                                                <a href="<?= base_url('admin/nilai/detail/' . $mhs['mahasiswa_id']) ?>" class="text-decoration-none ">
                                                     <?= $mhs['nama_lengkap'] ?>
                                                 </a>
                                             </div>
@@ -156,8 +110,6 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
-</html>
+  <?= $this->endSection(); ?>

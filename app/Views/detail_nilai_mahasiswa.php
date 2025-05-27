@@ -1,52 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+  <?php
+  /** @var \CodeIgniter\View\View $this */
+  ?>
+  <?= $this->extend('layouts/template_admin'); ?>
+  <?= $this->section('content'); ?>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Nilai Mahasiswa</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .category-header {
-            background: linear-gradient(135deg,rgb(3, 122, 49) 0%,rgb(4, 244, 96) 100%);
-            color: white;
-        }
-
-        .score-badge {
-            min-width: 50px;
-            font-size: 0.9rem;
-        }
-
-        .total-score {
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-        }
-
-        .criteria-col {
-            min-width: 300px;
-        }
-
-        @media (max-width: 768px) {
-            .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .criteria-col {
-                min-width: 200px;
-            }
-        }
-    </style>
-</head>
 
 <body>
     <div class="container py-4">
@@ -110,98 +67,125 @@
             </div>
 
             <!-- Nilai Industri -->
-            <div class="col-lg-6">
-                <?php if ($nilai_industri): ?>
-                    <div class="card h-100 shadow-sm card-hover border-success">
-                        <div class="card-header bg-success text-white">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-industry fa-lg me-3"></i>
-                                <h5 class="mb-0">Nilai Pembimbing Industri</h5>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="border rounded p-3 h-100">
-                                        <h6 class="text-success fw-bold mb-3">
-                                            <i class="fas fa-comments me-2"></i>Soft Skills
-                                        </h6>
-                                        <ul class="list-unstyled mb-0">
-                                            <li class="mb-3 d-flex justify-content-between align-items-center">
-                                                <span>Komunikasi</span>
-                                                <span class="badge bg-success score-badge"><?= $nilai_industri['komunikasi'] ?></span>
-                                            </li>
-                                            <li class="mb-3 d-flex justify-content-between align-items-center">
-                                                <span>Berpikir Kritis</span>
-                                                <span class="badge bg-success score-badge"><?= $nilai_industri['berpikir_kritis'] ?></span>
-                                            </li>
-                                            <li class="mb-3 d-flex justify-content-between align-items-center">
-                                                <span>Kerja Tim</span>
-                                                <span class="badge bg-success score-badge"><?= $nilai_industri['kerja_tim'] ?></span>
-                                            </li>
-                                            <li class="mb-3 d-flex justify-content-between align-items-center">
-                                                <span>Inisiatif</span>
-                                                <span class="badge bg-success score-badge"><?= $nilai_industri['inisiatif'] ?></span>
-                                            </li>
-                                            <li class="d-flex justify-content-between align-items-center">
-                                                <span>Literasi Digital</span>
-                                                <span class="badge bg-success score-badge"><?= $nilai_industri['literasi_digital'] ?></span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="border rounded p-3 h-100">
-                                        <h6 class="text-success fw-bold mb-3">
-                                            <i class="fas fa-cogs me-2"></i>Hard Skills
-                                        </h6>
-                                        <ul class="list-unstyled mb-0">
-                                            <li class="mb-3 d-flex justify-content-between align-items-center">
-                                                <span>Deskripsi Produk</span>
-                                                <span class="badge bg-success score-badge"><?= $nilai_industri['deskripsi_produk'] ?></span>
-                                            </li>
-                                            <li class="mb-3 d-flex justify-content-between align-items-center">
-                                                <span>Spesifikasi Produk</span>
-                                                <span class="badge bg-success score-badge"><?= $nilai_industri['spesifikasi_produk'] ?></span>
-                                            </li>
-                                            <li class="mb-3 d-flex justify-content-between align-items-center">
-                                                <span>Desain Produk</span>
-                                                <span class="badge bg-success score-badge"><?= $nilai_industri['desain_produk'] ?></span>
-                                            </li>
-                                            <li class="mb-3 d-flex justify-content-between align-items-center">
-                                                <span>Implementasi Produk</span>
-                                                <span class="badge bg-success score-badge"><?= $nilai_industri['implementasi_produk'] ?></span>
-                                            </li>
-                                            <li class="d-flex justify-content-between align-items-center">
-                                                <span>Pengujian Produk</span>
-                                                <span class="badge bg-success score-badge"><?= $nilai_industri['pengujian_produk'] ?></span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-4 p-3 bg-success bg-opacity-10 rounded text-center">
-                                <h4 class="mb-0 text-success">
-                                    Total Nilai Industri:
-                                    <span class="badge bg-success total-score ms-2"><?= number_format($nilai_industri['total_nilai_industri'], 2) ?></span>
-                                </h4>
-                            </div>
-                        </div>
+    <!-- Nilai Industri -->
+    <div class="col-12">
+        <?php if ($nilai_industri): ?>
+            <div class="card h-100 shadow-sm card-hover border-success">
+                <div class="card-header bg-success text-white">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-industry fa-lg me-3"></i>
+                        <h5 class="mb-0">Nilai Pembimbing Industri</h5>
                     </div>
-                <?php else: ?>
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body text-center d-flex flex-column justify-content-center py-5">
-                            <div class="bg-warning bg-opacity-10 p-4 rounded-circle d-inline-block mb-3">
-                                <i class="fas fa-exclamation-circle fa-3x text-warning"></i>
-                            </div>
-                            <h5 class="text-dark mb-2">Belum ada nilai dari pembimbing industri</h5>
-                            <p class="text-muted mb-0">Nilai akan muncul setelah pembimbing industri mengisi evaluasi</p>
-                        </div>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 15%" class="text-center">Kategori</th>
+                                    <th>Kriteria Unjuk Kerja (KUK)</th>
+                                    <th style="width: 15%" class="text-center">Range Nilai</th>
+                                    <th style="width: 15%" class="text-center">Nilai</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Soft Skills -->
+                                <tr>
+                                    <td class="text-center align-middle fw-bold bg-info bg-opacity-10" rowspan="5">
+                                        <div class="d-flex flex-column justify-content-center align-items-center">
+                                            <i class="fas fa-comments fa-2x mb-2 text-info"></i>
+                                            <span>Soft Skills</span>
+                                            <span class="badge bg-info mt-1">50%</span>
 
+                                        </div>
+                                    </td>
+                                    <td>1.1 Mahasiswa memiliki kemampuan berkomunikasi yang baik</td>
+                                    <td class="text-center">1 - 10</td>
+                                    <td class="text-center"><span class="badge bg-info score-badge"><?= $nilai_industri['komunikasi'] ?></span></td>
+                                </tr>
+                                <tr>
+                                    <td>1.2 Mahasiswa mampu berpikir kritis</td>
+                                    <td class="text-center">1 - 10</td>
+                                    <td class="text-center"><span class="badge bg-info score-badge"><?= $nilai_industri['berpikir_kritis'] ?></span></td>
+                                </tr>
+                                <tr>
+                                    <td>1.3 Mahasiswa mampu bekerja secara individu maupun tim</td>
+                                    <td class="text-center">1 - 10</td>
+                                    <td class="text-center"><span class="badge bg-info score-badge"><?= $nilai_industri['kerja_tim'] ?></span></td>
+                                </tr>
+                                <tr>
+                                    <td>1.4 Mahasiswa memiliki daya inisiatif, kreatif, inovatif, dan adaptif yang tinggi</td>
+                                    <td class="text-center">1 - 10</td>
+                                    <td class="text-center"><span class="badge bg-info score-badge"><?= $nilai_industri['inisiatif'] ?></span></td>
+                                </tr>
+                                <tr>
+                                    <td>1.5 Mahasiswa memiliki kemampuan literasi, informasi, media, dan teknologi</td>
+                                    <td class="text-center">1 - 10</td>
+                                    <td class="text-center"><span class="badge bg-info score-badge"><?= $nilai_industri['literasi_digital'] ?></span></td>
+                                </tr>
+
+                                <!-- Hard Skills -->
+                                <tr>
+                                    <td class="text-center align-middle fw-bold bg-success bg-opacity-10" rowspan="5">
+                                        <div class="d-flex flex-column justify-content-center align-items-center">
+                                            <i class="fas fa-cogs fa-2x mb-2 text-success"></i>
+                                            <span>Hard Skills</span>
+                                            <span class="badge bg-success mt-1">30%</span>
+
+                                        </div>
+                                    </td>
+                                    <td>2.1 Mahasiswa mampu membuat deskripsi produk</td>
+                                    <td class="text-center">1 - 10</td>
+                                    <td class="text-center"><span class="badge bg-success score-badge"><?= $nilai_industri['deskripsi_produk'] ?></span></td>
+                                </tr>
+                                <tr>
+                                    <td>2.2 Mahasiswa mampu menentukan requirement/Spesifikasi produk</td>
+                                    <td class="text-center">1 - 10</td>
+                                    <td class="text-center"><span class="badge bg-success score-badge"><?= $nilai_industri['spesifikasi_produk'] ?></span></td>
+                                </tr>
+                                <tr>
+                                    <td>2.3 Mahasiswa mampu membuat desain produk</td>
+                                    <td class="text-center">1 - 10</td>
+                                    <td class="text-center"><span class="badge bg-success score-badge"><?= $nilai_industri['desain_produk'] ?></span></td>
+                                </tr>
+                                <tr>
+                                    <td>2.4 Mahasiswa mampu mengimplementasikan produk</td>
+                                    <td class="text-center">1 - 10</td>
+                                    <td class="text-center"><span class="badge bg-success score-badge"><?= $nilai_industri['implementasi_produk'] ?></span></td>
+                                </tr>
+                                <tr>
+                                    <td>2.5 Mahasiswa mampu melakukan pengujian produk</td>
+                                    <td class="text-center">1 - 10</td>
+                                    <td class="text-center"><span class="badge bg-success score-badge"><?= $nilai_industri['pengujian_produk'] ?></span></td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <td colspan="3" class="text-end fw-bold fs-5">Total Nilai Industri</td>
+                                    <td class="text-center fw-bold fs-4">
+                                        <span class="badge bg-primary total-score"><?= number_format($nilai_industri['total_nilai_industri'], 2) ?></span>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        <?php else: ?>
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center d-flex flex-column justify-content-center py-5">
+                    <div class="bg-warning bg-opacity-10 p-4 rounded-circle d-inline-block mb-3">
+                        <i class="fas fa-exclamation-circle fa-3x text-warning"></i>
+                    </div>
+                    <h5 class="text-dark mb-2">Belum ada nilai dari pembimbing industri</h5>
+                    <p class="text-muted mb-0">Nilai akan muncul setelah pembimbing industri mengisi evaluasi</p>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
+
+
+                
         <!-- Nilai Dosen -->
         <div class="card shadow-sm mb-4 border-primary card-hover">
             <div class="card-header category-header">
@@ -313,7 +297,7 @@
                                     </td>
                                 </tr>
                             </tbody>
-                            <tfoot class="table-dark">
+                            <tfoot class="table-light">
                                 <tr>
                                     <td colspan="3" class="text-end fw-bold fs-5">Total Nilai Dosen</td>
                                     <td class="text-center fw-bold fs-4">
@@ -340,4 +324,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
-</html>
+  <?= $this->endSection(); ?>

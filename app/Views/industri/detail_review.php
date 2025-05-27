@@ -49,3 +49,5 @@
     <a href="<?= base_url('industri/review-kinerja/daftar') ?>" class="btn btn-secondary">← Kembali ke Daftar</a>
 </div>
 
+<?= $this->endSection(); ?>
+

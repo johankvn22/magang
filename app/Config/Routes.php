@@ -60,6 +60,8 @@ $routes->group('mahasiswa', function ($routes) {
     $routes->get('logbook/edit/(:num)', 'LogbookController::edit/$1');
     $routes->post('logbook/update/(:num)', 'LogbookController::update/$1');
     $routes->get('logbook/delete/(:num)', 'LogbookController::delete/$1');
+    $routes->get('logbook/download/(:any)', 'LogbookController::downloadLogbookFile/$1');
+
 
     // Logbook Aktivitas Industri Mahasiswa
     $routes->get('logbook_industri', 'LogbookIndustriController::index');
@@ -80,8 +82,8 @@ $routes->group('mahasiswa', function ($routes) {
     $routes->post('update', 'MahasiswaController::update'); // menyimpan data mahasiswa
     $routes->get('ganti-password', 'MahasiswaController::ganti_password');
 
-    // Upload Laporan
-    $routes->post('upload', 'MahasiswaController::upload');
+    // // Upload Laporan
+    // $routes->post('upload', 'MahasiswaController::upload');
 });
 
 $routes->group('dosen', ['filter' => 'auth'], function ($routes) {
@@ -95,8 +97,9 @@ $routes->group('dosen', ['filter' => 'auth'], function ($routes) {
 
     // Rute Bimbingan Logbook Mahasiswa
     $routes->get('bimbingan', 'BimbinganController::index');
-    $routes->post('tentukan-bimbingan', 'BimbinganController::tentukanBimbingan');
     $routes->get('bimbingan/detail/(:num)', 'BimbinganController::detail/$1');
+    $routes->get('download-logbook/(:any)', 'BimbinganController::downloadLogbookFile/$1');
+
 
     // Rute untuk Penilaian Dosen
     // $routes->get('penilaian-dosen', 'PenilaianDosenController::index');
@@ -104,13 +107,15 @@ $routes->group('dosen', ['filter' => 'auth'], function ($routes) {
 
     $routes->post('penilaian-dosen/save', 'PenilaianDosenController::save');
 
-    $routes->get('penilaian-dosen/nilai/(:num)', 'PenilaianDosenController::showNilai/$1');
+    $routes->get('penilaian-dosen/detail/(:num)', 'PenilaianDosenController::showNilai/$1');
     $routes->get('penilaian-dosen/listNilai', 'PenilaianDosenController::listNilai');
 
     // Rute untuk Validasi Logbook Mahasiswa
     $routes->post('bimbingan/setujui/(:num)', 'BimbinganController::setujui/$1');
     $routes->post('bimbingan/tolak/(:num)', 'BimbinganController::tolak/$1');
     $routes->post('bimbingan/hapus/(:num)', 'BimbinganController::hapus/$1');
+    $routes->post('update_catatan/(:num)', 'BimbinganController::update_catatan/$1');
+
 
     $routes->get('aktivitas', 'BimbinganController::aktivitasMahasiswaBimbingan');
     $routes->get('logbook/(:num)', 'BimbinganController::detailAktivitasMahasiswa/$1');
@@ -153,9 +158,8 @@ $routes->group('kps', ['filter' => 'kpsauth'], function ($routes) {
 
     $routes->get('review-kinerja', 'KpsController::listReview');
     $routes->get('review-kinerja/detail/(:num)', 'KpsController::detailReview/$1');
-    $routes->get('nilai', 'KpsController::listNilaiMahasiswa');
 
-    $routes->get('nilai/detail/(:num)', 'KpsController::detail_nilai/$1');
+    $routes->get('list_nilai_mahasiswa', 'KpsController::listNilaiMahasiswa');
 });
 
 $routes->group('panitia', ['filter' => 'auth'], function ($routes) {
@@ -187,21 +191,15 @@ $routes->group('panitia', ['filter' => 'auth'], function ($routes) {
 
     $routes->get('review-kinerja', 'PanitiaController::listReview');
     $routes->get('review-kinerja/detail/(:num)', 'PanitiaController::detailReview/$1');
-    $routes->get('nilai', 'PanitiaController::listNilaiMahasiswa');
 
-    $routes->get('nilai/detail/(:num)', 'PanitiaController::detail_nilai/$1');
+    $routes->get('list_nilai_mahasiswa', 'PanitiaController::listNilaiMahasiswa');
 
     // Rute untuk atur pembimbingan industri
 
 
 });
 
-
-
-
 // ROUTE UNTUK INDUSTRI
-
-
 $routes->group('industri', ['filter' => 'auth'], function ($routes) {
     $routes->get('dashboard', 'PembimbingIndustriController::dashboard');
 
@@ -216,6 +214,8 @@ $routes->group('industri', ['filter' => 'auth'], function ($routes) {
     // Bimbingan Industri
     $routes->get('bimbingan', 'BimbinganIndustriController::index');
     $routes->get('bimbingan/detail/(:num)', 'BimbinganIndustriController::detail/$1');
+    $routes->post('bimbingan/update-catatan/(:num)', 'BimbinganIndustriController::updateCatatanIndustri/$1');
+
 
     $routes->post('bimbingan/setujui/(:num)', 'BimbinganIndustriController::setujui/$1');
     $routes->post('bimbingan/tolak/(:num)', 'BimbinganIndustriController::tolak/$1');

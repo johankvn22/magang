@@ -65,6 +65,8 @@
                         <th>Tanggal</th>
                         <th>Kegiatan</th>
                         <th>Catatan Dosen</th>
+                        <th>Dokumen</th>
+                        <th>Link Drive</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -73,7 +75,30 @@
                         <tr>
                             <td><?= esc($log['tanggal']) ?></td>
                             <td><?= esc($log['aktivitas']) ?></td>
-                            <td><?= esc($log['catatan_dosen']) ?: 'Belum ada catatan' ?></td>
+                            <td>
+                                <?php if ($log['status_validasi'] === 'menunggu') : ?>
+                                    <form action="<?= site_url('dosen/update_catatan/' . $log['logbook_id']) ?>" method="post">
+                                        <textarea name="catatan_dosen" class="form-control form-control-sm" rows="2" required><?= esc($log['catatan_dosen']) ?></textarea>
+                                        <button type="submit" class="btn btn-primary btn-sm mt-1">Simpan</button>
+                                    </form>
+                                <?php else : ?>
+                                    <?= esc($log['catatan_dosen']) ?: '<em>Belum ada catatan</em>' ?>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if (!empty($log['file_dokumen'])): ?>
+                                    <a href="<?= site_url('dosen/download-logbook/' . $log['file_dokumen']) ?>" class="btn btn-sm btn-outline-primary">Download</a>
+                                <?php else: ?>
+                                    <span class="text-muted">Tidak ada file</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if (!empty($log['link_drive'])): ?>
+                                    <a href="<?= esc($log['link_drive']) ?>" target="_blank" class="btn btn-sm btn-outline-success">Buka Link</a>
+                                <?php else: ?>
+                                    <span class="text-muted">Tidak ada link</span>
+                                <?php endif; ?>
+                            </td>
                             <td>
                                 <?php if ($log['status_validasi'] === 'menunggu') : ?>
                                     <form action="<?= site_url('dosen/bimbingan/setujui/' . $log['logbook_id']) ?>" method="post" style="display:inline;">

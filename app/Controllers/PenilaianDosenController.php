@@ -60,11 +60,13 @@ class PenilaianDosenController extends BaseController
         $mahasiswaModel = new MahasiswaModel();
         $penilaianIndustriModel = new PenilaianIndustriModel();
 
+        // Ambil data bimbingan berdasarkan ID
         $bimbingan = $bimbinganModel->find($bimbingan_id);
         if (!$bimbingan) {
             return redirect()->to('/dosen/penilaian-dosen')->with('error', 'Bimbingan tidak ditemukan.');
         }
 
+        // Pastikan mahasiswa tersebut dibimbing oleh dosen yang sedang login
         $penilaian = $penilaianModel->where('bimbingan_id', $bimbingan_id)->first();
         if (!$penilaian) {
             return redirect()->to('/dosen/penilaian-dosen')->with('error', 'Penilaian belum tersedia.');

@@ -91,7 +91,7 @@ class ReviewKinerjaController extends BaseController
 
         $reviewModel->insert($data);
 
-        return redirect()->to('industri/dashboard')->with('message', 'Review kinerja berhasil disimpan!');
+        return redirect()->to('/industri/review-kinerja/detail/' . $mahasiswa_id)->with('message', 'Review kinerja berhasil disimpan!');
     }
 
     public function listReview()

@@ -24,9 +24,14 @@
                             <td><?= esc($mhs['nama_lengkap']) ?></td>
                             <td><?= esc($mhs['nim']) ?></td>
                             <td><?= esc($mhs['program_studi']) ?></td>
-                            <td>
-                                <a href="<?= base_url('industri/penilaian-industri/detail/' . $mhs['mahasiswa_id']) ?>" class="btn btn-info btn-sm">Detail Nilai</a>
-                            </td>
+<td>
+    <?php if ($mhs['sudah_dinilai']) : ?>
+        <a href="<?= base_url('industri/penilaian-industri/detail/' . $mhs['mahasiswa_id']) ?>" class="btn btn-info btn-sm">Detail Nilai</a>
+    <?php else : ?>
+        <span class="text-muted">Belum melengkapi logbook aktivitas</span>
+    <?php endif; ?>
+</td>
+
                         </tr>
                     <?php endforeach; ?>
                 <?php else : ?>
