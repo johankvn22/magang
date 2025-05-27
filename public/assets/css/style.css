@@ -154,3 +154,19 @@ header.bg-dark-green {
   pointer-events: none;
   background-color: transparent;
 }
+
+.score-badge {
+  min-width: 60px;
+  font-size: 0.85rem;
+  padding: 5px 8px;
+}
+
+.score-dosen {
+  background-color: rgba(13, 110, 253, 0.1);
+  color: #0d6efd;
+}
+
+.score-industri {
+  background-color: rgba(25, 135, 84, 0.1);
+  color: #198754;
+}
