@@ -97,8 +97,18 @@ class PenilaianIndustri extends Controller
         $bimbinganModel = new BimbinganIndustriModel();
         $mahasiswaList = $bimbinganModel->getMahasiswaByPembimbing($pembimbingId);
 
+        // Tambahkan status penilaian untuk masing-masing mahasiswa
+        foreach ($mahasiswaList as &$mhs) {
+            $penilaian = $this->penilaianModel
+                ->where('mahasiswa_id', $mhs['mahasiswa_id'])
+                ->first();
+
+            $mhs['sudah_dinilai'] = $penilaian ? true : false;
+        }
+
         return view('industri/list_nilai_mahasiswa', ['mahasiswaList' => $mahasiswaList]);
     }
+
 
 
 }
