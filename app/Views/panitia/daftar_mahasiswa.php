@@ -1,75 +1,112 @@
-<?php
-/** @var \CodeIgniter\View\View $this */
-?>
+ <?php
+  /** @var \CodeIgniter\View\View $this */
+  ?>
 <?= $this->extend('layouts/template_panitia'); ?>
 <?= $this->section('content'); ?>
 
-<div class="container mt-5">
-  <h2>Daftar Mahasiswa</h2>
+<div class="container-fluid px-2">
 
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-success mb-0">📋 Daftar Mahasiswa Magang</h2>
+    
+    <form method="get" action="<?= site_url('panitia/daftar_mahasiswa') ?>" class="row mb-3">
+      <div class="col-md-9">
+        <input type="text" name="keyword" value="<?= esc($keyword ?? '') ?>" class="form-control" placeholder="Cari Mahasiswa...">
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-success">Cari</button>
+      </div>
+    </form>
+
+    <form method="get" action="<?= site_url('panitia/daftar_mahasiswa') ?>" class="row mb-3 g-2">
+    <div class="col-md-12">
+      <select name="perPage" class="form-select" onchange="this.form.submit()">
+        <?php foreach ([5, 10, 25, 50, 100] as $option): ?>
+          <option value="<?= $option ?>" <?= $perPage == $option ? 'selected' : '' ?>>
+            Tampilkan <?= $option ?>
+          </option>
+        <?php endforeach; ?>
+      </select>
+    </div>
+
+  </form>
+
+  </div>
+
+  <!-- Flash Success -->
   <?php if (session()->getFlashdata('success')): ?>
-    <div class="alert alert-success">
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
       <?= session()->getFlashdata('success') ?>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   <?php endif; ?>
 
- <body class="bg-light">
-
-  <body>
-  <div class="container py-5">
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped align-middle">
-        <thead class=""table-light text-center">
-          <tr>
-            <th>No</th>
-            <th>Nama</th>
-            <th>NIM</th>
-            <th>Prodi</th>
-            <th>Kelas</th>
-            <th>No HP</th>
-            <th>Email</th>
-            <th>Perusahaan</th>
-            <th>Divisi</th>
-            <th>Durasi</th>
-            <th>Mulai</th>
-            <th>Selesai</th>
-            <th>Pembimbing</th>
-            <th>No HP Pembimbing</th>
-            <th>Email Pembimbing</th>
-            <th>Judul Magang</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($mahasiswa as $index => $mhs): ?>
+  <!-- Table -->
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover table-bordered text-nowrap align-middle small" id="mahasiswaTable">
+          <thead class="table-light text-center align-middle">
             <tr>
-              <td><?= $offset + $index + 1 ?></td>
-              <td><?= esc($mhs['nama_lengkap']) ?></td>
-              <td><?= esc($mhs['nim']) ?></td>
-              <td><?= esc($mhs['program_studi']) ?></td>
-              <td><?= esc($mhs['kelas']) ?></td>
-              <td><?= esc($mhs['no_hp']) ?></td>
-              <td><?= esc($mhs['email']) ?></td>
-              <td><?= esc($mhs['nama_perusahaan']) ?></td>
-              <td><?= esc($mhs['divisi']) ?></td>
-              <td><?= esc($mhs['durasi_magang']) ?></td>
-              <td><?= esc($mhs['tanggal_mulai']) ?></td>
-              <td><?= esc($mhs['tanggal_selesai']) ?></td>
-              <td><?= esc($mhs['nama_pembimbing_perusahaan']) ?></td>
-              <td><?= esc($mhs['no_hp_pembimbing_perusahaan']) ?></td>
-              <td><?= esc($mhs['email_pembimbing_perusahaan']) ?></td>
-              <td><?= esc($mhs['judul_magang']) ?></td>
+              <th>No</th>
+              <th>Nama & NIM</th>
+              <th>Prodi & Kelas</th>
+              <th>Kontak Mahasiswa</th>
+              <th>Perusahaan</th>
+              <th>Durasi</th>
+              <th>Pembimbing</th>
+              <th>Judul Magang</th>
             </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            <?php foreach ($mahasiswa as $index => $mhs): ?>
+              <tr>
+                <td class="text-center"><?= $offset + $index + 1 ?></td>
+                <td>
+                  <div class="fw-semibold"><?= esc($mhs['nama_lengkap']) ?></div>
+                  <div class="text-muted small"><?= esc($mhs['nim']) ?></div>
+                </td>
+                <td>
+                  <span class="badge bg-primary-subtle text-primary"><?= esc($mhs['program_studi']) ?></span><br>
+                  <span class="badge bg-secondary-subtle text-secondary"><?= esc($mhs['kelas']) ?></span>
+                </td>
+                <td>
+                  <div><?= esc($mhs['no_hp']) ?></div>
+                  <div class="text-muted small"><?= esc($mhs['email']) ?></div>
+                </td>
+                <td>
+                  <div class="fw-semibold text-wrap text-break" style="maxmax-width: 200px"><?= esc($mhs['nama_perusahaan']) ?></div>
+                  <div class="text-muted small text-wrap text-break" style="max-width: 200px;"><?= esc($mhs['divisi']) ?></div>
+                </td>
+                <td class="text-center">
+                  <span class="badge bg-success-subtle text-success"><?= esc($mhs['durasi_magang']) ?> bln</span><br>
+                  <small class="text-muted small text-wrap text-break" style="max-width: 200px;"><?= date('d M Y', strtotime($mhs['tanggal_mulai'])) ?> - <?= date('d M Y', strtotime($mhs['tanggal_selesai'])) ?></small>
+                </td>
+                <td>
+                  <div class="fw-semibold text-wrap text-break" style="max-width: 200px;"><?= esc($mhs['nama_pembimbing_perusahaan']) ?></div>
+                  <div class="text-muted small text-wrap text-break" style="max-width: 200px;"><?= esc($mhs['email_pembimbing_perusahaan']) ?></div>
+                </td>
 
-    <!-- PAGINATION -->
-    <div class="d-flex justify-content-center mt-4">
-      <?= $pager->links('default', 'default_full') ?>
+                <td class="text-wrap text-break" style="max-width: 220px;">
+                  <?= esc($mhs['judul_magang']) ?>
+                </td>
+
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="d-flex justify-content-center mt-3">
+        <?= $pager->links('default', 'custom_pagination') ?>
+      </div>
     </div>
   </div>
 
-</body>
+</div>
+
+
 
 <?= $this->endSection(); ?>
