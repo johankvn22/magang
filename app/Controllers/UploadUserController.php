@@ -68,7 +68,7 @@ class UploadUserController extends BaseController
                     'nim'          => $nomor_induk, // Simpan NIM
                     'nama_lengkap' => $nama,
                     'email'        => $email,
-                    'program_studi' => 'Sistem Informasi', // Contoh default
+                    'program_studi' => '', // Contoh default
                     'kelas'        => '', // Contoh default
                     'no_hp'        => '', // Default value
                     // Tambahkan field lain sesuai alur data mahasiswa
