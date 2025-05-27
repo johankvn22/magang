@@ -242,12 +242,60 @@ class KpsController extends BaseController
         return view('kps/daftar_mahasiswa', $data);
     }
 
-    public function logbookMahasiswa()
-    {
-        $model = new MahasiswaModel();
-        $data['mahasiswa'] = $model->getMahasiswaWithStatus(); // method sama seperti admin
-        return view('kps/logbook_mahasiswa', $data);
+public function logbookMahasiswa()
+{
+    // Pastikan hanya KPS yang bisa akses
+    if (session()->get('role') !== 'kps') {
+        return redirect()->to('/login')->with('error', 'Akses ditolak.');
     }
+
+    $model = new MahasiswaModel();
+
+    // 1. Ambil semua data mahasiswa + status
+    $allData = $model->getMahasiswaWithStatus();
+
+    // 2. Ambil parameter search & perPage dari query string
+    $keyword = $this->request->getGet('keyword');
+    $perPage = (int) ($this->request->getGet('perPage') ?? 10);
+    if (! in_array($perPage, [5,10,25,50,100])) {
+        $perPage = 10;
+    }
+    $currentPage = (int) ($this->request->getGet('page') ?? 1);
+
+    // 3. Filter data jika ada keyword
+    if ($keyword) {
+        $allData = array_filter($allData, function($mhs) use ($keyword) {
+            $kw = mb_strtolower($keyword);
+            return str_contains(mb_strtolower($mhs['nama_lengkap']), $kw)
+                || str_contains(mb_strtolower($mhs['nim']), $kw)
+                || str_contains(mb_strtolower($mhs['program_studi']), $kw)
+                || str_contains(mb_strtolower($mhs['kelas']), $kw)
+                || str_contains(mb_strtolower($mhs['status']), $kw);
+        });
+        // reindex array agar pagination benar
+        $allData = array_values($allData);
+    }
+
+    // 4. Hitung total & slice untuk pagination
+    $total      = count($allData);
+    $offset     = ($currentPage - 1) * $perPage;
+    $pagedData  = array_slice($allData, $offset, $perPage);
+
+    // 5. Buat pager manual
+    $pager = \Config\Services::pager();
+    // 'default_full' bisa diganti ke template pager custom-mu
+    $pager->makeLinks($currentPage, $perPage, $total, 'default_full');
+
+    // 6. Kirim ke view
+    return view('kps/logbook_mahasiswa', [
+        'mahasiswa' => $pagedData,
+        'pager'     => $pager,
+        'offset'    => $offset,
+        'perPage'   => $perPage,
+        'keyword'   => $keyword,
+    ]);
+}
+
 
     public function detailLogbook($id)
     {
