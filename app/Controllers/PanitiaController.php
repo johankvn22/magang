@@ -136,23 +136,48 @@ public function updateDosen()
 
 
 
-public function daftarMahasiswa()
-{
-    if (session()->get('role') !== 'panitia') {
-        return redirect()->to('/login')->with('error', 'Akses ditolak.');
+    public function daftarMahasiswa()
+    {
+        if (session()->get('role') !== 'panitia') {
+            return redirect()->to('/login')->with('error', 'Akses ditolak.');
+        }
+
+        $mahasiswaModel = new MahasiswaModel();
+
+        // Ambil jumlah per halaman dari GET, default 10
+        $perPage = (int) ($this->request->getGet('perPage') ?? 10);
+        if (!in_array($perPage, [5, 10, 25, 50, 100])) {
+            $perPage = 10; // fallback jika isian tak valid
+        }
+
+        $keyword = $this->request->getGet('keyword');
+
+        if ($keyword) {
+            $mahasiswaModel->groupStart()
+                ->like('nama_lengkap', $keyword)
+                ->orLike('nim', $keyword)
+                ->orLike('email', $keyword)
+                ->orLike('program_studi', $keyword)
+                ->orLike('kelas', $keyword)
+                ->orLike('no_hp', $keyword)
+                ->orLike('nama_perusahaan', $keyword)    
+                ->orLike('judul_magang', $keyword)
+                ->groupEnd();
+        }
+
+        $currentPage = (int) ($this->request->getGet('page') ?? 1);
+        $offset = ($currentPage - 1) * $perPage;
+
+        $data = [
+            'mahasiswa' => $mahasiswaModel->paginate($perPage, 'default'),
+            'pager'     => $mahasiswaModel->pager,
+            'offset'    => $offset,
+            'keyword'   => $keyword,
+            'perPage'   => $perPage, // Kirim ke view
+        ];
+
+        return view('panitia/daftar_mahasiswa', $data);
     }
-
-    $mahasiswaModel = new MahasiswaModel();
-    $perPage = 10;
-    $currentPage = $this->request->getVar('page') ?? 1;
-    $offset = ($currentPage - 1) * $perPage;
-
-    $data['mahasiswa'] = $mahasiswaModel->paginate($perPage);
-    $data['pager'] = $mahasiswaModel->pager;
-    $data['offset'] = $offset;
-
-    return view('panitia/daftar_mahasiswa', $data); // letakkan view di folder views/panitia
-}
 
 public function logbookMahasiswa()
 {

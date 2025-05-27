@@ -161,15 +161,19 @@ public function daftarMahasiswa()
 
     $keyword = $this->request->getGet('keyword');
 
-    if ($keyword) {
-        $mahasiswaModel->groupStart()
-            ->like('nama_lengkap', $keyword)
-            ->orLike('nim', $keyword)
-            ->orLike('email', $keyword)
-            ->orLike('program_studi', $keyword)
-            ->orLike('judul_magang', $keyword)
-            ->groupEnd();
-    }
+
+        if ($keyword) {
+            $mahasiswaModel->groupStart()
+                ->like('nama_lengkap', $keyword)
+                ->orLike('nim', $keyword)
+                ->orLike('email', $keyword)
+                ->orLike('program_studi', $keyword)
+                ->orLike('kelas', $keyword)
+                ->orLike('no_hp', $keyword)
+                ->orLike('nama_perusahaan', $keyword)    
+                ->orLike('judul_magang', $keyword)
+                ->groupEnd();
+        }
 
     $currentPage = (int) ($this->request->getGet('page') ?? 1);
     $offset = ($currentPage - 1) * $perPage;
