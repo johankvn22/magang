@@ -106,5 +106,26 @@ class BimbinganIndustriController extends BaseController
         return redirect()->back()->with('success', 'Logbook ditolak.');
     }
 
+    public function updateCatatanIndustri($id)
+    {
+        $model = new LogbookIndustri();
+        $logbook = $model->find($id);
+
+        if (!$logbook) {
+            return redirect()->back()->with('error', 'Data logbook tidak ditemukan.');
+        }
+
+        if ($logbook['status_validasi'] !== 'menunggu') {
+            return redirect()->back()->with('error', 'Catatan hanya bisa ditambahkan saat status logbook masih menunggu.');
+        }
+
+        $model->update($id, [
+            'catatan_industri' => $this->request->getPost('catatan_industri')
+        ]);
+
+        return redirect()->back()->with('success', 'Catatan industri berhasil disimpan.');
+    }
+
+
 
 }

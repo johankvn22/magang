@@ -199,12 +199,7 @@ $routes->group('panitia', ['filter' => 'auth'], function ($routes) {
 
 });
 
-
-
-
 // ROUTE UNTUK INDUSTRI
-
-
 $routes->group('industri', ['filter' => 'auth'], function ($routes) {
     $routes->get('dashboard', 'PembimbingIndustriController::dashboard');
 
@@ -219,6 +214,8 @@ $routes->group('industri', ['filter' => 'auth'], function ($routes) {
     // Bimbingan Industri
     $routes->get('bimbingan', 'BimbinganIndustriController::index');
     $routes->get('bimbingan/detail/(:num)', 'BimbinganIndustriController::detail/$1');
+    $routes->post('bimbingan/update-catatan/(:num)', 'BimbinganIndustriController::updateCatatanIndustri/$1');
+
 
     $routes->post('bimbingan/setujui/(:num)', 'BimbinganIndustriController::setujui/$1');
     $routes->post('bimbingan/tolak/(:num)', 'BimbinganIndustriController::tolak/$1');
