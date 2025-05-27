@@ -33,12 +33,14 @@
                 <input type="date" name="tanggal" id="tanggal" class="form-control" required>
             </div>
             <div class="form-group">
-                <label for="aktivitas">Aktivitas:</label>
+                <label for="aktivitas">Bimbingan:</label>
                 <textarea name="aktivitas" id="aktivitas" class="form-control" required></textarea>
             </div>
 
             <div class="form-group">
                 <label for="file_dokumen">Upload Dokumen (PDF):</label>
+                <small class="form-text text-muted">Maksimal ukuran file: 5MB.</small>
+
                 <input type="file" name="file_dokumen" id="file_dokumen" class="form-control-file" accept=".pdf">
             </div>
             <div class="form-group">
@@ -70,7 +72,7 @@
                         <td><?= esc($entry['catatan_dosen']) ?? 'Belum ada catatan' ?></td>
                         <td>
                             <?php if (!empty($entry['file_dokumen'])): ?>
-                                <a href="<?= base_url('uploads/logbook/' . $entry['file_dokumen']) ?>" target="_blank">Download</a>
+                                <a href="<?= site_url('mahasiswa/logbook/download/' . $entry['file_dokumen']) ?>" target="_blank">Download</a>
                             <?php else: ?>
                                 Tidak ada file
                             <?php endif; ?>

@@ -60,6 +60,8 @@ $routes->group('mahasiswa', function ($routes) {
     $routes->get('logbook/edit/(:num)', 'LogbookController::edit/$1');
     $routes->post('logbook/update/(:num)', 'LogbookController::update/$1');
     $routes->get('logbook/delete/(:num)', 'LogbookController::delete/$1');
+    $routes->get('logbook/download/(:any)', 'LogbookController::downloadLogbookFile/$1');
+
 
     // Logbook Aktivitas Industri Mahasiswa
     $routes->get('logbook_industri', 'LogbookIndustriController::index');
@@ -80,8 +82,8 @@ $routes->group('mahasiswa', function ($routes) {
     $routes->post('update', 'MahasiswaController::update'); // menyimpan data mahasiswa
     $routes->get('ganti-password', 'MahasiswaController::ganti_password');
 
-    // Upload Laporan
-    $routes->post('upload', 'MahasiswaController::upload');
+    // // Upload Laporan
+    // $routes->post('upload', 'MahasiswaController::upload');
 });
 
 $routes->group('dosen', ['filter' => 'auth'], function ($routes) {
@@ -95,8 +97,9 @@ $routes->group('dosen', ['filter' => 'auth'], function ($routes) {
 
     // Rute Bimbingan Logbook Mahasiswa
     $routes->get('bimbingan', 'BimbinganController::index');
-    $routes->post('tentukan-bimbingan', 'BimbinganController::tentukanBimbingan');
     $routes->get('bimbingan/detail/(:num)', 'BimbinganController::detail/$1');
+    $routes->get('download-logbook/(:any)', 'BimbinganController::downloadLogbookFile/$1');
+
 
     // Rute untuk Penilaian Dosen
     // $routes->get('penilaian-dosen', 'PenilaianDosenController::index');
@@ -111,6 +114,8 @@ $routes->group('dosen', ['filter' => 'auth'], function ($routes) {
     $routes->post('bimbingan/setujui/(:num)', 'BimbinganController::setujui/$1');
     $routes->post('bimbingan/tolak/(:num)', 'BimbinganController::tolak/$1');
     $routes->post('bimbingan/hapus/(:num)', 'BimbinganController::hapus/$1');
+    $routes->post('update_catatan/(:num)', 'BimbinganController::update_catatan/$1');
+
 
     $routes->get('aktivitas', 'BimbinganController::aktivitasMahasiswaBimbingan');
     $routes->get('logbook/(:num)', 'BimbinganController::detailAktivitasMahasiswa/$1');

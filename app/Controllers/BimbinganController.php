@@ -102,6 +102,38 @@ class BimbinganController extends BaseController
         return redirect()->back()->with('success', 'Logbook ditolak.');
     }
 
+    public function downloadLogbookFile($filename)
+    {
+        $filePath = WRITEPATH . 'uploads/logbook/' . $filename;
+
+        if (!file_exists($filePath)) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("File tidak ditemukan.");
+        }
+
+        return $this->response->download($filePath, null);
+    }
+
+    public function update_catatan($id)
+{
+    $model = new LogbookBimbingan();
+    $logbook = $model->find($id);
+
+    if (!$logbook) {
+        return redirect()->back()->with('error', 'Data tidak ditemukan.');
+    }
+
+    if ($logbook['status_validasi'] !== 'menunggu') {
+        return redirect()->back()->with('error', 'Catatan hanya bisa ditambahkan saat status menunggu.');
+    }
+
+    $model->update($id, [
+        'catatan_dosen' => $this->request->getPost('catatan_dosen')
+    ]);
+
+    return redirect()->back()->with('success', 'Catatan berhasil disimpan.');
+}
+
+
     //menampilkan logbook aktivitas mahasiswa
     public function aktivitasMahasiswaBimbingan()
     {
@@ -147,6 +179,10 @@ class BimbinganController extends BaseController
         ]);
 
     }
+
+
+
+
 
 
 }

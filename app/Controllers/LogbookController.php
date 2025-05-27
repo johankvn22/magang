@@ -30,9 +30,14 @@ class LogbookController extends BaseController
         // Handle file upload
         $file = $this->request->getFile('file_dokumen');
         if ($file && $file->isValid() && !$file->hasMoved()) {
+            if ($file->getSize() > 5 * 1024 * 1024) { // 5MB
+                return redirect()->back()->with('error', 'Ukuran file maksimal adalah 5MB.');
+            }
+
             $fileName = $file->getRandomName();
-            $file->move(ROOTPATH . 'writable/uploads/logbook/', $fileName);
+            $file->move(ROOTPATH . 'public/uploads/logbook/', $fileName);
         }
+
 
         // Mengambil data dari form
         $data = [
@@ -79,11 +84,17 @@ class LogbookController extends BaseController
 
         // Proses file jika ada
         $file = $this->request->getFile('file_dokumen');
-        $fileName = $entry['file_dokumen']; // Default lama
+        $fileName = $entry['file_dokumen']; // default lama
+
         if ($file && $file->isValid() && !$file->hasMoved()) {
+            if ($file->getSize() > 5 * 1024 * 1024) { // 5MB
+                return redirect()->back()->with('error', 'Ukuran file maksimal adalah 5MB.');
+            }
+
             $fileName = $file->getRandomName();
-            $file->move(ROOTPATH . 'writable/uploads/logbook/', $fileName);
+            $file->move(ROOTPATH . 'public/uploads/logbook/', $fileName);
         }
+
 
         $data = [
             'tanggal' => $this->request->getPost('tanggal'),
@@ -108,6 +119,17 @@ class LogbookController extends BaseController
 
         $logbookModel->delete($id);
         return redirect()->to('/mahasiswa/logbook')->with('success', 'Logbook berhasil dihapus.');
+    }
+
+        public function downloadLogbookFile($filename)
+    {
+        $filePath = WRITEPATH . 'uploads/logbook/' . $filename;
+
+        if (!file_exists($filePath)) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("File tidak ditemukan.");
+        }
+
+        return $this->response->download($filePath, null);
     }
 
 }
