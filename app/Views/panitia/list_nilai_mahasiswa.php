@@ -31,6 +31,8 @@
                                 <th style="width: 20%">Perusahaan</th>
                                 <th class="text-center" style="width: 15%">Nilai Dosen</th>
                                 <th class="text-center" style="width: 15%">Nilai Industri</th>
+                                <th class="text-center" style="width: 15%">Total Nilai</th>
+
                                 <th class="text-center" style="width: 10%">Aksi</th>
                             </tr>
                         </thead>

@@ -214,30 +214,41 @@ public function daftarMahasiswa()
             'nilai_dosen' => $nilai_dosen
         ]);
     }
-    public function listNilaiMahasiswa()
-    {
-        // Pastikan hanya admin yang bisa akses
-        if (session()->get('role') !== 'admin') {
-            return redirect()->to('/login')->with('error', 'Akses ditolak.');
-        }
-
-        $mahasiswaModel = new MahasiswaModel();
-        $penilaianDosenModel = new PenilaianDosenModel();
-        $penilaianIndustriModel = new PenilaianIndustriModel();
-
-        // Ambil semua data mahasiswa
-        $mahasiswaList = $mahasiswaModel
-            ->select('mahasiswa_id, nama_lengkap, nim, program_studi, nama_perusahaan')
-            ->findAll();
-
-        // Gabungkan dengan nilai dosen dan industri
-        foreach ($mahasiswaList as &$mhs) {
-            $mhs['nilai_dosen'] = $penilaianDosenModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
-            $mhs['nilai_industri'] = $penilaianIndustriModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
-        }
-
-        $data['mahasiswa_list'] = $mahasiswaList;
-
-        return view('list_nilai_mahasiswa', $data);
+   public function listNilaiMahasiswa()
+{
+    // Pastikan hanya admin yang bisa akses
+    if (session()->get('role') !== 'admin') {
+        return redirect()->to('/login')->with('error', 'Akses ditolak.');
     }
+
+    $mahasiswaModel = new MahasiswaModel();
+    $penilaianDosenModel = new PenilaianDosenModel();
+    $penilaianIndustriModel = new PenilaianIndustriModel();
+
+    // Ambil semua data mahasiswa
+    $mahasiswaList = $mahasiswaModel
+        ->select('mahasiswa_id, nama_lengkap, nim, program_studi, nama_perusahaan')
+        ->findAll();
+
+    // Gabungkan dengan nilai dosen dan industri + hitung total
+    foreach ($mahasiswaList as &$mhs) {
+        $nilai_dosen = $penilaianDosenModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
+        $nilai_industri = $penilaianIndustriModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
+
+        $mhs['nilai_dosen'] = $nilai_dosen;
+        $mhs['nilai_industri'] = $nilai_industri;
+
+        // Perhitungan total nilai
+        if (is_numeric($nilai_dosen) && is_numeric($nilai_industri)) {
+            $mhs['total_nilai'] = round(($nilai_industri * 0.6) + ($nilai_dosen * 0.4), 2);
+        } else {
+            $mhs['total_nilai'] = null; // atau bisa pakai '-' di view
+        }
+    }
+
+    $data['mahasiswa_list'] = $mahasiswaList;
+
+    return view('list_nilai_mahasiswa', $data);
+}
+
 }

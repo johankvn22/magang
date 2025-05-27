@@ -160,6 +160,8 @@ $routes->group('kps', ['filter' => 'kpsauth'], function ($routes) {
     $routes->get('review-kinerja/detail/(:num)', 'KpsController::detailReview/$1');
 
     $routes->get('list_nilai_mahasiswa', 'KpsController::listNilaiMahasiswa');
+    $routes->get('detail_nilai_mahasiswa', 'KpsController::detail_nilai');
+    $routes->get('nilai/detail/(:num)', 'KpsController::detail_nilai/$1');
 });
 
 $routes->group('panitia', ['filter' => 'auth'], function ($routes) {
@@ -193,7 +195,8 @@ $routes->group('panitia', ['filter' => 'auth'], function ($routes) {
     $routes->get('review-kinerja/detail/(:num)', 'PanitiaController::detailReview/$1');
 
     $routes->get('list_nilai_mahasiswa', 'PanitiaController::listNilaiMahasiswa');
-
+    $routes->get('detail_nilai_mahasiswa', 'PanitiaController::detail_nilai');
+    $routes->get('nilai/detail/(:num)', 'PanitiaController::detail_nilai/$1');
     // Rute untuk atur pembimbingan industri
 
 
