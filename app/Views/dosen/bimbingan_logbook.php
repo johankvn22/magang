@@ -1,141 +1,216 @@
-    <?php
-    /** @var \CodeIgniter\View\View $this */
-    ?>
-    <?= $this->extend('layouts/template_dosen'); ?>
-    <?= $this->section('content'); ?>
+<?php
+/** @var \CodeIgniter\View\View $this */
+?>
+<?= $this->extend('layouts/template_dosen'); ?>
+<?= $this->section('content'); ?>
 
-    <div class="container mt-4">
-        <h2 class="mb-4">Detail Logbook Bimbingan Mahasiswa</h2>
-
-        <h4>Informasi Mahasiswa</h4>
-        <table class="table table-bordered mb-4">
-            <tr>
-                <th>Nama Lengkap</th>
-                <td><?= esc($mahasiswa['nama_lengkap']) ?></td>
-            </tr>
-            <tr>
-                <th>NIM</th>
-                <td><?= esc($mahasiswa['nim']) ?></td>
-            </tr>
-            <tr>
-                <th>Program Studi</th>
-                <td><?= esc($mahasiswa['program_studi']) ?></td>
-            </tr>
-            <tr>
-                <th>Kelas</th>
-                <td><?= esc($mahasiswa['kelas']) ?></td>
-            </tr>
-            <tr>
-                <th>No. HP</th>
-                <td><?= esc($mahasiswa['no_hp']) ?></td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td><?= esc($mahasiswa['email']) ?></td>
-            </tr>
-            <tr>
-                <th>Perusahaan</th>
-                <td><?= esc($mahasiswa['nama_perusahaan']) ?></td>
-            </tr>
-            <tr>
-                <th>Divisi</th>
-                <td><?= esc($mahasiswa['divisi']) ?></td>
-            </tr>
-            <tr>
-                <th>Tanggal Magang</th>
-                <td><?= esc($mahasiswa['tanggal_mulai']) ?> s/d <?= esc($mahasiswa['tanggal_selesai']) ?></td>
-            </tr>
-            <tr>
-                <th>Judul Magang</th>
-                <td><?= esc($mahasiswa['judul_magang']) ?></td>
-            </tr>
-        </table>
-
-        <?php
-        $logbookLayakDinilai = array_filter($logbooks, fn($log) => isset($log['status_validasi']) && $log['status_validasi'] === 'disetujui');
-        $jumlahDisetujui = count($logbookLayakDinilai);
-        ?>
-        
-        <p><strong>Logbook Disetujui:</strong> <?= $jumlahDisetujui ?> / <?= count($logbooks) ?></p>
-
-        <?php if (!empty($logbooks)) : ?>
-            <table class="table table-striped">
-                <thead class="table-light">
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Kegiatan</th>
-                        <th>Catatan Dosen</th>
-                        <th>Dokumen</th>
-                        <th>Link Drive</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($logbooks as $log): ?>
-                        <tr>
-                            <td><?= esc($log['tanggal']) ?></td>
-                            <td><?= esc($log['aktivitas']) ?></td>
-                            <td>
-                                <?php if ($log['status_validasi'] === 'menunggu') : ?>
-                                    <form action="<?= site_url('dosen/update_catatan/' . $log['logbook_id']) ?>" method="post">
-                                        <textarea name="catatan_dosen" class="form-control form-control-sm" rows="2" required><?= esc($log['catatan_dosen']) ?></textarea>
-                                        <button type="submit" class="btn btn-primary btn-sm mt-1">Simpan</button>
-                                    </form>
-                                <?php else : ?>
-                                    <?= esc($log['catatan_dosen']) ?: '<em>Belum ada catatan</em>' ?>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <?php if (!empty($log['file_dokumen'])): ?>
-                                    <a href="<?= site_url('dosen/download-logbook/' . $log['file_dokumen']) ?>" class="btn btn-sm btn-outline-primary">Download</a>
-                                <?php else: ?>
-                                    <span class="text-muted">Tidak ada file</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <?php if (!empty($log['link_drive'])): ?>
-                                    <a href="<?= esc($log['link_drive']) ?>" target="_blank" class="btn btn-sm btn-outline-success">Buka Link</a>
-                                <?php else: ?>
-                                    <span class="text-muted">Tidak ada link</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <?php if ($log['status_validasi'] === 'menunggu') : ?>
-                                    <form action="<?= site_url('dosen/bimbingan/setujui/' . $log['logbook_id']) ?>" method="post" style="display:inline;">
-                                        <button type="submit" class="btn btn-success btn-sm">Setujui</button>
-                                    </form>
-                                    <form action="<?= site_url('dosen/bimbingan/tolak/' . $log['logbook_id']) ?>" method="post" style="display:inline;">
-                                        <button type="submit" class="btn btn-warning btn-sm">Tolak</button>
-                                    </form>
-                                <?php elseif ($log['status_validasi'] === 'disetujui') : ?>
-                                    <span class="badge bg-success">Disetujui</span>
-                                <?php elseif ($log['status_validasi'] === 'ditolak') : ?>
-                                    <span class="badge bg-danger">Ditolak</span>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        <?php else : ?>
-            <div class="alert alert-info">Belum ada logbook yang diinput oleh mahasiswa.</div>
-        <?php endif; ?>
-
-        <?php if (!$penilaian_sudah_ada && $jumlahDisetujui >= 6 && !empty($bimbingan_id)) : ?>
-            <a href="<?= site_url('dosen/penilaian-dosen/form/' . $bimbingan_id) ?>" class="btn btn-primary mt-3">
-                Beri Penilaian
-            </a>
-        <?php elseif ($penilaian_sudah_ada) : ?>
-            <a href="<?= site_url('dosen/penilaian-dosen/nilai/' . $bimbingan_id) ?>" class="btn btn-secondary mt-3">
-                Lihat Penilaian
-            </a>
-        <?php else : ?>
-            <div class="alert alert-warning mt-3">  
-                Mahasiswa belum memenuhi syarat penilaian atau data bimbingan tidak ditemukan.
-            </div>
-        <?php endif; ?>
-
-        <a href="<?= site_url('dosen/bimbingan') ?>" class="btn btn-outline-secondary mt-3">Kembali</a>
+<div class="container-fluid px-4 py-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary mb-0">
+            <i class="bi bi-journal-text me-2"></i>Detail Logbook Bimbingan
+        </h2>
+        <a href="<?= site_url('dosen/bimbingan') ?>" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Kembali
+        </a>
     </div>
 
-    <?= $this->endSection(); ?>
+    <!-- Student Information Card -->
+    <div class="card shadow-sm mb-4 border-0 rounded-3">
+        <div class="card-header bg-white border-bottom">
+            <h5 class="mb-0 fw-semibold">
+                <i class="bi bi-person-badge me-2"></i>Informasi Mahasiswa
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Nama Lengkap</label>
+                        <p class="fw-medium mb-0"><?= esc($mahasiswa['nama_lengkap']) ?></p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">NIM</label>
+                        <p class="fw-medium mb-0"><?= esc($mahasiswa['nim']) ?></p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Program Studi</label>
+                        <p class="fw-medium mb-0"><?= esc($mahasiswa['program_studi']) ?></p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Kelas</label>
+                        <p class="fw-medium mb-0"><?= esc($mahasiswa['kelas']) ?></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Kontak</label>
+                        <p class="fw-medium mb-0"><?= esc($mahasiswa['no_hp']) ?> | <?= esc($mahasiswa['email']) ?></p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Tempat Magang</label>
+                        <p class="fw-medium mb-0"><?= esc($mahasiswa['nama_perusahaan']) ?> (<?= esc($mahasiswa['divisi']) ?>)</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Periode Magang</label>
+                        <p class="fw-medium mb-0"><?= date('d M Y', strtotime($mahasiswa['tanggal_mulai'])) ?> - <?= date('d M Y', strtotime($mahasiswa['tanggal_selesai'])) ?></p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Judul Magang</label>
+                        <p class="fw-medium mb-0"><?= esc($mahasiswa['judul_magang']) ?></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logbook Summary -->
+    <?php
+    $logbookLayakDinilai = array_filter($logbooks, fn($log) => isset($log['status_validasi']) && $log['status_validasi'] === 'disetujui');
+    $jumlahDisetujui = count($logbookLayakDinilai);
+    $totalLogbooks = count($logbooks);
+    ?>
+    <div class="alert alert-light border mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Status Logbook:</strong> 
+                <span class="badge bg-success-subtle text-success"><?= $jumlahDisetujui ?> Disetujui</span>
+                <span class="badge bg-warning-subtle text-warning mx-2"><?= $totalLogbooks - $jumlahDisetujui ?> Menunggu/Ditolak</span>
+                dari total <?= $totalLogbooks ?> logbook
+            </div>
+            <?php if ($jumlahDisetujui >= 6): ?>
+                <span class="badge bg-success-subtle text-success">
+                    <i class="bi bi-check-circle me-1"></i>Memenuhi syarat penilaian
+                </span>
+            <?php else: ?>
+                <span class="badge bg-warning-subtle text-warning">
+                    <i class="bi bi-exclamation-circle me-1"></i>Belum memenuhi syarat (minimal 6 logbook disetujui)
+                </span>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Logbook Table -->
+    <div class="card shadow-sm border-0 rounded-3 mb-4">
+        <div class="card-header bg-white border-bottom">
+            <h5 class="mb-0 fw-semibold">
+                <i class="bi bi-list-check me-2"></i>Daftar Logbook
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <?php if (empty($logbooks)) : ?>
+                <div class="alert alert-light text-center py-4 m-4">
+                    <i class="bi bi-journal-x fs-3 text-muted"></i>
+                    <p class="mt-2 mb-0">Belum ada logbook yang diinput oleh mahasiswa</p>
+                </div>
+            <?php else : ?>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="15%">Tanggal</th>
+                                <th width="25%">Kegiatan</th>
+                                <th width="25%">Catatan Dosen</th>
+                                <th width="15%">Dokumen</th>
+                                <th width="10%">Status</th>
+                                <th width="10%">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($logbooks as $log): ?>
+                                <tr>
+                                    <td class="fw-medium">
+                                        <?= date('d M Y', strtotime($log['tanggal'])) ?>
+                                    </td>
+                                    <td>
+                                        <div class="scrollable-cell" style="max-height: 100px; overflow-y: auto;">
+                                            <?= esc($log['aktivitas']) ?>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <?php if ($log['status_validasi'] === 'menunggu') : ?>
+                                            <form action="<?= site_url('dosen/update_catatan/' . $log['logbook_id']) ?>" method="post">
+                                                <textarea name="catatan_dosen" class="form-control form-control-sm mb-2" rows="2" required><?= esc($log['catatan_dosen']) ?></textarea>
+                                                <button type="submit" class="btn btn-primary btn-sm w-100">Simpan Catatan</button>
+                                            </form>
+                                        <?php else : ?>
+                                            <div class="scrollable-cell" style="max-height: 100px; overflow-y: auto;">
+                                                <?= !empty($log['catatan_dosen']) ? esc($log['catatan_dosen']) : '<span class="text-muted fst-italic">Belum ada catatan</span>' ?>
+                                            </div>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($log['file_dokumen'])): ?>
+                                            <a href="<?= site_url('dosen/download-logbook/' . $log['file_dokumen']) ?>" class="btn btn-sm btn-outline-primary w-100 mb-1">
+                                                <i class="bi bi-download me-1"></i>Download
+                                            </a>
+                                        <?php endif; ?>
+                                        <?php if (!empty($log['link_drive'])): ?>
+                                            <a href="<?= esc($log['link_drive']) ?>" target="_blank" class="btn btn-sm btn-outline-success w-100">
+                                                <i class="bi bi-google me-1"></i>Google Drive
+                                            </a>
+                                        <?php endif; ?>
+                                        <?php if (empty($log['file_dokumen']) && empty($log['link_drive'])): ?>
+                                            <span class="text-muted small">Tidak ada dokumen</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($log['status_validasi'] === 'disetujui') : ?>
+                                            <span class="badge bg-success rounded-pill w-100">Disetujui</span>
+                                        <?php elseif ($log['status_validasi'] === 'ditolak') : ?>
+                                            <span class="badge bg-danger rounded-pill w-100">Ditolak</span>
+                                        <?php else : ?>
+                                            <span class="badge bg-warning rounded-pill w-100">Menunggu</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($log['status_validasi'] === 'menunggu') : ?>
+                                            <div class="d-grid gap-2">
+                                                <form action="<?= site_url('dosen/bimbingan/setujui/' . $log['logbook_id']) ?>" method="post">
+                                                    <button type="submit" class="btn btn-success btn-sm w-100 mb-1">
+                                                        <i class="bi bi-check-lg"></i>
+                                                    </button>
+                                                </form>
+                                                <form action="<?= site_url('dosen/bimbingan/tolak/' . $log['logbook_id']) ?>" method="post">
+                                                    <button type="submit" class="btn btn-danger btn-sm w-100">
+                                                        <i class="bi bi-x-lg"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        <?php else : ?>
+                                            <span class="text-muted small">Telah divalidasi</span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Assessment Button -->
+    <div class="d-flex justify-content-between align-items-center">
+        <?php if (!$penilaian_sudah_ada && $jumlahDisetujui >= 6 && !empty($bimbingan_id)) : ?>
+            <a href="<?= site_url('dosen/penilaian-dosen/form/' . $bimbingan_id) ?>" class="btn btn-primary">
+                <i class="bi bi-pencil-square me-1"></i> Beri Penilaian
+            </a>
+        <?php elseif ($penilaian_sudah_ada) : ?>
+            <a href="<?= site_url('dosen/penilaian-dosen/detail/' . $bimbingan_id) ?>" class="btn btn-outline-primary">
+                <i class="bi bi-eye me-1"></i> Lihat Penilaian
+            </a>
+        <?php else : ?>
+            <div class="alert alert-warning mb-0 w-100">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Mahasiswa belum memenuhi syarat penilaian (minimal 6 logbook disetujui) atau data bimbingan tidak ditemukan.
+            </div>
+        <?php endif; ?>
+        <a href="<?= site_url('dosen/bimbingan') ?>" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar
+        </a>
+    </div>
+</div>
+
+<?= $this->endSection(); ?>
