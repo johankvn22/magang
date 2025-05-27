@@ -225,30 +225,27 @@ public function daftarMahasiswa()
     $penilaianDosenModel = new PenilaianDosenModel();
     $penilaianIndustriModel = new PenilaianIndustriModel();
 
-    // Ambil semua data mahasiswa
+    // Ambil semua data mahasiswa beserta total nilai akhir
     $mahasiswaList = $mahasiswaModel
         ->select('mahasiswa_id, nama_lengkap, nim, program_studi, nama_perusahaan')
         ->findAll();
 
-    // Gabungkan dengan nilai dosen dan industri + hitung total
+    // Gabungkan dengan nilai dosen, industri, dan hitung total nilai
     foreach ($mahasiswaList as &$mhs) {
-        $nilai_dosen = $penilaianDosenModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
-        $nilai_industri = $penilaianIndustriModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
-
-        $mhs['nilai_dosen'] = $nilai_dosen;
-        $mhs['nilai_industri'] = $nilai_industri;
-
-        // Perhitungan total nilai
-        if (is_numeric($nilai_dosen) && is_numeric($nilai_industri)) {
-            $mhs['total_nilai'] = round(($nilai_industri * 0.6) + ($nilai_dosen * 0.4), 2);
-        } else {
-            $mhs['total_nilai'] = null; // atau bisa pakai '-' di view
-        }
+        $nilaiDosen = $penilaianDosenModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
+        $nilaiIndustri = $penilaianIndustriModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
+        
+        $mhs['nilai_dosen'] = $nilaiDosen;
+        $mhs['nilai_industri'] = $nilaiIndustri;
+        
+        // Hitung total nilai akhir (60% industri + 40% dosen)
+        $totalNilaiDosen = $nilaiDosen ? $nilaiDosen['total_nilai'] : 0;
+        $totalNilaiIndustri = $nilaiIndustri ? $nilaiIndustri['total_nilai_industri'] : 0;
+        $mhs['total_nilai'] = ($totalNilaiIndustri * 0.6) + ($totalNilaiDosen * 0.4);
     }
 
     $data['mahasiswa_list'] = $mahasiswaList;
 
     return view('list_nilai_mahasiswa', $data);
 }
-
 }

@@ -96,19 +96,21 @@ class MahasiswaModel extends Model
     }
 
 
-    public function getAllPenilaianByMahasiswa($mahasiswa_id)
-    {
-        return $this->db->table('mahasiswa')
-            ->select('mahasiswa.*, 
-                  penilaian_dosen.total_nilai AS nilai_dosen, 
-                  penilaian_industri.total_nilai AS nilai_industri')
-            ->join('bimbingan', 'bimbingan.mahasiswa_id = mahasiswa.mahasiswa_id')
-            ->join('penilaian_dosen', 'penilaian_dosen.bimbingan_id = bimbingan.bimbingan_id', 'left')
-            ->join('penilaian_industri', 'penilaian_industri.mahasiswa_id = mahasiswa.mahasiswa_id', 'left')
-            ->where('mahasiswa.mahasiswa_id', $mahasiswa_id)
-            ->get()
-            ->getRowArray();
-    }
+  public function getAllPenilaianByMahasiswa($mahasiswa_id)
+{
+    return $this->db->table('mahasiswa')
+        ->select('mahasiswa.*, 
+              penilaian_dosen.total_nilai AS nilai_dosen, 
+              penilaian_industri.total_nilai_industri AS nilai_industri,
+              (COALESCE(penilaian_industri.total_nilai_industri, 0) * 0.6 + 
+              (COALESCE(penilaian_dosen.total_nilai, 0) * 0.4 AS total_nilai_akhir')
+        ->join('bimbingan', 'bimbingan.mahasiswa_id = mahasiswa.mahasiswa_id')
+        ->join('penilaian_dosen', 'penilaian_dosen.bimbingan_id = bimbingan.bimbingan_id', 'left')
+        ->join('penilaian_industri', 'penilaian_industri.mahasiswa_id = mahasiswa.mahasiswa_id', 'left')
+        ->where('mahasiswa.mahasiswa_id', $mahasiswa_id)
+        ->get()
+        ->getRowArray();
+}
 
 
     protected bool $allowEmptyInserts = true;
