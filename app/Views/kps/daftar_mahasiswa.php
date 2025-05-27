@@ -12,7 +12,7 @@
     
     <form method="get" action="<?= site_url('kps/daftar_mahasiswa') ?>" class="row mb-3">
       <div class="col-md-9">
-        <input type="text" name="keyword" value="<?= esc($keyword ?? '') ?>" class="form-control" placeholder="Cari Mahasiswa...">
+        <input type="text" name="keyword" value="<?= esc($keyword ?? '') ?>" class="form-control" placeholder="Cari Nama / NIM / Prodi...">
       </div>
       <div class="col-auto">
         <button type="submit" class="btn btn-success">Cari</button>

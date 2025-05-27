@@ -57,5 +57,5 @@ class ReviewKinerjaModel extends Model
         return $this->where('review_id', $id)->first();
     }
 
-
+    
 }

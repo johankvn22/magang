@@ -170,3 +170,16 @@ header.bg-dark-green {
   background-color: rgba(25, 135, 84, 0.1);
   color: #198754;
 }
+
+.scrollable-cell {
+  scrollbar-width: thin;
+  padding-right: 5px;
+}
+.scrollable-cell::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.scrollable-cell::-webkit-scrollbar-thumb {
+  background-color: #dee2e6;
+  border-radius: 10px;
+}

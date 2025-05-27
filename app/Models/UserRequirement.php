@@ -46,12 +46,13 @@ class UserRequirement extends Model
 
 public function getMahasiswaPengisiRequirement()
 {
-    return $this->select('m.mahasiswa_id, m.nama_lengkap, m.nim, m.program_studi, MAX(user_requirement.tanggal) as terakhir_diisi')
+    return $this->select('m.mahasiswa_id, m.nama_lengkap, m.nim, m.program_studi, m.kelas, MAX(user_requirement.tanggal) as terakhir_diisi')
                 ->join('mahasiswa m', 'm.mahasiswa_id = user_requirement.mahasiswa_id')
-                ->groupBy('m.mahasiswa_id, m.nama_lengkap, m.nim, m.program_studi')
+                ->groupBy('m.mahasiswa_id, m.nama_lengkap, m.nim, m.program_studi, m.kelas')
                 ->orderBy('terakhir_diisi', 'DESC')
                 ->findAll();
 }
+
 
 
 }

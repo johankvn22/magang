@@ -10,9 +10,26 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold text-primary mb-0">🏭 Monitoring Aktivitas Mahasiswa di Industri</h2>
 
-    <div class="col-md-6">
-      <input type="text" id="searchInput" class="form-control" placeholder="🔍 Cari mahasiswa...">
+   <form method="get" action="<?= site_url('kps/logbook-aktivitas') ?>" class="row mb-3">
+      <div class="col-md-9">
+        <input type="text" name="keyword" value="<?= esc($keyword ?? '') ?>" class="form-control" placeholder="Cari Nama / NIM / Prodi...">
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-success">Cari</button>
+      </div>
+    </form>
+
+    <form method="get" action="<?= site_url('kps/logbook-aktivitas') ?>" class="row mb-3 g-2">
+    <div class="col-md-12">
+      <select name="perPage" class="form-select" onchange="this.form.submit()">
+        <?php foreach ([5, 10, 25, 50, 100] as $option): ?>
+          <option value="<?= $option ?>" <?= $perPage == $option ? 'selected' : '' ?>>
+            Tampilkan <?= $option ?>
+          </option>
+        <?php endforeach; ?>
+      </select>
     </div>
+    </form>
   </div>
 
   <!-- Table -->
@@ -55,23 +72,15 @@
             <?php endforeach; ?>
           </tbody>
         </table>
+        </div>
+                <!-- Pagination -->
+        <div class="d-flex justify-content-center mt-3">
+            <?= $pager->links('default', 'custom_pagination') ?>
+        </div>
       </div>
     </div>
   </div>
 
 </div>
-
-<script>
-  const searchInput = document.getElementById("searchInput");
-  const tableRows = document.querySelectorAll("#aktivitasTable tbody tr");
-
-  searchInput.addEventListener("keyup", function () {
-    const filter = searchInput.value.toLowerCase();
-    tableRows.forEach(row => {
-      const text = row.innerText.toLowerCase();
-      row.style.display = text.includes(filter) ? "" : "none";
-    });
-  });
-</script>
 
 <?= $this->endSection(); ?>

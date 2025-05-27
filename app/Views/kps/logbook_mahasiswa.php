@@ -12,7 +12,7 @@
 
     <form method="get" action="<?= site_url('kps/logbook') ?>" class="row mb-3">
       <div class="col-md-9">
-        <input type="text" name="keyword" value="<?= esc($keyword ?? '') ?>" class="form-control" placeholder="Cari Mahasiswa...">
+        <input type="text" name="keyword" value="<?= esc($keyword ?? '') ?>" class="form-control" placeholder="Cari Nama / NIM / Prodi...">
       </div>
       <div class="col-auto">
         <button type="submit" class="btn btn-success">Cari</button>
@@ -66,13 +66,11 @@
                   <span class="badge bg-primary-subtle text-primary"><?= esc($mhs['program_studi']) ?></span><br>
                   <span class="badge bg-secondary-subtle text-secondary"><?= esc($mhs['kelas']) ?></span>
                 </td>
-                <td class="text-center">
-                  <span class="badge <?= $mhs['status'] === 'Sudah Verifikasi' ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary' ?>">
-                    <?= esc($mhs['status']) ?>
-                  </span>
+                <td>
+                  <div class="text-center fw-semibold"><?= esc($mhs['jumlah_verifikasi']) ?>  disetujui</div>
                 </td>
                 <td class="text-center">
-                  <a href="<?= base_url('kps/logbook/' . $mhs['mahasiswa_id']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                  <a href="<?= base_url('kps/logbook/' . $mhs['mahasiswa_id']) ?>"class="btn btn-sm btn-outline-primary rounded-pill px-3">
                     Lihat
                   </a>
                 </td>
