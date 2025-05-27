@@ -1,4 +1,4 @@
-<div?php
+<?php
 /** @var \CodeIgniter\View\View $this */
 ?>
 <?= $this->extend('layouts/template_kps'); ?>
