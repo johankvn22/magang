@@ -17,13 +17,15 @@
             <?= csrf_field() ?>
 
             <div class="form-group">
-                <label for="mahasiswa_id">Nama Mahasiswa</label>
-                <input type="hidden" name="mahasiswa_id" value="<?= $mahasiswa[0]['mahasiswa_id'] ?>">
+                <input type="hidden" name="mahasiswa_id" value="<?= $mahasiswa['mahasiswa_id'] ?>">
+                <label for="mahasiswa_id">NIM Mahasiswa</label>
+                <input type="text" class="form-control" value="<?= $mahasiswa['nama_lengkap'] ?>" readonly>
+            </div>
 
-                <div class="form-group">
-                    <label>Nama Mahasiswa</label>
-                    <input type="text" class="form-control" value="<?= $mahasiswa[0]['nama_lengkap'] ?> - <?= $mahasiswa[0]['nim'] ?>" readonly>
-                </div>
+            <div class="form-group">
+                <label>Nama Mahasiswa</label>
+                <input type="text" class="form-control" value="<?= $mahasiswa['nim'] ?>" readonly>                
+            </div>
 
             </div>
 
@@ -59,7 +61,7 @@
                 </div>
             <?php endforeach; ?>
 
-            <button type="submit" class="btn btn-primary mt-3">Simpan Review</button>
+            <button type="submit" class="btn btn-primary mt-3">Simpan Nilai</button>
         </form>
     </div>
 </body>

@@ -6,7 +6,7 @@ use App\Models\BimbinganIndustriModel;
 use App\Models\PenilaianIndustriModel;
 use App\Models\MahasiswaModel;
 use CodeIgniter\Controller;
-
+use App\Models\LogbookIndustri;
 
 class PenilaianIndustri extends Controller
 {
@@ -23,18 +23,41 @@ class PenilaianIndustri extends Controller
     // Menampilkan form input
 
 
-    public function create()
-    {
-        $pembimbingId = session()->get('pembimbing_id');
+public function create($mahasiswaId)
+{
+    $mahasiswaModel = new MahasiswaModel();
+    $logbookModel = new LogbookIndustri();
 
-        // Ambil hanya mahasiswa yang dibimbing oleh pembimbing ini
-        $data['mahasiswa'] = $this->mahasiswaModel
-            ->join('bimbingan_industri', 'bimbingan_industri.mahasiswa_id = mahasiswa.mahasiswa_id')
-            ->where('bimbingan_industri.pembimbing_id', $pembimbingId)
-            ->findAll();
-
-        return view('industri/penilaian_industri', $data);
+    $mahasiswa = $mahasiswaModel->find($mahasiswaId);
+    if (!$mahasiswa) {
+        return redirect()->back()->with('error', 'Mahasiswa tidak ditemukan.');
     }
+
+    // Cek apakah mahasiswa ini memiliki cukup logbook yang disetujui
+    $disetujuiCount = $logbookModel
+        ->where('mahasiswa_id', $mahasiswaId)
+        ->where('status_validasi', 'disetujui')
+        ->countAllResults();
+
+    if ($disetujuiCount < 2) {
+        return redirect()->to('industri/bimbingan/detail/' . $mahasiswaId)
+                         ->with('error', 'Minimal 2 logbook harus disetujui untuk memberi penilaian.');
+    }
+
+    // Cek apakah sudah dinilai
+    $penilaianModel = new PenilaianIndustriModel();
+    $sudahAda = $penilaianModel->where('mahasiswa_id', $mahasiswaId)->first();
+    if ($sudahAda) {
+        return redirect()->to('industri/bimbingan/detail/' . $mahasiswaId)
+                         ->with('error', 'Mahasiswa ini sudah dinilai.');
+    }
+
+    return view('industri/penilaian_industri', [
+        'mahasiswa' => $mahasiswa,
+        'mahasiswa_id' => $mahasiswaId,
+    ]);
+}
+
 
 
     // Proses simpan data
@@ -75,7 +98,10 @@ class PenilaianIndustri extends Controller
     ];
 
     $this->penilaianModel->insert($data);
-    return redirect()->to('industri/bimbingan')->with('success', 'Data penilaian berhasil disimpan!');
+
+    // Update status penilaian di tabel mahasiswa
+    return redirect()->to('industri/penilaian-industri/detail/' . $data['mahasiswa_id'])
+                    ->with('success', 'Penilaian berhasil disimpan.');
 }
 
 

@@ -69,9 +69,9 @@
 
         <?php if ($disetujuiCount >= 2 && !empty($bimbingan_id) && !$penilaian_sudah_ada): ?>
             <div class="mt-3">
-                <a href="<?= site_url('industri/penilaian-industri/' . $bimbingan_id) ?>" class="btn btn-primary">
-                    Beri Penilaian
-                </a>
+            <a href="<?= site_url('industri/penilaian-industri/' . $mahasiswa['mahasiswa_id']) ?>" class="btn btn-primary">
+                Beri Penilaian
+            </a>
             </div>
         <?php endif; ?>
 
