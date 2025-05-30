@@ -4,49 +4,77 @@
 <?= $this->extend('layouts/template_dosen'); ?>
 <?= $this->section('content'); ?>
 
-<body>
-    <div class="container mt-4">
-        <h2>Edit Profil Dosen Pembimbing</h2>
-        
-        <?php if (session()->getFlashdata('error')): ?>
-            <div class="alert alert-danger">
-                <?= session()->getFlashdata('error') ?>
-            </div>
-        <?php endif; ?>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Edit Profil Dosen Pembimbing</h4>
+                </div>
+                
+                <div class="card-body">
+                    <?php if (session()->getFlashdata('error')): ?>
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <?= session()->getFlashdata('error') ?>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    <?php endif; ?>
 
-        <?= form_open('dosen/updateProfile'); ?>
-            <div class="form-group">
-                <label for="nama_lengkap">Nama Lengkap</label>
-                <input type="text" class="form-control" id="nama_lengkap" name="nama" value="<?= esc($dosen['nama_lengkap']) ?>" required>
-            </div>
+                    <?= form_open('dosen/updateProfile'); ?>
+                        <div class="form-group">
+                            <label for="nama_lengkap" class="font-weight-bold">Nama Lengkap</label>
+                            <input type="text" class="form-control" id="nama_lengkap" name="nama" 
+                                   value="<?= esc($dosen['nama_lengkap']) ?>" required>
+                        </div>
 
-            <div class="form-group">
-                <label for="nip">NIP</label>
-                <input type="text" class="form-control" id="nip" name="nip" value="<?= esc($dosen['nip']) ?>" required>
-            </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="nip" class="font-weight-bold">NIP</label>
+                                <input type="text" class="form-control" id="nip" name="nip" 
+                                       value="<?= esc($dosen['nip']) ?>" required>
+                            </div>
+                            
+                            <div class="form-group col-md-6">
+                                <label for="no_telepon" class="font-weight-bold">No Telepon</label>
+                                <input type="text" class="form-control" id="no_telepon" name="no_telepon" 
+                                       value="<?= esc($dosen['no_telepon']) ?>" required>
+                            </div>
+                        </div>
 
-            <div class="form-group">
-                <label for="no_telepon">No Telepon</label>
-                <input type="text" class="form-control" id="no_telepon" name="no_telepon" value="<?= esc($dosen['no_telepon']) ?>" required>
-            </div>
+                        <div class="form-group">
+                            <label for="email" class="font-weight-bold">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   value="<?= esc($dosen['email']) ?>" required>
+                        </div>
 
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" name="email" value="<?= esc($dosen['email']) ?>" required>
-            </div>
+                        <div class="form-group">
+                            <label for="link_whatsapp" class="font-weight-bold">Link WhatsApp</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fab fa-whatsapp"></i></span>
+                                </div>
+                                <input type="url" class="form-control" id="link_whatsapp" name="link_whatsapp" 
+                                       placeholder="https://wa.me/6281234567890" 
+                                       value="<?= esc($dosen['link_whatsapp']) ?>">
+                            </div>
 
-            <div class="form-group">
-                <label for="link_whatsapp">Link WhatsApp</label>
-                <input type="url" class="form-control" id="link_whatsapp" name="link_whatsapp" value="<?= esc($dosen['link_whatsapp']) ?>">
-            </div>
+                        </div>
 
-            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-            <a href="<?= site_url('dosen/dashboard'); ?>" class="btn btn-secondary">Kembali</a>
-        <?= form_close(); ?>
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fas fa-save mr-2"></i>Simpan Perubahan
+                            </button>
+                            <a href="<?= site_url('dosen/'); ?>" class="btn btn-outline-secondary px-4">
+                                <i class="fas fa-arrow-left mr-2"></i>Kembali
+                            </a>
+                        </div>
+                    <?= form_close(); ?>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
-</body>
+</div>
 
 <?= $this->endSection(); ?>

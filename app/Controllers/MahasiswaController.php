@@ -90,7 +90,7 @@ class MahasiswaController extends BaseController
 
         // Update data mahasiswa
         if ($mahasiswaModel->update($userId, $dataUpdate)) {
-            return redirect()->to('/mahasiswa/dashboard')->with('success', 
+            return redirect()->to('/mahasiswa/edit')->with('success', 
             'Profil berhasil diperbarui.'); // Redirect ke dashboard
         } else {
             return redirect()->back()->with('error', 'Update profil gagal.'); // Pesan error jika gagal

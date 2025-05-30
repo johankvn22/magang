@@ -25,7 +25,7 @@
 
       <div class="card shadow-sm">
         <div class="card-body">
-          <form method="POST" action="<?= site_url('mahasiswa/update-password'); ?>">
+          <form method="POST" action="<?= site_url('mahasiswa/ganti-password'); ?>">
 
             <div class="mb-3">
               <label for="current_password" class="form-label">Password Lama</label>

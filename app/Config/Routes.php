@@ -81,6 +81,8 @@ $routes->group('mahasiswa', function ($routes) {
     $routes->get('edit', 'MahasiswaController::edit'); // memanggil halaman edit
     $routes->post('update', 'MahasiswaController::update'); // menyimpan data mahasiswa
     $routes->get('ganti-password', 'MahasiswaController::ganti_password');
+    $routes->post('ganti-password', 'MahasiswaController::update_password');
+
 
     // // Upload Laporan
     // $routes->post('upload', 'MahasiswaController::upload');

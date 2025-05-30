@@ -209,7 +209,7 @@ class PenilaianDosenController extends BaseController
 
         $penilaianModel->insert($data);
 
-    return redirect()->to('/dosen/penilaian-dosen/nilai/' . $bimbingan_id)->with('success', 'Penilaian berhasil disimpan.');
+    return redirect()->to('dosen/penilaian-dosen/detail/' . $bimbingan_id)->with('success', 'Penilaian berhasil disimpan.');
     }
 
 }

@@ -223,7 +223,7 @@
         <?php else : ?>
             <div class="alert alert-warning mb-0 w-100">
                 <i class="bi bi-exclamation-triangle me-2"></i>
-                Mahasiswa belum memenuhi syarat penilaian (minimal 6 logbook disetujui) atau data bimbingan tidak ditemukan.
+                Mahasiswa belum memenuhi syarat penilaian (minimal 6 logbook disetujui)
             </div>
         <?php endif; ?>
         <a href="<?= site_url('dosen/bimbingan') ?>" class="btn btn-outline-secondary">
