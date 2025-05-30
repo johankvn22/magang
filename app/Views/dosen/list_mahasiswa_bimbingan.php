@@ -10,14 +10,18 @@
         <h2 class="fw-bold text-primary mb-0">
             <i class="bi bi-people-fill me-2"></i>Daftar Mahasiswa Bimbingan
         </h2>
-        <div class="d-flex">
-            <form class="d-flex" method="get" action="">
-                <input type="text" name="search" class="form-control form-control-sm me-2" placeholder="Cari mahasiswa..." value="<?= esc($search ?? '') ?>">
+        <form method="get" action="<?= site_url('dosen/bimbingan') ?>" class="row g-2 align-items-center mb-4">
+            <div class="col-md-8">
+                <input type="text" name="search" value="<?= esc($keyword ?? '') ?>" class="form-control form-control-sm" placeholder="Cari Nama / NIM / Prodi / Kelas...">
+            </div>
+            <div class="col-auto">
                 <button type="submit" class="btn btn-primary btn-sm">
-                    <i class="bi bi-search"></i>
+                    <i class="bi bi-search"></i> Cari
                 </button>
-            </form>
-        </div>
+            </div>
+        </form>
+
+
     </div>
 
     <!-- Student List Card -->
@@ -31,6 +35,8 @@
                                 <th class="ps-4">Mahasiswa</th>
                                 <th>NIM</th>
                                 <th>Program Studi</th>
+                                <th>Perusahaan</th>
+                                <th>Jumlah Bimbingan</th>
                                 <th class="text-end pe-4">Aksi</th>
                             </tr>
                         </thead>
@@ -52,12 +58,23 @@
                                     <td>
                                         <span class="badge bg-primary-subtle text-primary"><?= esc($mhs['program_studi']) ?></span>
                                     </td>
+                                    <td>
+                                        <?php if (!empty($mhs['nama_perusahaan'])): ?>
+                                            <span class="badge bg-success-subtle text-success"><?= esc($mhs['nama_perusahaan']) ?></span>
+                                        <?php else: ?>
+                                            <span class="badge bg-secondary-subtle text-secondary">Belum ada</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($mhs[''])): ?>
+                                            <span class="badge bg-success-subtle text-success"><?= esc($mhs['']) ?></span>
+                                        <?php else: ?>
+                                            <span class="badge bg-secondary-subtle text-secondary">Belum ada</span>
+                                        <?php endif; ?>
+                                    </td>
                                     <td class="text-end pe-4">
                                         <div class="d-flex justify-content-end gap-2">
-                                            <a href="<?= site_url('dosen/bimbingan/detail/' . $mhs['mahasiswa_id']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                                                <i class="bi bi-eye me-1"></i> Detail
-                                            </a>
-                                            <a href="<?= site_url('dosen/bimbingan/logbook/' . $mhs['mahasiswa_id']) ?>" class="btn btn-sm btn-primary rounded-pill px-3">
+                                            <a href="<?= site_url('dosen/bimbingan/detail/' . $mhs['mahasiswa_id']) ?>" class="btn btn-sm btn-primary rounded-pill px-3">
                                                 <i class="bi bi-journal-text me-1"></i> Logbook
                                             </a>
                                         </div>

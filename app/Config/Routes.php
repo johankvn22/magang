@@ -116,7 +116,7 @@ $routes->group('dosen', ['filter' => 'auth'], function ($routes) {
     $routes->post('bimbingan/hapus/(:num)', 'BimbinganController::hapus/$1');
     $routes->post('update_catatan/(:num)', 'BimbinganController::update_catatan/$1');
 
-
+    // Rute untuk Daftar Aktivitas Mahasiswa Bimbingan
     $routes->get('aktivitas', 'BimbinganController::aktivitasMahasiswaBimbingan');
     $routes->get('logbook/(:num)', 'BimbinganController::detailAktivitasMahasiswa/$1');
 

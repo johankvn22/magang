@@ -15,10 +15,11 @@ class BimbinganController extends BaseController
     public function index()
     {
         $dosenId = session()->get('user_id');
+        $keyword = $this->request->getGet('search'); // ini HARUS 'search'
+
         $bimbinganModel = new Bimbingan();
         $mahasiswaModel = new MahasiswaModel();
 
-        // Ambil semua mahasiswa yang dibimbing oleh dosen ini
         $bimbingan = $bimbinganModel->where('dosen_id', $dosenId)->findAll();
 
         $mahasiswaList = [];
@@ -30,8 +31,24 @@ class BimbinganController extends BaseController
             }
         }
 
-        return view('dosen/list_mahasiswa_bimbingan', ['mahasiswaList' => $mahasiswaList]);
+        // Jika keyword ada, filter data
+        if ($keyword) {
+            $kw = mb_strtolower($keyword);
+            $mahasiswaList = array_filter($mahasiswaList, function ($item) use ($kw) {
+                return str_contains(mb_strtolower($item['nama_lengkap']), $kw)
+                    || str_contains(mb_strtolower($item['nim']), $kw)
+                    || str_contains(mb_strtolower($item['program_studi']), $kw)
+                    || str_contains(mb_strtolower($item['nama_perusahaan']), $kw);
+            });
+            $mahasiswaList = array_values($mahasiswaList); // reindex array
+        }
+
+        return view('dosen/list_mahasiswa_bimbingan', [
+            'mahasiswaList' => $mahasiswaList,
+            'keyword' => $keyword
+        ]);
     }
+
 
     public function detail($mahasiswaId)
     {
@@ -138,12 +155,12 @@ class BimbinganController extends BaseController
     public function aktivitasMahasiswaBimbingan()
     {
         $dosenId = session()->get('user_id');
+        $keyword = $this->request->getGet('keyword');
 
-        $bimbinganModel = new Bimbingan(); // atau BimbinganModel, sesuaikan
+        $bimbinganModel = new Bimbingan();
         $mahasiswaModel = new MahasiswaModel();
 
         $bimbinganList = $bimbinganModel->where('dosen_id', $dosenId)->findAll();
-
         $mahasiswaList = [];
 
         foreach ($bimbinganList as $bimbingan) {
@@ -153,10 +170,24 @@ class BimbinganController extends BaseController
             }
         }
 
+        // Filter pencarian jika ada keyword
+        if ($keyword) {
+            $kw = mb_strtolower($keyword);
+            $mahasiswaList = array_filter($mahasiswaList, function ($item) use ($kw) {
+                return str_contains(mb_strtolower($item['nama_lengkap']), $kw)
+                    || str_contains(mb_strtolower($item['nim']), $kw)
+                    || str_contains(mb_strtolower($item['program_studi']), $kw)
+                    || str_contains(mb_strtolower($item['nama_perusahaan']), $kw);
+            });
+            $mahasiswaList = array_values($mahasiswaList); // reindex
+        }
+
         return view('dosen/logbook_aktivitas_mahasiswa', [
-            'mahasiswaList' => $mahasiswaList
+            'mahasiswaList' => $mahasiswaList,
+            'keyword' => $keyword
         ]);
     }
+
 
     public function detailAktivitasMahasiswa($mahasiswaId)
     {
@@ -170,7 +201,7 @@ class BimbinganController extends BaseController
 
         $logbooks = $logbookModel
             ->where('mahasiswa_id', $mahasiswaId)
-            ->orderBy('tanggal', 'DESC')
+            // ->orderBy('tanggal', 'DESC')
             ->findAll();
 
         return view('dosen/detail_logbook_aktivitas', [

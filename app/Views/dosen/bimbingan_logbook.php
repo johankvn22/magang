@@ -24,9 +24,10 @@
         </div>
         <div class="card-body">
             <div class="row">
+                <!-- Student Info Column -->
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">Nama Lengkap</label>
+                        <label class="form-label text-muted small mb-1">Nama Mahasiswa</label>
                         <p class="fw-medium mb-0"><?= esc($mahasiswa['nama_lengkap']) ?></p>
                     </div>
                     <div class="mb-3">
@@ -41,19 +42,34 @@
                         <label class="form-label text-muted small mb-1">Kelas</label>
                         <p class="fw-medium mb-0"><?= esc($mahasiswa['kelas']) ?></p>
                     </div>
-                </div>
-                <div class="col-md-6">
                     <div class="mb-3">
                         <label class="form-label text-muted small mb-1">Kontak</label>
                         <p class="fw-medium mb-0"><?= esc($mahasiswa['no_hp']) ?> | <?= esc($mahasiswa['email']) ?></p>
                     </div>
+                </div>
+                
+                <!-- Internship Info Column -->
+                <div class="col-md-6">
                     <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">Tempat Magang</label>
+                        <label class="form-label text-muted small mb-1">Perusahaan</label>
                         <p class="fw-medium mb-0"><?= esc($mahasiswa['nama_perusahaan']) ?> (<?= esc($mahasiswa['divisi']) ?>)</p>
                     </div>
                     <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Durasi Magang</label>
+                        <p class="fw-medium mb-0"><?= esc($mahasiswa['durasi_magang']) ?> Bulan</p>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label text-muted small mb-1">Periode Magang</label>
-                        <p class="fw-medium mb-0"><?= date('d M Y', strtotime($mahasiswa['tanggal_mulai'])) ?> - <?= date('d M Y', strtotime($mahasiswa['tanggal_selesai'])) ?></p>
+                        <p class="fw-medium mb-0">
+                            <?= date('d M Y', strtotime($mahasiswa['tanggal_mulai'])) ?> - <?= date('d M Y', strtotime($mahasiswa['tanggal_selesai'])) ?>
+                        </p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small mb-1">Pembimbing Perusahaan</label>
+                        <p class="fw-medium mb-0">
+                            <?= esc($mahasiswa['nama_pembimbing_perusahaan']) ?><br>
+                            <?= esc($mahasiswa['no_hp_pembimbing_perusahaan']) ?> | <?= esc($mahasiswa['email_pembimbing_perusahaan']) ?>
+                        </p>
                     </div>
                     <div class="mb-3">
                         <label class="form-label text-muted small mb-1">Judul Magang</label>
@@ -63,6 +79,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Logbook Summary -->
     <?php
@@ -111,8 +128,8 @@
                             <tr>
                                 <th width="15%">Tanggal</th>
                                 <th width="25%">Kegiatan</th>
-                                <th width="25%">Catatan Dosen</th>
                                 <th width="15%">Dokumen</th>
+                                <th width="25%">Catatan Dosen</th>
                                 <th width="10%">Status</th>
                                 <th width="10%">Aksi</th>
                             </tr>
@@ -128,18 +145,7 @@
                                             <?= esc($log['aktivitas']) ?>
                                         </div>
                                     </td>
-                                    <td>
-                                        <?php if ($log['status_validasi'] === 'menunggu') : ?>
-                                            <form action="<?= site_url('dosen/update_catatan/' . $log['logbook_id']) ?>" method="post">
-                                                <textarea name="catatan_dosen" class="form-control form-control-sm mb-2" rows="2" required><?= esc($log['catatan_dosen']) ?></textarea>
-                                                <button type="submit" class="btn btn-primary btn-sm w-100">Simpan Catatan</button>
-                                            </form>
-                                        <?php else : ?>
-                                            <div class="scrollable-cell" style="max-height: 100px; overflow-y: auto;">
-                                                <?= !empty($log['catatan_dosen']) ? esc($log['catatan_dosen']) : '<span class="text-muted fst-italic">Belum ada catatan</span>' ?>
-                                            </div>
-                                        <?php endif; ?>
-                                    </td>
+
                                     <td>
                                         <?php if (!empty($log['file_dokumen'])): ?>
                                             <a href="<?= site_url('dosen/download-logbook/' . $log['file_dokumen']) ?>" class="btn btn-sm btn-outline-primary w-100 mb-1">
@@ -153,6 +159,19 @@
                                         <?php endif; ?>
                                         <?php if (empty($log['file_dokumen']) && empty($log['link_drive'])): ?>
                                             <span class="text-muted small">Tidak ada dokumen</span>
+                                        <?php endif; ?>
+                                    </td>
+
+                                    <td>
+                                        <?php if ($log['status_validasi'] === 'menunggu') : ?>
+                                            <form action="<?= site_url('dosen/update_catatan/' . $log['logbook_id']) ?>" method="post">
+                                                <textarea name="catatan_dosen" class="form-control form-control-sm mb-2" rows="2" required><?= esc($log['catatan_dosen']) ?></textarea>
+                                                <button type="submit" class="btn btn-primary btn-sm w-100">Simpan Catatan</button>
+                                            </form>
+                                        <?php else : ?>
+                                            <div class="scrollable-cell" style="max-height: 100px; overflow-y: auto;">
+                                                <?= !empty($log['catatan_dosen']) ? esc($log['catatan_dosen']) : '<span class="text-muted fst-italic">Belum ada catatan</span>' ?>
+                                            </div>
                                         <?php endif; ?>
                                     </td>
                                     <td>
