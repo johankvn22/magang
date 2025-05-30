@@ -12,11 +12,39 @@ class UserRequirementDosenController extends BaseController
     public function index()
     {
         $dosenId = session()->get('user_id');
+        $keyword = $this->request->getGet('keyword');
 
-        $dosenModel = new Bimbingan();
-        $mahasiswaList = $dosenModel->getMahasiswaByDosen($dosenId);
+        $bimbinganModel = new Bimbingan();
+        $mahasiswaModel = new MahasiswaModel();
 
-        return view('dosen/list_mahasiswa_userrequirement', ['mahasiswaList' => $mahasiswaList]);
+        // Ambil semua mahasiswa yang dibimbing oleh dosen ini
+        $bimbinganList = $bimbinganModel->where('dosen_id', $dosenId)->findAll();
+
+        $mahasiswaList = [];
+
+        foreach ($bimbinganList as $bimbingan) {
+            $mahasiswa = $mahasiswaModel->find($bimbingan['mahasiswa_id']);
+            if ($mahasiswa) {
+                $mahasiswaList[] = $mahasiswa;
+            }
+        }
+
+        // Filter jika ada keyword pencarian
+        if ($keyword) {
+            $kw = mb_strtolower($keyword);
+            $mahasiswaList = array_filter($mahasiswaList, function ($item) use ($kw) {
+                return str_contains(mb_strtolower($item['nama_lengkap']), $kw)
+                    || str_contains(mb_strtolower($item['nim']), $kw)
+                    || str_contains(mb_strtolower($item['kelas']), $kw)
+                    || str_contains(mb_strtolower($item['program_studi']), $kw);
+            });
+            $mahasiswaList = array_values($mahasiswaList); // Re-index
+        }
+
+        return view('dosen/list_mahasiswa_userrequirement', [
+            'mahasiswaList' => $mahasiswaList,
+            'keyword' => $keyword
+        ]);
     }
 
     public function detail($mahasiswaId)

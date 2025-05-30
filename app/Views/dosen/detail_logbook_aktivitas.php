@@ -80,7 +80,7 @@
         </div>
     </div>
 
-        <!-- Logbook Summary -->
+    <!-- Logbook Summary -->
     <?php
     $logbookLayakDinilai = array_filter($logbooks, fn($log) => isset($log['status_validasi']) && $log['status_validasi'] === 'disetujui');
     $jumlahDisetujui = count($logbookLayakDinilai);
@@ -101,7 +101,7 @@
                 </span>
             <?php else: ?>
                 <span class="badge bg-warning-subtle text-warning">
-                    <i class="bi bi-exclamation-circle me-1"></i>Belum memenuhi syarat (minimal 6 logbook disetujui)
+                    <i class="bi bi-exclamation-circle me-1"></i>Belum memenuhi syarat (minimal 6 logbook Aktivitas disetujui)
                 </span>
             <?php endif; ?>
         </div>

@@ -37,6 +37,7 @@ class BimbinganController extends BaseController
             $mahasiswaList = array_filter($mahasiswaList, function ($item) use ($kw) {
                 return str_contains(mb_strtolower($item['nama_lengkap']), $kw)
                     || str_contains(mb_strtolower($item['nim']), $kw)
+                    || str_contains(mb_strtolower($item['kelas']), $kw)
                     || str_contains(mb_strtolower($item['program_studi']), $kw)
                     || str_contains(mb_strtolower($item['nama_perusahaan']), $kw);
             });
@@ -176,6 +177,7 @@ class BimbinganController extends BaseController
             $mahasiswaList = array_filter($mahasiswaList, function ($item) use ($kw) {
                 return str_contains(mb_strtolower($item['nama_lengkap']), $kw)
                     || str_contains(mb_strtolower($item['nim']), $kw)
+                    || str_contains(mb_strtolower($item['kelas']), $kw)
                     || str_contains(mb_strtolower($item['program_studi']), $kw)
                     || str_contains(mb_strtolower($item['nama_perusahaan']), $kw);
             });

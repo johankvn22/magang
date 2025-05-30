@@ -10,7 +10,7 @@
         <h2 class="fw-bold text-primary mb-0">
             <i class="bi bi-people-fill me-2"></i>Daftar Mahasiswa Bimbingan
         </h2>
-        <form method="get" action="<?= site_url('dosen/bimbingan') ?>" class="row g-2 align-items-center mb-4">
+        <form method="get" action="<?= site_url('dosen/bimbingan') ?>" class="row g-2 align-items-center">
             <div class="col-md-8">
                 <input type="text" name="search" value="<?= esc($keyword ?? '') ?>" class="form-control form-control-sm" placeholder="Cari Nama / NIM / Prodi / Kelas...">
             </div>
@@ -20,8 +20,6 @@
                 </button>
             </div>
         </form>
-
-
     </div>
 
     <!-- Student List Card -->
@@ -29,15 +27,14 @@
         <div class="card-body p-0">
             <?php if (!empty($mahasiswaList)): ?>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
+                    <table class="table table-hover align-middle mb-0" style="table-layout: fixed;">
                         <thead class="table-light">
                             <tr>
-                                <th class="ps-4">Mahasiswa</th>
-                                <th>NIM</th>
-                                <th>Program Studi</th>
-                                <th>Perusahaan</th>
-                                <th>Jumlah Bimbingan</th>
-                                <th class="text-end pe-4">Aksi</th>
+                                <th class="ps-4" style="width: 25%;">Mahasiswa</th>
+                                <th style="width: 20%;">Program Studi</th>
+                                <th style="width: 25%;">Perusahaan</th>
+                                <th style="width: 15%;">Bimbingan</th>
+                                <th style="width: 15%;">Detail</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -48,32 +45,32 @@
                                             <div class="avatar avatar-sm me-3 bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center">
                                                 <i class="bi bi-person-fill"></i>
                                             </div>
-                                            <div>
+                                            <div style="word-wrap: break-word;">
                                                 <h6 class="mb-0 fw-medium"><?= esc($mhs['nama_lengkap']) ?></h6>
-                                                <small class="text-muted"><?= esc($mhs['kelas'] ?? '-') ?></small>
+                                                <small class="text-muted"><?= esc($mhs['nim'] ?? '-') ?></small>
                                             </div>
                                         </div>
                                     </td>
-                                    <td><?= esc($mhs['nim']) ?></td>
-                                    <td>
-                                        <span class="badge bg-primary-subtle text-primary"><?= esc($mhs['program_studi']) ?></span>
+                                    <td style="word-wrap: break-word;">
+                                        <h6 class="mb-0 fw-medium"><?= esc($mhs['program_studi']) ?></h6>
+                                        <small><?= esc($mhs['kelas']) ?></small>
                                     </td>
-                                    <td>
+                                    <td style="word-wrap: break-word;">
                                         <?php if (!empty($mhs['nama_perusahaan'])): ?>
-                                            <span class="badge bg-success-subtle text-success"><?= esc($mhs['nama_perusahaan']) ?></span>
+                                            <span class="badge bg-success-subtle text-success" style="white-space: normal;"><?= esc($mhs['nama_perusahaan']) ?></span>
                                         <?php else: ?>
                                             <span class="badge bg-secondary-subtle text-secondary">Belum ada</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <?php if (!empty($mhs[''])): ?>
-                                            <span class="badge bg-success-subtle text-success"><?= esc($mhs['']) ?></span>
+                                        <?php if (!empty($mhs['jumlah_bimbingan'])): ?>
+                                            <span class="badge bg-primary rounded-pill"><?= esc($mhs['jumlah_bimbingan']) ?>x</span>
                                         <?php else: ?>
-                                            <span class="badge bg-secondary-subtle text-secondary">Belum ada</span>
+                                            <span class="badge bg-secondary-subtle text-secondary">0x</span>
                                         <?php endif; ?>
                                     </td>
-                                    <td class="text-end pe-4">
-                                        <div class="d-flex justify-content-end gap-2">
+                                    <td>
+                                        <div class="d-flex gap-2">
                                             <a href="<?= site_url('dosen/bimbingan/detail/' . $mhs['mahasiswa_id']) ?>" class="btn btn-sm btn-primary rounded-pill px-3">
                                                 <i class="bi bi-journal-text me-1"></i> Logbook
                                             </a>
@@ -84,18 +81,6 @@
                         </tbody>
                     </table>
                 </div>
-                
-                <!-- Pagination -->
-                <?php if (isset($pager)): ?>
-                <div class="d-flex justify-content-between align-items-center px-4 py-3 border-top">
-                    <div class="text-muted small">
-                        Menampilkan <?= count($mahasiswaList) ?> dari <?= $pager->getTotal() ?> mahasiswa
-                    </div>
-                    <div>
-                        <?= $pager->links() ?>
-                    </div>
-                </div>
-                <?php endif; ?>
                 
             <?php else: ?>
                 <div class="text-center py-5">

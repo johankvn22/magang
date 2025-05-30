@@ -89,17 +89,19 @@ class PenilaianDosenController extends BaseController
         $mahasiswaModel = new MahasiswaModel();
         $penilaianModel = new PenilaianDosenModel();
 
+        // Ambil keyword dari input pencarian
+        $keyword = $this->request->getGet('keyword');
+
         // Ambil data bimbingan milik dosen
         $bimbinganList = $bimbinganModel->where('dosen_id', $dosen_id)->findAll();
 
         $mahasiswaList = [];
         foreach ($bimbinganList as $bimbingan) {
             $mhs = $mahasiswaModel->find($bimbingan['mahasiswa_id']);
-            // Cek apakah mahasiswa ada
             if ($mhs) {
-                $mhs['bimbingan_id'] = $bimbingan['bimbingan_id']; // tambahkan id bimbingan
+                $mhs['bimbingan_id'] = $bimbingan['bimbingan_id'];
 
-                 // Tambahkan flag penilaian
+                // Tambahkan flag apakah sudah dinilai
                 $penilaian = $penilaianModel->where('bimbingan_id', $bimbingan['bimbingan_id'])->first();
                 $mhs['sudah_dinilai'] = $penilaian ? true : false;
 
@@ -107,7 +109,22 @@ class PenilaianDosenController extends BaseController
             }
         }
 
-        return view('dosen/list_nilai_mahasiswa', ['mahasiswaList' => $mahasiswaList]);
+        // Jika ada keyword, lakukan filter
+        if ($keyword) {
+            $kw = mb_strtolower($keyword);
+            $mahasiswaList = array_filter($mahasiswaList, function ($item) use ($kw) {
+                return str_contains(mb_strtolower($item['nama_lengkap']), $kw)
+                    || str_contains(mb_strtolower($item['nim']), $kw)
+                    || str_contains(mb_strtolower($item['program_studi']), $kw)
+                    || str_contains(mb_strtolower($item['kelas']), $kw);
+            });
+            $mahasiswaList = array_values($mahasiswaList); // Reset index
+        }
+
+        return view('dosen/list_nilai_mahasiswa', [
+            'mahasiswaList' => $mahasiswaList,
+            'keyword' => $keyword
+        ]);
     }
 
 
