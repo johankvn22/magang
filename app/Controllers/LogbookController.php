@@ -123,7 +123,7 @@ class LogbookController extends BaseController
 
         public function downloadLogbookFile($filename)
     {
-        $filePath = WRITEPATH . 'uploads/logbook/' . $filename;
+        $filePath = ROOTPATH . 'public/uploads/logbook/' . $filename;
 
         if (!file_exists($filePath)) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound("File tidak ditemukan.");
