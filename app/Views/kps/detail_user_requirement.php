@@ -10,7 +10,7 @@
         <h2 class="fw-bold text-primary mb-0">
             <i class="bi bi-file-earmark-text me-2"></i>Detail User Requirement
         </h2>
-        <a href="<?= base_url('kps/logbook') ?>" class="btn btn-outline-secondary">
+        <a href="<?= base_url('kps/user-requirement') ?>" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-1"></i> Kembali
         </a>
     </div>

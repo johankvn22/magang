@@ -8,10 +8,10 @@
 
   <!-- Header & Search -->
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold text-success mb-0">📝 Daftar Mahasiswa Pengisi User Requirement</h2>
+    <h2 class="fw-bold text-success mb-0">📝 Daftar User Requirement Mahasiswa</h2>
 
     <form method="get" action="<?= site_url('kps/user-requirement') ?>" class="row mb-3">
-      <div class="col-md-9">
+      <div class="col-md-8">
         <input type="text" name="keyword" value="<?= esc($keyword ?? '') ?>" class="form-control" placeholder="Cari Nama / NIM / Prodi...">
       </div>
       <div class="col-auto">
@@ -36,10 +36,10 @@
   <div class="card border-0 shadow-sm rounded-4">
     <div class="card-body">
       <div class="table-responsive">
-        <table class="table table-hover table-bordered text-nowrap align-middle small">
-          <thead class="table-light text-center">
+        <table class="table table-hover text-nowrap align-middle small">
+          <thead class="table-light">
             <tr>
-              <th>No</th>
+              <th class="text-center">No</th>
               <th>Nama & NIM</th>
               <th>Program Studi & Kelas</th>
               <th>Terakhir Diisi</th>
@@ -58,10 +58,9 @@
                   <div class="fw-semibold"><?= esc($mhs['program_studi']) ?></div>
                     <div class="text-muted small"><?= esc($mhs['kelas']) ?></div>
                 </td>
-
-                <td class="text-center"><?= esc($mhs['terakhir_diisi']) ?></td>
-                <td class="text-center">
-                  <a href="<?= site_url('kps/user-requirement/detail/' . $mhs['mahasiswa_id']) ?>" class="btn btn-sm btn-outline-info rounded-pill px-3">
+                <td class=""><?= esc($mhs['terakhir_diisi']) ?></td>
+                <td class="">
+                  <a href="<?= site_url('kps/user-requirement/detail/' . $mhs['mahasiswa_id']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3">
                     Detail
                   </a>
                 </td>

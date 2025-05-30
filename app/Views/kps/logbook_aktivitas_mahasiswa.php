@@ -8,10 +8,10 @@
 
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold text-primary mb-0">🏭 Monitoring Aktivitas Mahasiswa di Industri</h2>
+    <h2 class="fw-bold text-success mb-0">🏭 Monitoring Aktivitas Mahasiswa di Industri</h2>
 
    <form method="get" action="<?= site_url('kps/logbook-aktivitas') ?>" class="row mb-3">
-      <div class="col-md-9">
+      <div class="col-md-8">
         <input type="text" name="keyword" value="<?= esc($keyword ?? '') ?>" class="form-control" placeholder="Cari Nama / NIM / Prodi...">
       </div>
       <div class="col-auto">
@@ -36,14 +36,14 @@
   <div class="card border-0 shadow-sm rounded-4">
     <div class="card-body">
       <div class="table-responsive">
-        <table class="table table-hover table-bordered text-nowrap align-middle small" id="aktivitasTable">
-          <thead class="table-light text-center align-middle">
+        <table class="table table-hover text-nowrap align-middle small" id="aktivitasTable">
+          <thead class="table-light align-middle">
             <tr>
-              <th>No</th>
+              <th class="text-center">No</th>
               <th>Nama & NIM</th>
               <th>Prodi & Kelas</th>
-              <th>Status Aktivitas</th>
-              <th>Detail</th>
+              <th class="text-center">Status Aktivitas</th>
+              <th class="text-center">Detail</th>
             </tr>
           </thead>
           <tbody>
@@ -59,10 +59,14 @@
                   <span class="badge bg-secondary-subtle text-secondary"><?= esc($mhs['kelas']) ?></span>
                 </td>
                 <td class="text-center">
-                  <span class="badge <?= $mhs['status'] === 'Sudah Verifikasi' ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary' ?>">
-                    <?= esc($mhs['status']) ?>
-                  </span>
-                </td>
+                  <?php if (!empty($mhs['jumlah_aktivitas_disetujui'])): ?>
+                      <span class="badge bg-success rounded-pill">
+                        <?= esc($mhs['jumlah_aktivitas_disetujui']) ?> aktivitas
+                      </span>
+                  <?php else: ?>
+                      <span class="badge bg-secondary-subtle text-secondary">0 aktivitas</span>
+                  <?php endif; ?>
+                </td>               
                 <td class="text-center">
                   <a href="<?= base_url('kps/logbook-aktivitas/' . $mhs['mahasiswa_id']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3">
                     Detail Aktivitas

@@ -111,25 +111,47 @@ class KpsController extends BaseController
         $bimbinganModel = new Bimbingan();
         $dosenModel = new DosenPembimbingModel();
 
-        // Pagination setup
-        $perPage = 10;
-        $data['mahasiswa'] = $mahasiswaModel->getMahasiswaWithDosen()->paginate($perPage, 'default');
-        $data['pager'] = $mahasiswaModel->pager;
+        // Ambil parameter search & pagination
+        $keyword = $this->request->getGet('keyword');
+        $perPage = (int) ($this->request->getGet('perPage') ?? 10);
+        if (!in_array($perPage, [5, 10, 25, 50, 100])) {
+            $perPage = 10;
+        }
+        $currentPage = (int) ($this->request->getGet('page') ?? 1);
+        $offset = ($currentPage - 1) * $perPage;
 
-        // Hitung offset untuk penomoran
-        $currentPage = $data['pager']->getCurrentPage('default');
-        $data['offset'] = ($currentPage - 1) * $perPage;
+        // Ambil data mahasiswa + dosen
+        $allMahasiswa = $mahasiswaModel->getMahasiswaWithDosen();
+        if ($allMahasiswa instanceof \CodeIgniter\Model) {
+            $allMahasiswa = $allMahasiswa->findAll();
+        }
 
-        // Ambil semua dosen
-        $data['listDosen'] = $dosenModel->findAll();
+        // Filter jika ada keyword
+        if ($keyword) {
+            $allMahasiswa = array_filter($allMahasiswa, function($m) use ($keyword) {
+                $kw = mb_strtolower($keyword);
+                return str_contains(mb_strtolower($m['nama_lengkap']), $kw)
+                    || str_contains(mb_strtolower($m['nim']), $kw)
+                    || str_contains(mb_strtolower($m['program_studi']), $kw)
+                    || str_contains(mb_strtolower($m['kelas']), $kw)
+                    || str_contains(mb_strtolower($m['nama_perusahaan'] ?? ''), $kw);
+            });
+            $allMahasiswa = array_values($allMahasiswa); // reindex
+        }
+
+        $total = count($allMahasiswa);
+        $pagedMahasiswa = array_slice($allMahasiswa, $offset, $perPage);
 
         // Mahasiswa + dosen terpilih
-        foreach ($data['mahasiswa'] as &$m) {
+        foreach ($pagedMahasiswa as &$m) {
             $m['dosen_terpilih'] = array_column(
                 $bimbinganModel->where('mahasiswa_id', $m['mahasiswa_id'])->findAll(),
                 'dosen_id'
             );
         }
+
+        // Ambil semua dosen
+        $listDosen = $dosenModel->findAll();
 
         // Jumlah bimbingan per dosen
         $bimbinganCount = $bimbinganModel->select('dosen_id, COUNT(*) as total')
@@ -142,11 +164,22 @@ class KpsController extends BaseController
         }
 
         // Tambahkan total ke listDosen
-        foreach ($data['listDosen'] as &$d) {
+        foreach ($listDosen as &$d) {
             $d['total_bimbingan'] = $bimbinganMap[$d['dosen_id']] ?? 0;
         }
 
-        return view('kps/daftar_dosen', $data);
+        // Pager manual
+        $pager = \Config\Services::pager();
+        $pager->makeLinks($currentPage, $perPage, $total, 'default_full');
+
+        return view('kps/daftar_dosen', [
+            'mahasiswa' => $pagedMahasiswa,
+            'pager' => $pager,
+            'offset' => $offset,
+            'listDosen' => $listDosen,
+            'keyword' => $keyword,
+            'perPage' => $perPage,
+        ]);
     }
 
     // public function updateDosen()
@@ -329,7 +362,6 @@ class KpsController extends BaseController
 
         return view('kps/detail_logbook', $data);
     }
-
     public function logbookAktivitas()
     {
         // Hanya role KPS yang bisa mengakses
@@ -338,9 +370,18 @@ class KpsController extends BaseController
         }
 
         $model = new MahasiswaModel();
+        $logbookIndustriModel = new LogbookIndustri();
 
         // 1. Ambil semua data mahasiswa dengan status industri
         $allData = $model->getMahasiswaWithStatusIndustri();
+
+        // Tambahkan jumlah logbook aktivitas disetujui untuk setiap mahasiswa
+        foreach ($allData as &$mhs) {
+            $mhs['jumlah_aktivitas_disetujui'] = $logbookIndustriModel
+                ->where('mahasiswa_id', $mhs['mahasiswa_id'])
+                ->where('status_validasi', 'disetujui')
+                ->countAllResults();
+        }
 
         // 2. Ambil parameter pencarian dan pagination
         $keyword = $this->request->getGet('keyword');
@@ -453,9 +494,43 @@ class KpsController extends BaseController
     public function listReview()
     {
         $reviewModel = new ReviewKinerjaModel();
-        $listReview = $reviewModel->getAll(); // pastikan ini sudah join ke mahasiswa
 
-        return view('kps/list_review', ['reviews' => $listReview]);
+        $keyword = $this->request->getGet('keyword');
+        $perPage = (int) ($this->request->getGet('perPage') ?? 10);
+        $currentPage = (int) ($this->request->getGet('page') ?? 1);
+        $offset = ($currentPage - 1) * $perPage;
+
+        if (!in_array($perPage, [5, 10, 25, 50, 100])) {
+            $perPage = 10;
+        }
+
+        $allReviews = $reviewModel->getAll(); // pastikan sudah join ke mahasiswa
+
+        // Filter berdasarkan keyword
+        if ($keyword) {
+            $allReviews = array_filter($allReviews, function ($item) use ($keyword) {
+                $kw = mb_strtolower($keyword);
+                return str_contains(mb_strtolower($item['nama_mahasiswa'] ?? ''), $kw)
+                    || str_contains(mb_strtolower($item['nim'] ?? ''), $kw)
+                    || str_contains(mb_strtolower($item['nama_perusahaan'] ?? ''), $kw)
+                    || str_contains(mb_strtolower($item['nama_pembimbing_perusahaan'] ?? ''), $kw);
+            });
+            $allReviews = array_values($allReviews); // reindex
+        }
+
+        $total = count($allReviews);
+        $pagedData = array_slice($allReviews, $offset, $perPage);
+
+        $pager = \Config\Services::pager();
+        $pager->makeLinks($currentPage, $perPage, $total, 'default_full');
+
+        return view('kps/list_review', [
+            'reviews' => $pagedData,
+            'pager' => $pager,
+            'keyword' => $keyword,
+            'perPage' => $perPage,
+            'offset' => $offset,
+        ]);
     }
 
     public function detailReview($id)

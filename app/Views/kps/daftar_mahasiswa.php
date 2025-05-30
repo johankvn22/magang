@@ -45,7 +45,7 @@
   <div class="card border-0 shadow-sm rounded-4">
     <div class="card-body">
       <div class="table-responsive">
-        <table class="table table-hover table-bordered text-nowrap align-middle small" id="mahasiswaTable">
+        <table class="table table-hover  text-nowrap align-middle small" id="mahasiswaTable">
           <thead class="table-light text-center align-middle">
             <tr>
               <th>No</th>

@@ -153,7 +153,7 @@
                                             </a>
                                         <?php endif; ?>
                                         <?php if (!empty($log['link_drive'])): ?>
-                                            <a href="<?= esc($log['link_drive']) ?>" target="_blank" class="btn btn-sm btn-outline-success w-100">
+                                            <a href="<?= esc($log['link_drive']) ?>" target="_blank" class="btn btn-sm btn-outline-primary w-100">
                                                 <i class="bi bi-google me-1"></i>Google Drive
                                             </a>
                                         <?php endif; ?>
@@ -166,7 +166,7 @@
                                         <?php if ($log['status_validasi'] === 'menunggu') : ?>
                                             <form action="<?= site_url('dosen/update_catatan/' . $log['logbook_id']) ?>" method="post">
                                                 <textarea name="catatan_dosen" class="form-control form-control-sm mb-2" rows="2" required><?= esc($log['catatan_dosen']) ?></textarea>
-                                                <button type="submit" class="btn btn-success btn-sm w-100">Simpan Catatan</button>
+                                                <button type="submit" class="btn btn-primary btn-sm w-100">Simpan Catatan</button>
                                             </form>
                                         <?php else : ?>
                                             <div class="scrollable-cell" style="max-height: 100px; overflow-y: auto;">

@@ -44,14 +44,14 @@
   <div class="card border-0 shadow-sm rounded-4">
     <div class="card-body">
       <div class="table-responsive">
-        <table class="table table-hover table-bordered text-nowrap align-middle small" id="logbookTable">
-          <thead class="table-light text-center align-middle">
+        <table class="table table-hover text-nowrap align-middle small" id="logbookTable">
+          <thead class="table-light align-middle">
             <tr>
-              <th>No</th>
+              <th class="text-center">No</th>
               <th>Nama & NIM</th>
               <th>Prodi & Kelas</th>
-              <th>Status</th>
-              <th>Detail</th>
+              <th class="text-center">Status</th>
+              <th class="text-center">Detail</th>
             </tr>
           </thead>
           <tbody>
@@ -66,12 +66,18 @@
                   <span class="badge bg-primary-subtle text-primary"><?= esc($mhs['program_studi']) ?></span><br>
                   <span class="badge bg-secondary-subtle text-secondary"><?= esc($mhs['kelas']) ?></span>
                 </td>
-                <td>
-                  <div class="text-center fw-semibold"><?= esc($mhs['jumlah_verifikasi']) ?>  disetujui</div>
-                </td>
+                <td class="text-center">
+                  <?php if (!empty($mhs['jumlah_verifikasi'])): ?>
+                      <span class="badge bg-success rounded-pill">
+                        <?= esc($mhs['jumlah_verifikasi']) ?> disetujui
+                      </span>
+                  <?php else: ?>
+                      <span class="badge bg-secondary-subtle text-secondary">belum ada bimbingan</span>
+                  <?php endif; ?>
+                </td>             
                 <td class="text-center">
                   <a href="<?= base_url('kps/logbook/' . $mhs['mahasiswa_id']) ?>"class="btn btn-sm btn-outline-primary rounded-pill px-3">
-                    Lihat
+                    Lihat Bimbingan
                   </a>
                 </td>
               </tr>
