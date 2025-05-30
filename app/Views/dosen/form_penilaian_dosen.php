@@ -367,9 +367,9 @@
                 <button type="submit" class="btn btn-primary px-4 py-2 fw-bold shadow-sm">
                     <i class="fas fa-save me-2"></i>Simpan Penilaian
                 </button>
-                <a href="<?= site_url('dosen/penilaian-dosen') ?>" class="btn btn-outline-secondary px-4 py-2 ms-2">
+                <button class="btn btn-outline-secondary px-4 py-2 ms-2" onclick="history.back(); return false;">
                     <i class="fas fa-arrow-left me-2"></i>Kembali
-                </a>
+                </button>
             </div>
         </div>
     </form>
