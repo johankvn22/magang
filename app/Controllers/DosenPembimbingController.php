@@ -23,7 +23,7 @@ class DosenPembimbingController extends BaseController
         return view('dosen/dashboard', ['dosen' => $dosen]);
     }
 
-    
+
 
     // Fungsi untuk edit profil
     public function editProfile()
@@ -77,30 +77,39 @@ class DosenPembimbingController extends BaseController
     }
 
     // Fungsi untuk memperbarui password
-    public function updatePassword()
-    {
-        $dosenModel = new DosenPembimbingModel();
-        $userId = session()->get('user_id');
+   public function updatePassword()
+{
+    $userId = session()->get('user_id');
 
-        // Validasi input password
-        $this->validate([
-            'current_password' => 'required',
-            'new_password' => 'required|min_length[8]',
-            'confirm_password' => 'required|matches[new_password]',
-        ]);
+    $currentPassword = $this->request->getPost('current_password');
+    $newPassword = $this->request->getPost('new_password');
+    $confirmPassword = $this->request->getPost('confirm_password');
 
+    $userModel = new \App\Models\UserModel(); // Gunakan UserModel, karena password di tabel users
+    $user = $userModel->find($userId);
 
-        // Cek jika password saat ini benar
-        $dosen = $dosenModel->where('dosen_id', $userId)->first();
-        if (!password_verify($this->request->getPost('current_password'), $dosen['password'])) {
-            return redirect()->back()->with('error', 'Password saat ini salah.'); // Tangani jika salah
-        }
-
-        // Update password baru
-        $dosenModel->update($userId, [
-            'password' => password_hash($this->request->getPost('new_password'), PASSWORD_DEFAULT), // Hash dan simpan password baru
-        ]);
-
-        return redirect()->to('/dosen/dashboard')->with('success', 'Password berhasil diperbarui.');
+    if (!$user) {
+        return redirect()->back()->with('error', 'Data user tidak ditemukan.');
     }
+
+    if (!isset($user['password']) || !password_verify($currentPassword, $user['password'])) {
+        return redirect()->back()->with('error', 'Password lama salah.');
+    }
+
+    if ($newPassword !== $confirmPassword) {
+        return redirect()->back()->with('error', 'Konfirmasi password baru tidak cocok.');
+    }
+
+    $dataUpdate = [
+        'password' => password_hash($newPassword, PASSWORD_DEFAULT)
+    ];
+
+    if ($userModel->update($userId, $dataUpdate)) {
+       return redirect()->to('/dosen')->with('success', 'Password berhasil diperbarui.');
+
+    } else {
+        return redirect()->back()->with('error', 'Gagal memperbarui password.');
+    }
+}
+
 }

@@ -97,35 +97,36 @@ class MahasiswaController extends BaseController
         }
     }
 
-    public function update_password()
-    {
-        $userId = session()->get('user_id');
+   public function update_password()
+{
+    $userId = session()->get('user_id');
 
-        $currentPassword = $this->request->getPost('current_password');
-        $newPassword = $this->request->getPost('new_password');
-        $confirmPassword = $this->request->getPost('confirm_password');
+    $currentPassword = $this->request->getPost('current_password');
+    $newPassword = $this->request->getPost('new_password');
+    $confirmPassword = $this->request->getPost('confirm_password');
 
-        $userModel = new UserModel();
-        $user = $userModel->find($userId); // Ambil user dari tabel 'users'
+    $userModel = new UserModel();
+    $user = $userModel->find($userId); // Ambil user dari tabel 'users'
 
-        if ($user && password_verify($currentPassword, $user->password)) {
-            if ($newPassword === $confirmPassword) {
-                $dataUpdate = [
-                    'password' => password_hash($newPassword, PASSWORD_DEFAULT)
-                ];
+    if ($user && password_verify($currentPassword, $user['password'])) {
+        if ($newPassword === $confirmPassword) {
+            $dataUpdate = [
+                'password' => password_hash($newPassword, PASSWORD_DEFAULT)
+            ];
 
-                if ($userModel->update($userId, $dataUpdate)) {
-                    return redirect()->to('/mahasiswa/dashboard')->with('success', 'Password berhasil diperbarui.');
-                } else {
-                    return redirect()->back()->with('error', 'Gagal memperbarui password.');
-                }
+            if ($userModel->update($userId, $dataUpdate)) {
+                return redirect()->to('/mahasiswa/dashboard')->with('success', 'Password berhasil diperbarui.');
             } else {
-                return redirect()->back()->with('error', 'Konfirmasi password baru tidak cocok.');
+                return redirect()->back()->with('error', 'Gagal memperbarui password.');
             }
         } else {
-            return redirect()->back()->with('error', 'Password lama salah.');
+            return redirect()->back()->with('error', 'Konfirmasi password baru tidak cocok.');
         }
+    } else {
+        return redirect()->back()->with('error', 'Password lama salah.');
     }
+}
+
 
     public function ganti_password()
     {

@@ -94,7 +94,8 @@ $routes->group('dosen', ['filter' => 'auth'], function ($routes) {
     $routes->get('editProfile', 'DosenPembimbingController::editProfile'); // /dosen/editProfile
     $routes->post('updateProfile', 'DosenPembimbingController::updateProfile');
     $routes->get('changePassword', 'DosenPembimbingController::changePassword');
-    $routes->post('update-password', 'DosenPembimbingController::updatePassword');
+    $routes->post('ganti-password', 'DosenPembimbingController::updatePassword');
+
     // $routes->get('mahasiswa-bimbingan', 'DosenPembimbingController::daftarMahasiswaBimbingan');
 
     // Rute Bimbingan Logbook Mahasiswa
