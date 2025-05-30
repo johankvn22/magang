@@ -31,6 +31,16 @@ class BimbinganController extends BaseController
             }
         }
 
+        $logbookModel = new LogbookBimbingan();
+
+        foreach ($mahasiswaList as &$mhs) {
+            $mhs['jumlah_verifikasi'] = $logbookModel
+                ->where('mahasiswa_id', $mhs['mahasiswa_id'])
+                ->where('status_validasi', 'disetujui')
+                ->countAllResults();
+        }
+
+
         // Jika keyword ada, filter data
         if ($keyword) {
             $kw = mb_strtolower($keyword);
@@ -169,6 +179,15 @@ class BimbinganController extends BaseController
             if ($mahasiswa) {
                 $mahasiswaList[] = $mahasiswa;
             }
+        }
+
+        $logbookModel = new LogbookIndustri();
+        // Tambahkan jumlah aktivitas untuk setiap mahasiswa
+        foreach ($mahasiswaList as &$mhs) {
+            $mhs['jumlah_aktivitas'] = $logbookModel
+                ->where('mahasiswa_id', $mhs['mahasiswa_id'])
+                ->countAllResults();
+            $mhs['nama_perusahaan'] = $mhs['nama_perusahaan'] ?? '-'; // Pastikan ada nama perusahaan
         }
 
         // Filter pencarian jika ada keyword

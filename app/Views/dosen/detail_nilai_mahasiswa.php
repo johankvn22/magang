@@ -8,7 +8,7 @@
 <body>
     <div class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="mb-0 text-primary fw-bold">
+            <h2 class="mb-0 text-success fw-bold">
                 <i class="fas fa-clipboard-check me-2"></i>Detail Nilai Mahasiswa
             </h2>
             <a href="<?= base_url('dosen/penilaian-dosen/listNilai') ?>" class="btn btn-outline-primary">

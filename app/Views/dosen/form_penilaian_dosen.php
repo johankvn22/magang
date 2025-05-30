@@ -5,7 +5,7 @@
 <div class="container py-4">
     <!-- Student Information Card -->
     <div class="card border-0 shadow-lg mb-4">
-        <div class="card-header bg-primary text-white fw-bold py-3">
+        <div class="card-header bg-success text-white fw-bold py-3">
             <i class="fas fa-user-graduate me-2"></i>Informasi Mahasiswa
         </div>
         <div class="card-body">
@@ -13,8 +13,8 @@
                 <div class="col-md-6">
                     <div class="d-flex mb-3">
                         <div class="flex-shrink-0">
-                            <div class="bg-primary bg-opacity-10 p-2 rounded-circle">
-                                <i class="fas fa-user text-primary"></i>
+                            <div class="bg-success bg-opacity-10 p-2 rounded-circle">
+                                <i class="fas fa-user text-success"></i>
                             </div>
                         </div>
                         <div class="ms-3">
@@ -23,15 +23,15 @@
                         </div>
                     </div>
                     
-                    <p><i class="fas fa-graduation-cap text-primary me-2"></i> <strong>Program Studi:</strong> <?= esc($mahasiswa['program_studi']) ?></p>
-                    <p><i class="fas fa-users text-primary me-2"></i> <strong>Kelas:</strong> <?= esc($mahasiswa['kelas']) ?></p>
-                    <p><i class="fas fa-user-tie text-primary me-2"></i> <strong>Pembimbing Industri:</strong> <?= isset($nilaiIndustri) ? esc($nilaiIndustri['nama_pembimbing_perusahaan']) : '-' ?></p>
+                    <p><i class="fas fa-graduation-cap text-success me-2"></i> <strong>Program Studi:</strong> <?= esc($mahasiswa['program_studi']) ?></p>
+                    <p><i class="fas fa-users text-success me-2"></i> <strong>Kelas:</strong> <?= esc($mahasiswa['kelas']) ?></p>
+                    <p><i class="fas fa-user-tie text-success me-2"></i> <strong>Pembimbing Industri:</strong> <?= isset($nilaiIndustri) ? esc($nilaiIndustri['nama_pembimbing_perusahaan']) : '-' ?></p>
                 </div>
                 <div class="col-md-6">
-                    <p><i class="fas fa-building text-primary me-2"></i> <strong>Perusahaan:</strong> <?= esc($mahasiswa['nama_perusahaan']) ?></p>
-                    <p><i class="fas fa-sitemap text-primary me-2"></i> <strong>Divisi:</strong> <?= esc($mahasiswa['divisi']) ?></p>
-                    <p><i class="fas fa-calendar-alt text-primary me-2"></i> <strong>Tanggal Magang:</strong> <?= esc($mahasiswa['tanggal_mulai']) ?> s/d <?= esc($mahasiswa['tanggal_selesai']) ?></p>
-                    <p><i class="fas fa-file-alt text-primary me-2"></i> <strong>Judul Magang:</strong> <?= esc($mahasiswa['judul_magang']) ?></p>
+                    <p><i class="fas fa-building text-success me-2"></i> <strong>Perusahaan:</strong> <?= esc($mahasiswa['nama_perusahaan']) ?></p>
+                    <p><i class="fas fa-sitemap text-success me-2"></i> <strong>Divisi:</strong> <?= esc($mahasiswa['divisi']) ?></p>
+                    <p><i class="fas fa-calendar-alt text-success me-2"></i> <strong>Tanggal Magang:</strong> <?= esc($mahasiswa['tanggal_mulai']) ?> s/d <?= esc($mahasiswa['tanggal_selesai']) ?></p>
+                    <p><i class="fas fa-file-alt text-success me-2"></i> <strong>Judul Magang:</strong> <?= esc($mahasiswa['judul_magang']) ?></p>
                 </div>
             </div>
         </div>
@@ -112,15 +112,15 @@
                     
                     <!-- Hard Skills -->
                     <div class="col-lg-6">
-                        <div class="card h-100 border-primary">
-                            <div class="card-header bg-primary text-white py-2">
+                        <div class="card h-100 border-success">
+                            <div class="card-header bg-success text-white py-2">
                                 <h6 class="mb-0"><i class="fas fa-cogs me-2"></i>Hard Skills (50%)</h6>
                             </div>
                             <div class="card-body">
                                 <div class="mb-3 pb-2 border-bottom">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <strong>2.1 Deskripsi Produk</strong>
-                                        <span class="badge bg-primary rounded-pill"><?= $nilaiIndustri['deskripsi_produk'] ?></span>
+                                        <span class="badge bg-success rounded-pill"><?= $nilaiIndustri['deskripsi_produk'] ?></span>
                                     </div>
                                     <small class="text-muted">Mampu menyusun deskripsi produk dengan jelas</small>
                                 </div>
@@ -128,7 +128,7 @@
                                 <div class="mb-3 pb-2 border-bottom">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <strong>2.2 Spesifikasi Produk</strong>
-                                        <span class="badge bg-primary rounded-pill"><?= $nilaiIndustri['spesifikasi_produk'] ?></span>
+                                        <span class="badge bg-success rounded-pill"><?= $nilaiIndustri['spesifikasi_produk'] ?></span>
                                     </div>
                                     <small class="text-muted">Mampu merumuskan requirement/spesifikasi teknis</small>
                                 </div>
@@ -136,7 +136,7 @@
                                 <div class="mb-3 pb-2 border-bottom">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <strong>2.3 Desain Produk</strong>
-                                        <span class="badge bg-primary rounded-pill"><?= $nilaiIndustri['desain_produk'] ?></span>
+                                        <span class="badge bg-success rounded-pill"><?= $nilaiIndustri['desain_produk'] ?></span>
                                     </div>
                                     <small class="text-muted">Dapat merancang desain produk yang baik</small>
                                 </div>
@@ -144,7 +144,7 @@
                                 <div class="mb-3 pb-2 border-bottom">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <strong>2.4 Implementasi Produk</strong>
-                                        <span class="badge bg-primary rounded-pill"><?= $nilaiIndustri['implementasi_produk'] ?></span>
+                                        <span class="badge bg-success rounded-pill"><?= $nilaiIndustri['implementasi_produk'] ?></span>
                                     </div>
                                     <small class="text-muted">Mengimplementasikan produk sesuai desain</small>
                                 </div>
@@ -152,7 +152,7 @@
                                 <div class="mb-3">
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <strong>2.5 Pengujian Produk</strong>
-                                        <span class="badge bg-primary rounded-pill"><?= $nilaiIndustri['pengujian_produk'] ?></span>
+                                        <span class="badge bg-success rounded-pill"><?= $nilaiIndustri['pengujian_produk'] ?></span>
                                     </div>
                                     <small class="text-muted">Melakukan pengujian produk secara sistematis</small>
                                 </div>
@@ -160,7 +160,7 @@
                                 <div class="mt-4 pt-3 border-top">
                                     <div class="d-flex justify-content-between fw-bold">
                                         <span>Rata-rata Hard Skills:</span>
-                                        <span class="text-primary">
+                                        <span class="text-success">
                                             <?= number_format((
                                                 $nilaiIndustri['deskripsi_produk'] + 
                                                 $nilaiIndustri['spesifikasi_produk'] + 
@@ -352,49 +352,9 @@
                                         <span>Nilai Dosen (40%):</span>
                                         <span class="fw-bold">(Akan dihitung)</span>
                                     </div>
-                                    <div class="d-flex justify-content-between fw-bold text-primary">
+                                    <div class="d-flex justify-content-between fw-bold text-success">
                                         <span>Total Nilai Akhir:</span>
                                         <span><?= number_format($nilaiIndustri['total_nilai_industri'] * 0.6, 2) ?> + (Nilai Dosen × 0.4)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body">
-                                    <h6 class="fw-bold mb-3">Konversi Nilai</h6>
-                                    <div class="table-responsive">
-                                        <table class="table table-sm table-bordered">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th>Range</th>
-                                                    <th>Huruf</th>
-                                                    <th>Keterangan</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>86-100</td>
-                                                    <td>A</td>
-                                                    <td>Sangat Baik</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>71-85</td>
-                                                    <td>B</td>
-                                                    <td>Baik</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>56-70</td>
-                                                    <td>C</td>
-                                                    <td>Cukup</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>≤ 55</td>
-                                                    <td>D</td>
-                                                    <td>Kurang</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
                                     </div>
                                 </div>
                             </div>

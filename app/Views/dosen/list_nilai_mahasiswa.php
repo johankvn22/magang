@@ -7,7 +7,7 @@
 <div class="container-fluid px-4 py-4">
     <!-- Header Section -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <h2 class="fw-bold text-primary mb-0">
+        <h2 class="fw-bold text-success mb-0">
             <i class="bi bi-journal-check me-2"></i>Daftar Nilai Mahasiswa
         </h2>
         
@@ -19,7 +19,7 @@
                        value="<?= esc($keyword ?? '') ?>">
             </div>
             <div class="col-auto">
-                <button type="submit" class="btn btn-primary btn-sm">
+                <button type="submit" class="btn btn-success btn-sm">
                     <i class="bi bi-search me-1"></i> Cari
                 </button>
             </div>
@@ -45,7 +45,7 @@
                                 <tr>
                                     <td class="ps-4">
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar avatar-sm me-3 bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center">
+                                            <div class="avatar avatar-sm me-3 bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center">
                                                 <i class="bi bi-person-fill"></i>
                                             </div>
                                             <div style="word-break: break-word;">
@@ -75,7 +75,7 @@
                                     <td>
                                         <?php if ($mhs['sudah_dinilai']) : ?>
                                             <a href="<?= site_url('dosen/penilaian-dosen/detail/' . $mhs['bimbingan_id']) ?>" 
-                                               class="btn btn-sm btn-primary rounded-pill px-3">
+                                               class="btn btn-sm btn-success rounded-pill px-3">
                                                 <i class="bi bi-eye me-1"></i> Detail
                                             </a>
                                         <?php else : ?>

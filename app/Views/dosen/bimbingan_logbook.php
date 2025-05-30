@@ -7,7 +7,7 @@
 <div class="container-fluid px-4 py-4">
     <!-- Header Section -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-primary mb-0">
+        <h2 class="fw-bold text-success mb-0">
             <i class="bi bi-journal-text me-2"></i>Detail Logbook Bimbingan
         </h2>
         <a href="<?= site_url('dosen/bimbingan') ?>" class="btn btn-outline-secondary">
@@ -148,7 +148,7 @@
 
                                     <td>
                                         <?php if (!empty($log['file_dokumen'])): ?>
-                                            <a href="<?= site_url('dosen/download-logbook/' . $log['file_dokumen']) ?>" class="btn btn-sm btn-outline-primary w-100 mb-1">
+                                            <a href="<?= site_url('dosen/download-logbook/' . $log['file_dokumen']) ?>" class="btn btn-sm btn-outline-success w-100 mb-1">
                                                 <i class="bi bi-download me-1"></i>Download
                                             </a>
                                         <?php endif; ?>
@@ -166,7 +166,7 @@
                                         <?php if ($log['status_validasi'] === 'menunggu') : ?>
                                             <form action="<?= site_url('dosen/update_catatan/' . $log['logbook_id']) ?>" method="post">
                                                 <textarea name="catatan_dosen" class="form-control form-control-sm mb-2" rows="2" required><?= esc($log['catatan_dosen']) ?></textarea>
-                                                <button type="submit" class="btn btn-primary btn-sm w-100">Simpan Catatan</button>
+                                                <button type="submit" class="btn btn-success btn-sm w-100">Simpan Catatan</button>
                                             </form>
                                         <?php else : ?>
                                             <div class="scrollable-cell" style="max-height: 100px; overflow-y: auto;">
@@ -213,11 +213,11 @@
     <!-- Assessment Button -->
     <div class="d-flex justify-content-between align-items-center">
         <?php if (!$penilaian_sudah_ada && $jumlahDisetujui >= 6 && !empty($bimbingan_id)) : ?>
-            <a href="<?= site_url('dosen/penilaian-dosen/form/' . $bimbingan_id) ?>" class="btn btn-primary">
+            <a href="<?= site_url('dosen/penilaian-dosen/form/' . $bimbingan_id) ?>" class="btn btn-success">
                 <i class="bi bi-pencil-square me-1"></i> Beri Penilaian
             </a>
         <?php elseif ($penilaian_sudah_ada) : ?>
-            <a href="<?= site_url('dosen/penilaian-dosen/detail/' . $bimbingan_id) ?>" class="btn btn-outline-primary">
+            <a href="<?= site_url('dosen/penilaian-dosen/detail/' . $bimbingan_id) ?>" class="btn btn-outline-success">
                 <i class="bi bi-eye me-1"></i> Lihat Penilaian
             </a>
         <?php else : ?>
