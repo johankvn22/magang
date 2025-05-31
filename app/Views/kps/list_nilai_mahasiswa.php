@@ -13,11 +13,25 @@
                     <h3 class="mb-0">
                         <i class="fas fa-clipboard-list me-2"></i>Daftar Nilai Mahasiswa - KPS
                     </h3>
-                    <div>
-                        <button class="btn btn-outline-light btn-sm" onclick="window.print()">
-                            <i class="fas fa-print me-1"></i>Cetak
-                        </button>
-                    </div>
+                    <form method="get" action="<?= site_url('kps/list_nilai_mahasiswa') ?>" class="row mb-3">
+                        <div class="col-md-9">
+                            <input type="text" name="keyword" value="<?= esc($keyword ?? '') ?>" class="form-control" placeholder="Cari Nama / NIM / Prodi...">
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-success">Cari</button>
+                        </div>
+                    </form>
+                    <form method="get" action="<?= site_url('kps/list_nilai_mahasiswa') ?>" class="row mb-3 g-2">
+                        <div class="col-md-9">
+                        <select name="perPage" class="form-select" onchange="this.form.submit()">
+                            <?php foreach ([5, 10, 25, 50, 100] as $option): ?>
+                            <option value="<?= $option ?>" <?= $perPage == $option ? 'selected' : '' ?>>
+                                Tampilkan <?= $option ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                        </div>
+                    </form>
                 </div>
             </div>
             <div class="card-body">
@@ -27,15 +41,15 @@
                             <tr>
                                 <th class="text-center" style="width: 5%">No</th>
                                 <th style="width: 20%">Mahasiswa</th>
-                                <th style="width: 10%">NIM</th>
                                 <th style="width: 15%">Program Studi</th>
-                                <th style="width: 20%">Perusahaan</th>
-                                <th class="text-center" style="width: 15%">Nilai Dosen</th>
-                                <th class="text-center" style="width: 15%">Nilai Industri</th>
-                                <th class="text-center" style="width: 10%">Aksi</th>
+                                <th style="width: 30%">Perusahaan</th>
+                                <th style="width: 10%">Nilai Dosen</th>
+                                <th style="width: 10%">Nilai Industri</th>
+                                <th style="width: 10%">Total Nilai</th>
+                                <th class="text-center" >Aksi</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody> 
                             <?php $no = 1;
                             foreach ($mahasiswa_list as $mhs): ?>
                                 <tr>
@@ -46,17 +60,22 @@
                                                 <i class="fas fa-user-circle fa-lg text-primary me-2"></i>
                                             </div>
                                             <div class="flex-grow-1 ms-2">
-                                                <a href="<?= base_url('kps/nilai/detail/' . $mhs['mahasiswa_id']) ?>" class="text-decoration-none fw-bold">
+                                                <div href="<?= base_url('kps/nilai/detail/' . $mhs['mahasiswa_id']) ?>" class="text-decoration-none fw-bold">
                                                     <?= $mhs['nama_lengkap'] ?>
-                                                </a>
+                                                </div>
+                                                <div class="text-muted small"><?= esc($mhs['nim']) ?></div>
+
                                             </div>
                                         </div>
                                     </td>
-                                    <td><?= $mhs['nim'] ?></td>
                                     <td>
                                         <span class="badge bg-primary bg-opacity-10 text-primary">
                                             <?= $mhs['program_studi'] ?>
                                         </span>
+                                        <span class="badge bg-secondary-subtle text-secondary">
+                                            <?= esc($mhs['kelas']) ?>
+                                        </span>
+
                                     </td>
                                     <td>
                                         <div class="d-flex align-items-center">
@@ -86,6 +105,9 @@
                                             </span>
                                         <?php endif; ?>
                                     </td>
+                                    <td>
+                                        <?= is_null($mhs['total_nilai']) ? '–' : number_format($mhs['total_nilai'], 2); ?>
+                                    </td>
                                     <td class="text-center">
                                         <a href="<?= base_url('kps/nilai/detail/' . $mhs['mahasiswa_id']) ?>"
                                             class="btn btn-primary btn-sm action-btn">
@@ -97,6 +119,10 @@
                         </tbody>
                     </table>
                 </div>
+                 <!-- Pagination -->
+        <div class="d-flex justify-content-center mt-3">
+            <?= $pager->links('default', 'custom_pagination') ?>
+        </div>
 
                 <?php if (empty($mahasiswa_list)): ?>
                     <div class="text-center py-5">

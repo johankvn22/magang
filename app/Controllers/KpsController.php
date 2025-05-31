@@ -547,6 +547,7 @@ class KpsController extends BaseController
     // Di dalam KpsController
     public function listNilaiMahasiswa()
     {
+        // Pastikan hanya kps yang bisa akses
         if (session()->get('role') !== 'kps') {
             return redirect()->to('/login')->with('error', 'Akses ditolak.');
         }
@@ -555,16 +556,60 @@ class KpsController extends BaseController
         $penilaianDosenModel = new PenilaianDosenModel();
         $penilaianIndustriModel = new PenilaianIndustriModel();
 
+        // Ambil semua data mahasiswa beserta total nilai akhir
         $mahasiswaList = $mahasiswaModel
-            ->select('mahasiswa_id, nama_lengkap, nim, program_studi, nama_perusahaan')
+            ->select('mahasiswa_id, nama_lengkap, nim, program_studi, kelas, nama_perusahaan')
             ->findAll();
 
-        foreach ($mahasiswaList as &$mhs) {
-            $mhs['nilai_dosen'] = $penilaianDosenModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
-            $mhs['nilai_industri'] = $penilaianIndustriModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
+        $keyword = $this->request->getGet('keyword');
+        $perPage = (int) ($this->request->getGet('perPage') ?? 10);
+        if (!in_array($perPage, [5, 10, 25, 50, 100])) {
+            $perPage = 10;
+        }
+        $currentPage = (int) ($this->request->getGet('page') ?? 1);
+        $offset = ($currentPage - 1) * $perPage;
+
+        // Filter berdasarkan keyword
+        if ($keyword) {
+            $mahasiswaList = array_filter($mahasiswaList, function($mhs) use ($keyword) {
+                $kw = mb_strtolower($keyword);
+                return str_contains(mb_strtolower($mhs['nama_lengkap']), $kw)
+                    || str_contains(mb_strtolower($mhs['nim']), $kw)
+                    || str_contains(mb_strtolower($mhs['program_studi']), $kw)
+                    || str_contains(mb_strtolower($mhs['kelas']), $kw)
+                    || str_contains(mb_strtolower($mhs['nama_perusahaan'] ?? ''), $kw);
+            });
+            $mahasiswaList = array_values($mahasiswaList); // reindex
         }
 
-        return view('kps/list_nilai_mahasiswa', ['mahasiswa_list' => $mahasiswaList]);
+        $total = count($mahasiswaList);
+        $mahasiswaList = array_slice($mahasiswaList, $offset, $perPage);
+
+        $pager = \Config\Services::pager();
+        $pager->makeLinks($currentPage, $perPage, $total, 'default_full');
+
+        $data['pager'] = $pager;
+        $data['keyword'] = $keyword;
+        $data['perPage'] = $perPage;
+        $data['offset'] = $offset;
+
+        // Gabungkan dengan nilai dosen, industri, dan hitung total nilai
+        foreach ($mahasiswaList as &$mhs) {
+            $nilaiDosen = $penilaianDosenModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
+            $nilaiIndustri = $penilaianIndustriModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
+            
+            $mhs['nilai_dosen'] = $nilaiDosen;
+            $mhs['nilai_industri'] = $nilaiIndustri;
+            
+            // Hitung total nilai akhir (60% industri + 40% dosen)
+            $totalNilaiDosen = $nilaiDosen ? $nilaiDosen['total_nilai'] : 0;
+            $totalNilaiIndustri = $nilaiIndustri ? $nilaiIndustri['total_nilai_industri'] : 0;
+            $mhs['total_nilai'] = ($totalNilaiIndustri * 0.6) + ($totalNilaiDosen * 0.4);
+        }
+
+        $data['mahasiswa_list'] = $mahasiswaList;
+
+        return view('kps/list_nilai_mahasiswa', $data);
     }
 
     public function detail_nilai($mahasiswa_id)
