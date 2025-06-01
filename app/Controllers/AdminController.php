@@ -90,33 +90,50 @@ class AdminController extends BaseController
 //fungsi untuk memasukkan pedoman magang
 public function uploadPedoman()
 {
-    helper(['form', 'url']);
-    
-    if ($this->request->getMethod() === 'post') {
-        $rules = [
-            'judul' => 'required',
-            'file' => 'uploaded[file]|ext_in[file,pdf]|max_size[file,5120]', // maksimal 5MB
-        ];
+    $file = $this->request->getFile('file_pedoman');
+    $judul = $this->request->getPost('judul');
 
-        if (!$this->validate($rules)) {
-            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
-        }
-
-        $file = $this->request->getFile('file');
+    if ($file && $file->isValid() && !$file->hasMoved()) {
         $newName = $file->getRandomName();
-        $file->move('uploads/pedoman/', $newName);
+        $file->move('uploads/pedoman', $newName);
 
         $pedomanModel = new PedomanMagangModel();
-        $pedomanModel->save([
-            'judul' => $this->request->getPost('judul'),
+
+        // Hapus file lama jika ada
+        $lama = $pedomanModel->first();
+        if ($lama) {
+            if (file_exists($lama['file_path'])) {
+                unlink($lama['file_path']);
+            }
+            $pedomanModel->delete($lama['id']);
+        }
+
+        $pedomanModel->insert([
+            'judul' => $judul,
             'file_path' => 'uploads/pedoman/' . $newName,
-            'deskripsi' => $this->request->getPost('deskripsi'),
+            'created_at' => date('Y-m-d H:i:s'),
         ]);
 
-        return redirect()->back()->with('success', 'File pedoman berhasil diupload!');
+        return redirect()->back()->with('success', 'File pedoman berhasil diupload.');
     }
 
-    return view('admin/upload_pedoman');
+    return redirect()->back()->with('error', 'Gagal mengupload file.');
+}
+
+public function deletePedoman($id)
+{
+    $pedomanModel = new PedomanMagangModel();
+    $data = $pedomanModel->find($id);
+
+    if ($data) {
+        if (file_exists($data['file_path'])) {
+            unlink($data['file_path']);
+        }
+        $pedomanModel->delete($id);
+        return redirect()->back()->with('success', 'File pedoman berhasil dihapus.');
+    }
+
+    return redirect()->back()->with('error', 'File tidak ditemukan.');
 }
 
 

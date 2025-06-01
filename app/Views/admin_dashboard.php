@@ -83,7 +83,7 @@
                 <?php endif; ?>
               </div>
 
-              <div class="d-flex gap-2">
+              <div class="d-flex flex-column gap-2">
                 <?php if (!empty($pedoman)) : ?>
                   <a href="<?= base_url($pedoman['file_path']) ?>" target="_blank" class="btn btn-primary w-100">
                     <i class="bi bi-download me-1"></i>Download
@@ -91,15 +91,21 @@
                 <?php endif; ?>
 
                 <?php if (session()->get('role') === 'admin') : ?>
-                  <a href="<?= base_url('admin/upload-pedoman') ?>" class="btn btn-success w-50">
-                    <i class="bi bi-upload me-1"></i>Upload
-                  </a>
+                  <!-- Inline Form Upload -->
+                  <form action="<?= base_url('admin/upload-pedoman') ?>" method="post" enctype="multipart/form-data" class="d-flex flex-column gap-2">
+                    <?= csrf_field() ?>
+                    <input type="text" name="judul" class="form-control" placeholder="Judul file PDF" required>
+                    <input type="file" name="file_pedoman" class="form-control" accept="application/pdf" required>
+                    <button type="submit" class="btn btn-success">
+                      <i class="bi bi-upload me-1"></i>Upload
+                    </button>
+                  </form>
 
                   <?php if (!empty($pedoman)) : ?>
                     <form action="<?= base_url('admin/delete-pedoman/' . $pedoman['id']) ?>" method="post" onsubmit="return confirm('Yakin ingin menghapus file ini?');">
                       <?= csrf_field() ?>
-                      <button class="btn btn-outline-danger w-50" type="submit">
-                        <i class="bi bi-trash me-1"></i>Delete
+                      <button class="btn btn-outline-danger w-100" type="submit">
+                        <i class="bi bi-trash me-1"></i>Hapus
                       </button>
                     </form>
                   <?php endif; ?>
@@ -108,6 +114,7 @@
             </div>
           </div>
         </div>
+
 
     </main>
 
