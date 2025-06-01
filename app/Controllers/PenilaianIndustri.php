@@ -80,7 +80,7 @@ public function create($mahasiswaId)
         $input['inisiatif'] + $input['literasi_digital'] + $input['deskripsi_produk'] +
         $input['spesifikasi_produk'] + $input['desain_produk'] +
         $input['implementasi_produk'] + $input['pengujian_produk']
-    ) / 10;
+    );
 
     $data = [
         'mahasiswa_id' => $input['mahasiswa_id'],

@@ -318,17 +318,17 @@
                                 </div>
                             </td>
                             <td>3.1 Frekuensi bimbingan minimal 4 kali</td>
-                            <td class="text-center">5-10</td>
+                            <td class="text-center">5-15</td>
                             <td>
-                                <input type="number" name="nilai_3_1" min="5" max="10" 
+                                <input type="number" name="nilai_3_1" min="5" max="15" 
                                        class="form-control form-control-sm" required>
                             </td>
                         </tr>
                         <tr>
                             <td>3.2 Bukti kemajuan bimbingan berkala</td>
-                            <td class="text-center">5-10</td>
+                            <td class="text-center">5-15</td>
                             <td>
-                                <input type="number" name="nilai_3_2" min="5" max="10" 
+                                <input type="number" name="nilai_3_2" min="5" max="15" 
                                        class="form-control form-control-sm" required>
                             </td>
                         </tr>

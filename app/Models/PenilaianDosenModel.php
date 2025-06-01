@@ -22,7 +22,8 @@ class PenilaianDosenModel extends Model
         'nilai_2_3',
         'nilai_2_4',
         'nilai_3_1',
-        'nilai_3_2'
+        'nilai_3_2',
+        'total_nilai'
     ];
 
     protected bool $allowEmptyInserts = false;

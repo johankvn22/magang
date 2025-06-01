@@ -105,7 +105,7 @@
                                                     $nilaiIndustri['kerja_tim'] + 
                                                     $nilaiIndustri['inisiatif'] + 
                                                     $nilaiIndustri['literasi_digital']
-                                                ) / 5, 2) ?>
+                                                ), 2) ?>
                                             </span>
                                         </div>
                                         <div class="d-flex justify-content-between mb-3">
@@ -117,12 +117,12 @@
                                                     $nilaiIndustri['desain_produk'] + 
                                                     $nilaiIndustri['implementasi_produk'] + 
                                                     $nilaiIndustri['pengujian_produk']
-                                                ) / 5, 2) ?>
+                                                ) , 2) ?>
                                             </span>
                                         </div>
                                         <div class="progress mb-3" style="height: 10px;">
                                             <div class="progress-bar bg-success" role="progressbar" 
-                                                 style="width: <?= $nilaiIndustri['total_nilai_industri'] * 10 ?>%" 
+                                                 style="width: <?= $nilaiIndustri['total_nilai_industri']?>%" 
                                                  aria-valuenow="<?= $nilaiIndustri['total_nilai_industri'] ?>" 
                                                  aria-valuemin="0" 
                                                  aria-valuemax="100">
@@ -148,7 +148,7 @@
                                                     $penilaian['nilai_1_1'] + 
                                                     $penilaian['nilai_1_2'] + 
                                                     $penilaian['nilai_1_3']
-                                                ) / 3, 2) ?>
+                                                ), 2) ?>
                                             </span>
                                         </div>
                                         <div class="d-flex justify-content-between mb-2">
@@ -159,7 +159,7 @@
                                                     $penilaian['nilai_2_2'] + 
                                                     $penilaian['nilai_2_3'] + 
                                                     $penilaian['nilai_2_4']
-                                                ) / 4, 2) ?>
+                                                ), 2) ?>
                                             </span>
                                         </div>
                                         <div class="d-flex justify-content-between mb-3">
@@ -168,12 +168,12 @@
                                                 <?= number_format((
                                                     $penilaian['nilai_3_1'] + 
                                                     $penilaian['nilai_3_2']
-                                                ) / 2, 2) ?>
+                                                ), 2) ?>
                                             </span>
                                         </div>
                                         <div class="progress mb-3" style="height: 10px;">
                                             <div class="progress-bar bg-primary" role="progressbar" 
-                                                 style="width: <?= $penilaian['total_nilai'] * 10 ?>%" 
+                                                 style="width: <?= $penilaian['total_nilai']?>%" 
                                                  aria-valuenow="<?= $penilaian['total_nilai'] ?>" 
                                                  aria-valuemin="0" 
                                                  aria-valuemax="100">
@@ -440,14 +440,14 @@
                                         </div>
                                     </td>
                                     <td>3.1 Mahasiswa melakukan bimbingan minimal 4 kali</td>
-                                    <td class="text-center">5 - 10</td>
+                                    <td class="text-center">5 - 15</td>
                                     <td class="text-center fw-bold">
                                         <span class="badge bg-success score-badge"><?= $penilaian['nilai_3_1'] ?></span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>3.2 Mahasiswa mampu menunjukkan bukti kemajuan bimbingan secara berkala</td>
-                                    <td class="text-center">5 - 10</td>
+                                    <td class="text-center">5 - 15</td>
                                     <td class="text-center fw-bold">
                                         <span class="badge bg-success score-badge"><?= $penilaian['nilai_3_2'] ?></span>
                                     </td>
@@ -476,8 +476,6 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
-  <?= $this->endSection(); ?>
+<?= $this->endSection(); ?>

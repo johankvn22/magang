@@ -105,7 +105,7 @@
                                                     $nilai_industri['kerja_tim'] + 
                                                     $nilai_industri['inisiatif'] + 
                                                     $nilai_industri['literasi_digital']
-                                                ) / 5, 2) ?>
+                                                ), 2) ?>
                                             </span>
                                         </div>
                                         <div class="d-flex justify-content-between mb-3">
@@ -117,12 +117,12 @@
                                                     $nilai_industri['desain_produk'] + 
                                                     $nilai_industri['implementasi_produk'] + 
                                                     $nilai_industri['pengujian_produk']
-                                                ) / 5, 2) ?>
+                                                ), 2) ?>
                                             </span>
                                         </div>
                                         <div class="progress mb-3" style="height: 10px;">
                                             <div class="progress-bar bg-success" role="progressbar" 
-                                                 style="width: <?= $nilai_industri['total_nilai_industri'] * 10 ?>%" 
+                                                 style="width: <?= $nilai_industri['total_nilai_industri']  ?>%" 
                                                  aria-valuenow="<?= $nilai_industri['total_nilai_industri'] ?>" 
                                                  aria-valuemin="0" 
                                                  aria-valuemax="100">
@@ -148,7 +148,7 @@
                                                     $nilai_dosen['nilai_1_1'] + 
                                                     $nilai_dosen['nilai_1_2'] + 
                                                     $nilai_dosen['nilai_1_3']
-                                                ) / 3, 2) ?>
+                                                ), 2) ?>
                                             </span>
                                         </div>
                                         <div class="d-flex justify-content-between mb-2">
@@ -159,7 +159,7 @@
                                                     $nilai_dosen['nilai_2_2'] + 
                                                     $nilai_dosen['nilai_2_3'] + 
                                                     $nilai_dosen['nilai_2_4']
-                                                ) / 4, 2) ?>
+                                                ), 2) ?>
                                             </span>
                                         </div>
                                         <div class="d-flex justify-content-between mb-3">
@@ -168,12 +168,12 @@
                                                 <?= number_format((
                                                     $nilai_dosen['nilai_3_1'] + 
                                                     $nilai_dosen['nilai_3_2']
-                                                ) / 2, 2) ?>
+                                                ), 2) ?>
                                             </span>
                                         </div>
                                         <div class="progress mb-3" style="height: 10px;">
                                             <div class="progress-bar bg-primary" role="progressbar" 
-                                                 style="width: <?= $nilai_dosen['total_nilai'] * 10 ?>%" 
+                                                 style="width: <?= $nilai_dosen['total_nilai']?>%" 
                                                  aria-valuenow="<?= $nilai_dosen['total_nilai'] ?>" 
                                                  aria-valuemin="0" 
                                                  aria-valuemax="100">
@@ -205,7 +205,7 @@
 
                                     <div class="d-flex justify-content-between mt-2">
                                         <small class="text-muted">0</small>
-                                        <small class="text-muted">10</small>
+                                        <small class="text-muted">100</small>
                                     </div>
                                 </div>
                             </div>
@@ -240,7 +240,7 @@
                                 <tr>
                                     <th style="width: 15%" class="text-center">Kategori</th>
                                     <th>Kriteria Unjuk Kerja (KUK)</th>
-                                    <th style="width: 15%" class="text-center">Range Nilai</th>
+                                    <th style="width: 15%" class="text-center">Angka Mutu</th>
                                     <th style="width: 15%" class="text-center">Nilai</th>
                                 </tr>
                             </thead>
@@ -358,7 +358,7 @@
                                 <tr>
                                     <th style="width: 15%" class="text-center">Kategori</th>
                                     <th class="criteria-col">Kriteria Unjuk Kerja (KUK)</th>
-                                    <th style="width: 15%" class="text-center">Range Nilai</th>
+                                    <th style="width: 15%" class="text-center">Angka Mutu</th>
                                     <th style="width: 15%" class="text-center">Nilai</th>
                                 </tr>
                             </thead>
@@ -440,14 +440,14 @@
                                         </div>
                                     </td>
                                     <td>3.1 Mahasiswa melakukan bimbingan minimal 4 kali</td>
-                                    <td class="text-center">5 - 10</td>
+                                    <td class="text-center">5 - 15</td>
                                     <td class="text-center fw-bold">
                                         <span class="badge bg-success score-badge"><?= $nilai_dosen['nilai_3_1'] ?></span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>3.2 Mahasiswa mampu menunjukkan bukti kemajuan bimbingan secara berkala</td>
-                                    <td class="text-center">5 - 10</td>
+                                    <td class="text-center">5 - 15</td>
                                     <td class="text-center fw-bold">
                                         <span class="badge bg-success score-badge"><?= $nilai_dosen['nilai_3_2'] ?></span>
                                     </td>
@@ -476,8 +476,6 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
   <?= $this->endSection(); ?>
