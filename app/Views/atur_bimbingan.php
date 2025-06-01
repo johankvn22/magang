@@ -72,12 +72,13 @@
     const searchInput = document.getElementById("searchInput");
     const table = document.getElementById("bimbinganTable").getElementsByTagName("tbody")[0];
 
-    searchInput.addEventListener("keyup", function () {
+    searchInput.addEventListener("keyup", function() {
         const filter = searchInput.value.toLowerCase();
 
         for (let row of table.rows) {
             const namaMahasiswa = row.cells[1]?.textContent.toLowerCase() || '';
             const nim = row.cells[2]?.textContent.toLowerCase() || '';
+            const kelas = row.cells[3]?.textContent.toLowerCase() || '';
             const perusahaan = row.cells[4]?.textContent.toLowerCase() || '';
             const dospem1 = row.cells[5]?.textContent.toLowerCase() || '';
             const dospem2 = row.cells[6]?.textContent.toLowerCase() || '';
@@ -86,6 +87,7 @@
             const match =
                 namaMahasiswa.includes(filter) ||
                 nim.includes(filter) ||
+                kelas.includes(filter) ||
                 perusahaan.includes(filter) ||
                 dospem1.includes(filter) ||
                 dospem2.includes(filter) ||

@@ -12,7 +12,7 @@ use App\Models\PembimbingIndustri;
 use App\Models\PenilaianDosenModel;
 use App\Models\PenilaianIndustriModel;
 use App\Models\UserModel; // Untuk mengambil data user
-
+use App\Models\PedomanMagangModel;
 
 class AdminController extends BaseController
 {
@@ -86,6 +86,38 @@ class AdminController extends BaseController
             return redirect()->back()->with('error', 'Tidak ada data bimbingan yang berhasil disimpan.');
         }
     }
+
+//fungsi untuk memasukkan pedoman magang
+public function uploadPedoman()
+{
+    helper(['form', 'url']);
+    
+    if ($this->request->getMethod() === 'post') {
+        $rules = [
+            'judul' => 'required',
+            'file' => 'uploaded[file]|ext_in[file,pdf]|max_size[file,5120]', // maksimal 5MB
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $file = $this->request->getFile('file');
+        $newName = $file->getRandomName();
+        $file->move('uploads/pedoman/', $newName);
+
+        $pedomanModel = new PedomanMagangModel();
+        $pedomanModel->save([
+            'judul' => $this->request->getPost('judul'),
+            'file_path' => 'uploads/pedoman/' . $newName,
+            'deskripsi' => $this->request->getPost('deskripsi'),
+        ]);
+
+        return redirect()->back()->with('success', 'File pedoman berhasil diupload!');
+    }
+
+    return view('admin/upload_pedoman');
+}
 
 
     // 🔽 FORM BIMBINGAN INDUSTRI

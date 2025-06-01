@@ -69,20 +69,46 @@
 
         <!-- Buku Pedoman -->
         <div class="col-lg-4">
-          <!-- HAPUS class 'h-100' di sini -->
           <div class="card border-0 shadow-sm">
             <div class="card-body d-flex flex-column justify-content-between">
               <div>
                 <h5 class="fw-bold">Buku Pedoman Magang</h5>
-                <p class="text-muted mb-3"><i class="bi bi-file-earmark-pdf-fill me-2"></i>Judul File PDF</p>
+
+                <?php if (!empty($pedoman)) : ?>
+                  <p class="text-muted mb-3">
+                    <i class="bi bi-file-earmark-pdf-fill me-2"></i><?= esc($pedoman['judul']) ?>
+                  </p>
+                <?php else : ?>
+                  <p class="text-muted mb-3">Belum ada file pedoman yang diupload.</p>
+                <?php endif; ?>
               </div>
+
               <div class="d-flex gap-2">
-                <button class="btn btn-success w-50">Upload </button>
-                <button class="btn btn-outline-danger w-50">Delete</button>
+                <?php if (!empty($pedoman)) : ?>
+                  <a href="<?= base_url($pedoman['file_path']) ?>" target="_blank" class="btn btn-primary w-100">
+                    <i class="bi bi-download me-1"></i>Download
+                  </a>
+                <?php endif; ?>
+
+                <?php if (session()->get('role') === 'admin') : ?>
+                  <a href="<?= base_url('admin/upload-pedoman') ?>" class="btn btn-success w-50">
+                    <i class="bi bi-upload me-1"></i>Upload
+                  </a>
+
+                  <?php if (!empty($pedoman)) : ?>
+                    <form action="<?= base_url('admin/delete-pedoman/' . $pedoman['id']) ?>" method="post" onsubmit="return confirm('Yakin ingin menghapus file ini?');">
+                      <?= csrf_field() ?>
+                      <button class="btn btn-outline-danger w-50" type="submit">
+                        <i class="bi bi-trash me-1"></i>Delete
+                      </button>
+                    </form>
+                  <?php endif; ?>
+                <?php endif; ?>
               </div>
             </div>
           </div>
         </div>
+
     </main>
 
 
