@@ -20,8 +20,8 @@ class UserModel extends Model
 
     protected array $casts = [];
     protected array $castHandlers = [];
-    
- // Ambil pengguna berdasarkan nomor induk
+
+    // Ambil pengguna berdasarkan nomor induk
     public function getUserByNomorInduk($nomorInduk)
     {
         return $this->where('nomor_induk', $nomorInduk)->first(); // Mengambil data pengguna berdasarkan nomor induk
@@ -32,6 +32,11 @@ class UserModel extends Model
     {
         return $this->insert($data); // Menyisipkan data pengguna baru ke tabel
     }
+    public function countByRole($role)
+    {
+        return $this->where('role', $role)->countAllResults();
+    }
+
 
     // Dates
     protected $useTimestamps = false;

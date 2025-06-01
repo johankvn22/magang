@@ -16,16 +16,29 @@ use App\Models\UserModel; // Untuk mengambil data user
 
 class AdminController extends BaseController
 {
+
+
     public function index()
     {
         if (session()->get('role') !== 'admin') {
             return redirect()->to('/login')->with('error', 'Akses ditolak.');
         }
 
+        $userModel = new UserModel();
+
+        // Ambil jumlah user berdasarkan role
+        $jumlahMahasiswa = $userModel->where('role', 'mahasiswa')->countAllResults();
+        $jumlahDosen = $userModel->where('role', 'pembimbing_dosen')->countAllResults();
+        $jumlahIndustri = $userModel->where('role', 'pembimbing_industri')->countAllResults();
+
         return view('admin_dashboard', [
             'title' => 'Dashboard Mahasiswa',
+            'jumlahMahasiswa' => $jumlahMahasiswa,
+            'jumlahDosen' => $jumlahDosen,
+            'jumlahIndustri' => $jumlahIndustri
         ]);
     }
+
 
     // FORM BIMBINGAN DOSEN
     public function tambahBimbingan()
@@ -145,21 +158,21 @@ class AdminController extends BaseController
     }
 
     //paginasi
-public function daftarMahasiswa()
-{
-    if (session()->get('role') !== 'admin') {
-        return redirect()->to('/login')->with('error', 'Akses ditolak.');
-    }
+    public function daftarMahasiswa()
+    {
+        if (session()->get('role') !== 'admin') {
+            return redirect()->to('/login')->with('error', 'Akses ditolak.');
+        }
 
-    $mahasiswaModel = new MahasiswaModel();
+        $mahasiswaModel = new MahasiswaModel();
 
-    // Ambil jumlah per halaman dari GET, default 10
-    $perPage = (int) ($this->request->getGet('perPage') ?? 10);
-    if (!in_array($perPage, [5, 10, 25, 50, 100])) {
-        $perPage = 10; // fallback jika isian tak valid
-    }
+        // Ambil jumlah per halaman dari GET, default 10
+        $perPage = (int) ($this->request->getGet('perPage') ?? 10);
+        if (!in_array($perPage, [5, 10, 25, 50, 100])) {
+            $perPage = 10; // fallback jika isian tak valid
+        }
 
-    $keyword = $this->request->getGet('keyword');
+        $keyword = $this->request->getGet('keyword');
 
 
         if ($keyword) {
@@ -170,24 +183,24 @@ public function daftarMahasiswa()
                 ->orLike('program_studi', $keyword)
                 ->orLike('kelas', $keyword)
                 ->orLike('no_hp', $keyword)
-                ->orLike('nama_perusahaan', $keyword)    
+                ->orLike('nama_perusahaan', $keyword)
                 ->orLike('judul_magang', $keyword)
                 ->groupEnd();
         }
 
-    $currentPage = (int) ($this->request->getGet('page') ?? 1);
-    $offset = ($currentPage - 1) * $perPage;
+        $currentPage = (int) ($this->request->getGet('page') ?? 1);
+        $offset = ($currentPage - 1) * $perPage;
 
-    $data = [
-        'mahasiswa' => $mahasiswaModel->paginate($perPage, 'default'),
-        'pager'     => $mahasiswaModel->pager,
-        'offset'    => $offset,
-        'keyword'   => $keyword,
-        'perPage'   => $perPage, // Kirim ke view
-    ];
+        $data = [
+            'mahasiswa' => $mahasiswaModel->paginate($perPage, 'default'),
+            'pager'     => $mahasiswaModel->pager,
+            'offset'    => $offset,
+            'keyword'   => $keyword,
+            'perPage'   => $perPage, // Kirim ke view
+        ];
 
-    return view('daftar_mahasiswa', $data);
-}
+        return view('daftar_mahasiswa', $data);
+    }
 
 
 
@@ -218,38 +231,38 @@ public function daftarMahasiswa()
             'nilai_dosen' => $nilai_dosen
         ]);
     }
-   public function listNilaiMahasiswa()
-{
-    // Pastikan hanya admin yang bisa akses
-    if (session()->get('role') !== 'admin') {
-        return redirect()->to('/login')->with('error', 'Akses ditolak.');
+    public function listNilaiMahasiswa()
+    {
+        // Pastikan hanya admin yang bisa akses
+        if (session()->get('role') !== 'admin') {
+            return redirect()->to('/login')->with('error', 'Akses ditolak.');
+        }
+
+        $mahasiswaModel = new MahasiswaModel();
+        $penilaianDosenModel = new PenilaianDosenModel();
+        $penilaianIndustriModel = new PenilaianIndustriModel();
+
+        // Ambil semua data mahasiswa beserta total nilai akhir
+        $mahasiswaList = $mahasiswaModel
+            ->select('mahasiswa_id, nama_lengkap, nim, program_studi, nama_perusahaan')
+            ->findAll();
+
+        // Gabungkan dengan nilai dosen, industri, dan hitung total nilai
+        foreach ($mahasiswaList as &$mhs) {
+            $nilaiDosen = $penilaianDosenModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
+            $nilaiIndustri = $penilaianIndustriModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
+
+            $mhs['nilai_dosen'] = $nilaiDosen;
+            $mhs['nilai_industri'] = $nilaiIndustri;
+
+            // Hitung total nilai akhir (60% industri + 40% dosen)
+            $totalNilaiDosen = $nilaiDosen ? $nilaiDosen['total_nilai'] : 0;
+            $totalNilaiIndustri = $nilaiIndustri ? $nilaiIndustri['total_nilai_industri'] : 0;
+            $mhs['total_nilai'] = ($totalNilaiIndustri * 0.6) + ($totalNilaiDosen * 0.4);
+        }
+
+        $data['mahasiswa_list'] = $mahasiswaList;
+
+        return view('list_nilai_mahasiswa', $data);
     }
-
-    $mahasiswaModel = new MahasiswaModel();
-    $penilaianDosenModel = new PenilaianDosenModel();
-    $penilaianIndustriModel = new PenilaianIndustriModel();
-
-    // Ambil semua data mahasiswa beserta total nilai akhir
-    $mahasiswaList = $mahasiswaModel
-        ->select('mahasiswa_id, nama_lengkap, nim, program_studi, nama_perusahaan')
-        ->findAll();
-
-    // Gabungkan dengan nilai dosen, industri, dan hitung total nilai
-    foreach ($mahasiswaList as &$mhs) {
-        $nilaiDosen = $penilaianDosenModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
-        $nilaiIndustri = $penilaianIndustriModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
-        
-        $mhs['nilai_dosen'] = $nilaiDosen;
-        $mhs['nilai_industri'] = $nilaiIndustri;
-        
-        // Hitung total nilai akhir (60% industri + 40% dosen)
-        $totalNilaiDosen = $nilaiDosen ? $nilaiDosen['total_nilai'] : 0;
-        $totalNilaiIndustri = $nilaiIndustri ? $nilaiIndustri['total_nilai_industri'] : 0;
-        $mhs['total_nilai'] = ($totalNilaiIndustri * 0.6) + ($totalNilaiDosen * 0.4);
-    }
-
-    $data['mahasiswa_list'] = $mahasiswaList;
-
-    return view('list_nilai_mahasiswa', $data);
-}
 }

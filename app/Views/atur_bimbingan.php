@@ -1,4 +1,5 @@
 <?php
+
 /** @var \CodeIgniter\View\View $this */
 ?>
 <?= $this->extend('layouts/template_admin'); ?>
@@ -14,7 +15,7 @@
 
         <div class="row mb-3">
             <div class="col-md-3 mx-0">
-            <input type="text" id="searchInput" class="form-control" placeholder="Cari Mahasiswa...">
+                <input type="text" id="searchInput" class="form-control" placeholder="Cari Mahasiswa...">
             </div>
         </div>
 
@@ -67,18 +68,33 @@
     </div>
 </body>
 
-    <script>
-        const searchInput = document.getElementById("searchInput");
-        const table = document.getElementById("bimbinganTable").getElementsByTagName("tbody")[0];
+<script>
+    const searchInput = document.getElementById("searchInput");
+    const table = document.getElementById("bimbinganTable").getElementsByTagName("tbody")[0];
 
-        searchInput.addEventListener("keyup", function() {
-            const filter = searchInput.value.toLowerCase();
-            for (let row of table.rows) {
-                row.style.display = [...row.cells].some(cell =>
-                    cell.textContent.toLowerCase().includes(filter)
-                ) ? "" : "none";
-            }
-        });
-    </script>
+    searchInput.addEventListener("keyup", function () {
+        const filter = searchInput.value.toLowerCase();
+
+        for (let row of table.rows) {
+            const namaMahasiswa = row.cells[1]?.textContent.toLowerCase() || '';
+            const nim = row.cells[2]?.textContent.toLowerCase() || '';
+            const perusahaan = row.cells[4]?.textContent.toLowerCase() || '';
+            const dospem1 = row.cells[5]?.textContent.toLowerCase() || '';
+            const dospem2 = row.cells[6]?.textContent.toLowerCase() || '';
+            const dospem3 = row.cells[7]?.textContent.toLowerCase() || '';
+
+            const match =
+                namaMahasiswa.includes(filter) ||
+                nim.includes(filter) ||
+                perusahaan.includes(filter) ||
+                dospem1.includes(filter) ||
+                dospem2.includes(filter) ||
+                dospem3.includes(filter);
+
+            row.style.display = match ? "" : "none";
+        }
+    });
+</script>
+
 
 <?= $this->endSection(); ?>
