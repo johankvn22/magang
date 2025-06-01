@@ -5,12 +5,16 @@
   <?= $this->section('content'); ?>
 
 
+
   <body>
       <div class="container py-4">
           <div class="d-flex justify-content-between align-items-center mb-4">
               <h2 class="mb-0 text-primary fw-bold">
                   <i class="fas fa-clipboard-check me-2"></i>Detail Nilai Mahasiswa
               </h2>
+              <button class="btn btn-outline-primary" onclick="window.history.back()">
+                  <i class="fas fa-back me-1"></i>Kembali
+              </button>
               <button class="btn btn-outline-primary" onclick="window.print()">
                   <i class="fas fa-print me-1"></i>Cetak
               </button>
@@ -102,7 +106,7 @@
                                                         $nilai_industri['kerja_tim'] +
                                                         $nilai_industri['inisiatif'] +
                                                         $nilai_industri['literasi_digital']
-                                                    ) / 5, 2) ?>
+                                                    ), 2) ?>
                                               </span>
                                           </div>
                                           <div class="d-flex justify-content-between mb-3">
@@ -114,12 +118,12 @@
                                                         $nilai_industri['desain_produk'] +
                                                         $nilai_industri['implementasi_produk'] +
                                                         $nilai_industri['pengujian_produk']
-                                                    ) / 5, 2) ?>
+                                                    ), 2) ?>
                                               </span>
                                           </div>
                                           <div class="progress mb-3" style="height: 10px;">
                                               <div class="progress-bar bg-success" role="progressbar"
-                                                  style="width: <?= $nilai_industri['total_nilai_industri'] * 10 ?>%"
+                                                  style="width: <?= $nilai_industri['total_nilai_industri']  ?>%"
                                                   aria-valuenow="<?= $nilai_industri['total_nilai_industri'] ?>"
                                                   aria-valuemin="0"
                                                   aria-valuemax="100">
@@ -145,7 +149,7 @@
                                                         $nilai_dosen['nilai_1_1'] +
                                                         $nilai_dosen['nilai_1_2'] +
                                                         $nilai_dosen['nilai_1_3']
-                                                    ) / 3, 2) ?>
+                                                    ), 2) ?>
                                               </span>
                                           </div>
                                           <div class="d-flex justify-content-between mb-2">
@@ -156,7 +160,7 @@
                                                         $nilai_dosen['nilai_2_2'] +
                                                         $nilai_dosen['nilai_2_3'] +
                                                         $nilai_dosen['nilai_2_4']
-                                                    ) / 4, 2) ?>
+                                                    ), 2) ?>
                                               </span>
                                           </div>
                                           <div class="d-flex justify-content-between mb-3">
@@ -165,12 +169,12 @@
                                                   <?= number_format((
                                                         $nilai_dosen['nilai_3_1'] +
                                                         $nilai_dosen['nilai_3_2']
-                                                    ) / 2, 2) ?>
+                                                    ), 2) ?>
                                               </span>
                                           </div>
                                           <div class="progress mb-3" style="height: 10px;">
                                               <div class="progress-bar bg-primary" role="progressbar"
-                                                  style="width: <?= $nilai_dosen['total_nilai'] * 10 ?>%"
+                                                  style="width: <?= $nilai_dosen['total_nilai'] ?>%"
                                                   aria-valuenow="<?= $nilai_dosen['total_nilai'] ?>"
                                                   aria-valuemin="0"
                                                   aria-valuemax="100">
@@ -202,7 +206,7 @@
 
                                       <div class="d-flex justify-content-between mt-2">
                                           <small class="text-muted">0</small>
-                                          <small class="text-muted">10</small>
+                                          <small class="text-muted">100</small>
                                       </div>
                                   </div>
                               </div>
@@ -472,6 +476,7 @@
               </div>
           </div>
       </div>
+
   </body>
 
   <?= $this->endSection(); ?>
