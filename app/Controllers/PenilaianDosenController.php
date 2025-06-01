@@ -129,52 +129,43 @@ class PenilaianDosenController extends BaseController
 
 
 
-    private function hitungTotal()
-    {
-        // Ambil nilai-nilai
-        $nilai1 = [
-            $this->request->getPost('nilai_1_1'),
-            $this->request->getPost('nilai_1_2'),
-            $this->request->getPost('nilai_1_3'),
-        ];
+private function hitungTotal()
+{
+    // Ambil nilai-nilai
+    $nilai1 = [
+        $this->request->getPost('nilai_1_1'),
+        $this->request->getPost('nilai_1_2'),
+        $this->request->getPost('nilai_1_3'),
+    ];
 
-        $nilai2 = [
-            $this->request->getPost('nilai_2_1'),
-            $this->request->getPost('nilai_2_2'),
-            $this->request->getPost('nilai_2_3'),
-            $this->request->getPost('nilai_2_4'),
-        ];
+    $nilai2 = [
+        $this->request->getPost('nilai_2_1'),
+        $this->request->getPost('nilai_2_2'),
+        $this->request->getPost('nilai_2_3'),
+        $this->request->getPost('nilai_2_4'),
+    ];
 
-        $nilai3 = [
-            $this->request->getPost('nilai_3_1'),
-            $this->request->getPost('nilai_3_2'),
-        ];
+    $nilai3 = [
+        $this->request->getPost('nilai_3_1'),
+        $this->request->getPost('nilai_3_2'),
+    ];
 
-        // Hitung rata-rata masing-masing bagian
-        $rata1 = $this->rataNilai($nilai1);
-        $rata2 = $this->rataNilai($nilai2);
-        $rata3 = $this->rataNilai($nilai3);
+    // Hitung total untuk nilai1 (bobot 30%)
+    $total_nilai1 = array_sum($nilai1);
 
-        // Hitung total berbobot
-        $total = ($rata1 * 0.3) + ($rata2 * 0.4) + ($rata3 * 0.3);
+    // Hitung total untuk nilai2 (bobot 40%)
+    $total_nilai2 = array_sum($nilai2);
 
-        return round($total, 3); // dibulatkan ke 2 angka di belakang koma
-        // return round($total, 2); // dibulatkan ke 2 angka di belakang koma
+    // Hitung total untuk nilai3 (bobot 30%)
+    $total_nilai3 = array_sum($nilai3);
 
-    }
+    // Hitung total keseluruhan
+    $total = $total_nilai1 + $total_nilai2 + $total_nilai3;
 
-    private function rataNilai($nilaiArray)
-    {
-        $total = 0;
-        $count = 0;
-        foreach ($nilaiArray as $nilai) {
-            if (is_numeric($nilai)) {
-                $total += floatval($nilai);
-                $count++;
-            }
-        }
-        return $count > 0 ? $total / $count : 0;
-    }
+    return $total;
+}
+
+
 
     // Menyimpan penilaian dosen
     public function save()

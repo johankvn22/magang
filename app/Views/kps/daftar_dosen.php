@@ -44,7 +44,7 @@
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered align-middle mb-0" id="mahasiswaTable">
+                    <table class="table table-striped align-middle mb-0" id="mahasiswaTable">
                         <thead class="table-light">
                             <tr>
                                 <th class="text-center" width="5%">No</th>
@@ -91,6 +91,8 @@
                                             <?php foreach ($listDosen as $dsn): ?>
                                                 <option data-id="<?= $dsn['dosen_id'] ?>" 
                                                         value="<?= esc($dsn['nama_lengkap']) ?> (<?= esc($dsn['nip']) ?>)">
+                                                    <?= $dsn['total_bimbingan'] ?? 0 ?> bimbingan
+                                                </option>
                                             <?php endforeach; ?>
                                         </datalist>
                                     </td>
@@ -164,30 +166,6 @@ document.querySelectorAll('.dosen-input').forEach(input => {
     });
 });
 
-const searchInput = document.getElementById("searchInput");
-const table = document.getElementById("mahasiswaTable").getElementsByTagName("tbody")[0];
-
-searchInput.addEventListener("keyup", function () {
-    const filter = searchInput.value.toLowerCase();
-    for (let row of table.rows) {
-        row.style.display = [...row.cells].some(cell =>
-            cell.textContent.toLowerCase().includes(filter)
-        ) ? "" : "none";
-    }
-});
-
-document.querySelectorAll('th.sortable').forEach(th => {
-    th.style.cursor = 'pointer';
-    th.addEventListener('click', () => {
-        const table = th.closest('table');
-        Array.from(table.querySelectorAll('tbody tr'))
-            .sort(((idx, asc) => (a, b) => {
-                const getVal = tr => tr.children[idx].innerText.toLowerCase();
-                return getVal(asc ? a : b).localeCompare(getVal(asc ? b : a));
-            })(Array.from(th.parentNode.children).indexOf(th), th.asc = !th.asc))
-            .forEach(tr => table.querySelector('tbody').appendChild(tr));
-    });
-});
 </script>
 
 <?= $this->endSection(); ?>
