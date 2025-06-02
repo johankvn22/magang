@@ -7,29 +7,32 @@
 <div class="container-fluid px-2">
 
   <!-- Header & Search -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
     <h2 class="fw-bold text-success mb-0">📋 Daftar Review Kinerja Mahasiswa</h2>
 
-    <form method="get" action="<?= site_url('kps/review-kinerja') ?>" class="row mb-3">
-      <div class="col-md-8">
-        <input type="text" name="keyword" value="<?= esc($keyword ?? '') ?>" class="form-control" placeholder="Cari Nama Mahasiswa/Perusahaan...">
-      </div>
-      <div class="col-auto">
-        <button type="submit" class="btn btn-success">Cari</button>
-      </div>
-    </form>
+    <div class="d-flex flex-wrap align-items-center gap-2 w-100">
+      <form method="get" action="<?= site_url('kps/review-kinerja') ?>" class="d-flex align-items-center me-2 flex-grow-1">
+      <input type="text" name="keyword" value="<?= esc($keyword ?? '') ?>" class="form-control me-2" placeholder="Cari Nama Mahasiswa/Perusahaan..." style="min-width:220px;">
+      <button type="submit" class="btn btn-success">Cari</button>
+      </form>
 
-    <form method="get" action="<?= site_url('kps/review-kinerja') ?>" class="row mb-3 g-2">
-      <div class="col-md-12">
-        <select name="perPage" class="form-select" onchange="this.form.submit()">
-          <?php foreach ([5, 10, 25, 50, 100] as $option): ?>
-            <option value="<?= $option ?>" <?= ($perPage ?? 10) == $option ? 'selected' : '' ?>>
-              Tampilkan <?= $option ?>
-            </option>
-          <?php endforeach; ?>
-        </select>
+      <form method="get" action="<?= site_url('kps/review-kinerja') ?>" class="me-2">
+      <select name="perPage" class="form-select" style="width:auto;" onchange="this.form.submit()">
+        <?php foreach ([5, 10, 25, 50, 100] as $option): ?>
+        <option value="<?= $option ?>" <?= ($perPage ?? 10) == $option ? 'selected' : '' ?>>
+          Tampilkan <?= $option ?>
+        </option>
+        <?php endforeach; ?>
+      </select>
+      </form>
+
+      <div class="ms-auto">
+      <a href="<?= site_url('kps/review-kinerja/export') ?>" class="btn btn-outline-success d-flex align-items-center">
+        <i class="fas fa-file-export me-2"></i>
+        <span>Ekspor Data</span>
+      </a>
       </div>
-    </form>
+    </div>
   </div>
 
   <!-- Table -->

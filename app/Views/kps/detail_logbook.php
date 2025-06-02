@@ -41,6 +41,30 @@
                         <p class="mb-0 fw-medium"><?= isset($mahasiswa['kelas']) ? esc($mahasiswa['kelas']) : '-' ?></p>
                     </div>
                 </div>
+                <div class="col-md-12 mt-3">
+                    <h6 class="mb-2 d-flex align-items-center">
+                        <i class="bi bi-person-badge me-2 text-secondary"></i>Informasi Dosen Pembimbing
+                    </h6>
+                    <div class="row">
+                        <?php if (!empty($dosen_pembimbing)) : ?>
+                            <?php foreach ($dosen_pembimbing as $dosen) : ?>
+                                <div class="col-md-6 mb-2">
+                                    <span class="text-muted small">Nama Dosen:</span>
+                                    <p class="mb-0 fw-medium"><?= esc($dosen['nama_lengkap']) ?></p>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <span class="text-muted small">NIP:</span>
+                                    <p class="mb-0 fw-medium"><?= esc($dosen['nip']) ?></p>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else : ?>
+                            <div class="col-12">
+                                <p class="text-muted">Belum ada dosen pembimbing terdaftar.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
             </div>
         </div>
 

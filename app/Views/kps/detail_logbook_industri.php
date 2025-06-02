@@ -15,9 +15,54 @@
         </a>
     </div>
 
-    <!-- Student Information Card (tetap sama) -->
+    <!-- Student & Dosen Information Card -->
     <div class="card shadow-sm mb-4 border-0 rounded-3">
-        <!-- ... (kode sebelumnya tetap) ... -->
+        <div class="card-body border-bottom">
+            <h5 class="mb-3 d-flex align-items-center">
+                <i class="bi bi-person-circle me-2 text-primary"></i>Informasi Mahasiswa
+            </h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-2">
+                        <span class="text-muted small">Nama:</span>
+                        <p class="mb-0 fw-medium"><?= isset($mahasiswa['nama_lengkap']) ? esc($mahasiswa['nama_lengkap']) : '-' ?></p>
+                    </div>
+                    <div>
+                        <span class="text-muted small">NIM:</span>
+                        <p class="mb-0 fw-medium"><?= isset($mahasiswa['nim']) ? esc($mahasiswa['nim']) : '-' ?></p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-2">
+                        <span class="text-muted small">Program Studi:</span>
+                        <p class="mb-0 fw-medium"><?= isset($mahasiswa['program_studi']) ? esc($mahasiswa['program_studi']) : '-' ?></p>
+                    </div>
+                    <div>
+                        <span class="text-muted small">Kelas:</span>
+                        <p class="mb-0 fw-medium"><?= isset($mahasiswa['kelas']) ? esc($mahasiswa['kelas']) : '-' ?></p>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <h6 class="mb-2 d-flex align-items-center">
+                        <i class="bi bi-person-badge me-2 text-secondary"></i>Informasi Pembimbing Industri
+                    </h6>
+                    <div class="row">
+                                <div class="col-md-6 mb-2">
+                                    <span class="text-muted small">Nama Dosen:</span>
+                                    <p class="mb-0 fw-medium"><?= esc($mahasiswa['nama_pembimbing_perusahaan']) ?></p>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <span class="text-muted small">Nama Perusahaan:</span>
+                                    <p class="mb-0 fw-medium"><?= esc($mahasiswa['nama_pembimbing_perusahaan']) ?></p>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <span class="text-muted small">Judul Magang:</span>
+                                    <p class="mb-0 fw-medium"><?= esc($mahasiswa['judul_magang']) ?></p>
+                                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Activity Log Table - MODIFIED SECTION -->

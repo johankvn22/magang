@@ -46,7 +46,10 @@ $routes->get('/admin/nilai', 'AdminController::listNilaiMahasiswa');
 
 $routes->get('admin/nilai/detail/(:num)', 'AdminController::detail_nilai/$1');
 
-
+$routes->get('admin/upload-pedoman', 'AdminController::uploadPedoman'); // Menampilkan form upload pedoman
+$routes->post('admin/upload-pedoman', 'AdminController::uploadPedoman'); // Memproses upload pedoman
+$routes->get('admin/pedoman/download/(:any)', 'AdminController::downloadPedoman/$1'); // Download pedoman
+$routes->post('admin/delete-pedoman/(:num)', 'AdminController::deletePedoman/$1'); // Hapus pedoman
 
 
 
@@ -165,6 +168,9 @@ $routes->group('kps', ['filter' => 'kpsauth'], function ($routes) {
     $routes->get('list_nilai_mahasiswa', 'KpsController::listNilaiMahasiswa');
     $routes->get('detail_nilai_mahasiswa', 'KpsController::detail_nilai');
     $routes->get('nilai/detail/(:num)', 'KpsController::detail_nilai/$1');
+
+    $routes->get('review-kinerja/export', 'KpsController::downloadReviewExcel');
+
 });
 
 $routes->group('panitia', ['filter' => 'auth'], function ($routes) {

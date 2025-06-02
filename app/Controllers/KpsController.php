@@ -12,6 +12,11 @@ use App\Models\PenilaianDosenModel;
 use App\Models\PenilaianIndustriModel;
 use App\Models\UserRequirement;
 use App\Models\ReviewKinerjaModel;
+use App\Models\UserModel;
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use App\Controllers\PedomanMagangModel; // Pastikan ini sesuai dengan controller pedoman
 
 class KpsController extends BaseController
 {
@@ -24,20 +29,39 @@ class KpsController extends BaseController
 
     public function dashboard()
     {
-        $kpsId = session()->get('kps_id');
-        if (!$kpsId) {
-            return redirect()->to('/login')->with('error', 'Session tidak valid.');
+        if (session()->get('role') !== 'kps') {
+            return redirect()->to('/login')->with('error', 'Akses ditolak.');
         }
 
+        $userModel = new UserModel();
+        $kpsId = session()->get('kps_id');
         $kps = $this->kpsModel->find($kpsId);
-        if (!$kps) {
-            return redirect()->to('/login')->with('error', 'Data KPS tidak ditemukan.');
-        }
+
+        // Ambil jumlah user berdasarkan role
+        $jumlahMahasiswa = $userModel->where('role', 'mahasiswa')->countAllResults();
+        $jumlahDosen = $userModel->where('role', 'pembimbing_dosen')->countAllResults();
+        $jumlahIndustri = $userModel->where('role', 'pembimbing_industri')->countAllResults();
 
         return view('kps/dashboard', [
-            'title' => 'Dashboard KPS',
-            'kps'   => $kps
+            'title' => 'Dashboard Mahasiswa',
+            'kps'   => $kps,
+            'jumlahMahasiswa' => $jumlahMahasiswa,
+            'jumlahDosen' => $jumlahDosen,
+            'jumlahIndustri' => $jumlahIndustri
         ]);
+    }
+
+    public function unduhPedomanMagang()
+    {
+        $pedomanModel = new \App\Models\PedomanMagangModel();
+        $pedoman = $pedomanModel->orderBy('created_at', 'DESC')->first();
+
+        if (!$pedoman || empty($pedoman['file_path']) || !file_exists(WRITEPATH . 'uploads/pedoman/' . $pedoman['file_path'])) {
+            return redirect()->back()->with('error', 'File pedoman magang tidak ditemukan.');
+        }
+
+        $filePath = WRITEPATH . 'uploads/pedoman/' . $pedoman['file_path'];
+        return $this->response->download($filePath, null);
     }
 
     public function editProfile()
@@ -352,7 +376,7 @@ class KpsController extends BaseController
         // Ambil data mahasiswa
         $data['mahasiswa'] = $mahasiswaModel->find($id);
 
-        // Ambil dosen pembimbing (bisa lebih dari satu)
+        // Ambil dosen pembimbing
         $bimbingan = $bimbinganModel->where('mahasiswa_id', $id)->findAll();
         $dosenIds = array_column($bimbingan, 'dosen_id');
         $data['dosen_pembimbing'] = [];
@@ -362,6 +386,7 @@ class KpsController extends BaseController
 
         return view('kps/detail_logbook', $data);
     }
+    
     public function logbookAktivitas()
     {
         // Hanya role KPS yang bisa mengakses
@@ -428,9 +453,18 @@ class KpsController extends BaseController
         $logbookModel = new LogbookIndustri();
         $mahasiswaModel = new MahasiswaModel();
 
-        $data['logbook_industri'] = $logbookModel->where('mahasiswa_id', $mahasiswa_id)->orderBy('created_at', 'DESC')->findAll();
+        // Ambil data logbook industri untuk mahasiswa terkait
+        $data['logbook_industri'] = $logbookModel->where('mahasiswa_id', $mahasiswa_id)->findAll();
+
+        // Ambil data mahasiswa
         $data['mahasiswa'] = $mahasiswaModel->find($mahasiswa_id);
 
+        // Jika mahasiswa tidak ditemukan, redirect dengan error
+        if (!$data['mahasiswa']) {
+            return redirect()->to('/kps/logbook-aktivitas')->with('error', 'Data mahasiswa tidak ditemukan.');
+        }
+
+        // Tampilkan view detail logbook industri beserta informasi mahasiswa
         return view('kps/detail_logbook_industri', $data);
     }
 
@@ -485,8 +519,8 @@ class KpsController extends BaseController
         $mahasiswaModel = new MahasiswaModel();
 
         $data['mahasiswa'] = $mahasiswaModel->find($mahasiswa_id);
-        $data['user_requirements'] = $requirementModel->where('mahasiswa_id', $mahasiswa_id)
-            ->orderBy('created_at', 'DESC')->findAll();
+        $data['user_requirements'] = $requirementModel->where('mahasiswa_id', $mahasiswa_id)->findAll();
+            // ->orderBy('created_at', 'DESC')->findAll();
 
         return view('kps/detail_user_requirement', $data);
     }
@@ -636,6 +670,77 @@ class KpsController extends BaseController
             'nilai_dosen' => $nilai_dosen
         ]);
     }
+
+    public function downloadReviewExcel()
+{
+    $reviewModel = new ReviewKinerjaModel();
+    $reviews = $reviewModel->findAll(); // ambil semua data
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    // Header kolom
+    $headers = [
+        'No', 'Nama Mahasiswa', 'NIM', 'Nama Perusahaan', 'Nama Pembimbing Perusahaan', 'Jabatan', 'Divisi',
+        'Integritas', 'Keahlian Bidang', 'Kemampuan Bahasa Inggris', 'Pengetahuan Bidang',
+        'Komunikasi & Adaptasi', 'Kerja Sama', 'Kemampuan Belajar', 'Kreativitas', 'Menuangkan Ide',
+        'Pemecahan Masalah', 'Sikap', 'Kerja di Bawah Tekanan', 'Manajemen Waktu', 'Bekerja Mandiri',
+        'Negosiasi', 'Analisis', 'Bekerja dgn Budaya Berbeda', 'Kepemimpinan', 'Tanggung Jawab',
+        'Presentasi', 'Menulis Dokumen', 'Saran Lulusan', 'Kemampuan Teknik Diperlukan',
+        'Profesi Cocok', 'Created At'
+    ];
+
+    $sheet->fromArray($headers, null, 'A1');
+
+    // Isi data
+    $row = 2;
+    foreach ($reviews as $i => $review) {
+        $sheet->setCellValue('A' . $row, $i + 1);
+        $sheet->setCellValue('B' . $row, $review['nama_mahasiswa']);
+        $sheet->setCellValue('C' . $row, $review['nim'] ?? '-');
+        $sheet->setCellValue('D' . $row, $review['nama_perusahaan']);
+        $sheet->setCellValue('E' . $row, $review['nama_pembimbing_perusahaan']);
+        $sheet->setCellValue('F' . $row, $review['jabatan']);
+        $sheet->setCellValue('G' . $row, $review['divisi']);
+        $sheet->setCellValue('H' . $row, $review['integritas']);
+        $sheet->setCellValue('I' . $row, $review['keahlian_bidang']);
+        $sheet->setCellValue('J' . $row, $review['kemampuan_bahasa_inggris']);
+        $sheet->setCellValue('K' . $row, $review['pengetahuan_bidang']);
+        $sheet->setCellValue('L' . $row, $review['komunikasi_adaptasi']);
+        $sheet->setCellValue('M' . $row, $review['kerja_sama']);
+        $sheet->setCellValue('N' . $row, $review['kemampuan_belajar']);
+        $sheet->setCellValue('O' . $row, $review['kreativitas']);
+        $sheet->setCellValue('P' . $row, $review['menuangkan_ide']);
+        $sheet->setCellValue('Q' . $row, $review['pemecahan_masalah']);
+        $sheet->setCellValue('R' . $row, $review['sikap']);
+        $sheet->setCellValue('S' . $row, $review['kerja_dibawah_tekanan']);
+        $sheet->setCellValue('T' . $row, $review['manajemen_waktu']);
+        $sheet->setCellValue('U' . $row, $review['bekerja_mandiri']);
+        $sheet->setCellValue('V' . $row, $review['negosiasi']);
+        $sheet->setCellValue('W' . $row, $review['analisis']);
+        $sheet->setCellValue('X' . $row, $review['bekerja_dengan_budaya_berbeda']);
+        $sheet->setCellValue('Y' . $row, $review['kepemimpinan']);
+        $sheet->setCellValue('Z' . $row, $review['tanggung_jawab']);
+        $sheet->setCellValue('AA' . $row, $review['presentasi']);
+        $sheet->setCellValue('AB' . $row, $review['menulis_dokumen']);
+        $sheet->setCellValue('AC' . $row, $review['saran_lulusan']);
+        $sheet->setCellValue('AD' . $row, $review['kemampuan_teknik_dibutuhkan']);
+        $sheet->setCellValue('AE' . $row, $review['profesi_cocok']);
+        $sheet->setCellValue('AF' . $row, $review['created_at']);
+        $row++;
+    }
+
+    // Set response
+    $filename = 'review_kinerja_mahasiswa_' . date('Ymd_His') . '.xlsx';
+
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header("Content-Disposition: attachment;filename=\"{$filename}\"");
+    header('Cache-Control: max-age=0');
+
+    $writer = new Xlsx($spreadsheet);
+    $writer->save('php://output');
+    exit;
+}
 
 
 

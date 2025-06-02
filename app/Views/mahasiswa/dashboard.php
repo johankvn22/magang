@@ -29,13 +29,13 @@
 
       <div class="card mb-4">
         <div class="card-body">
-          <h5 class="card-title">Upload Laporan Magang</h5>
+          <h5 class="card-title">Download Buku Pedoman Magang</h5>
           <form method="post" action="<?= site_url('mahasiswa/upload'); ?>" enctype="multipart/form-data">
             <div class="form-group mt-3">
               <label for="file">Pilih File:</label>
               <input type="file" name="file" id="file" class="form-control" required>
             </div>
-            <button type="submit" class="btn btn-primary mt-3">Upload</button>
+            <button type="submit" class="btn btn-primary mt-3">Download</button>
           </form>
         </div>
       </div>
