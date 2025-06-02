@@ -20,7 +20,7 @@
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item text-white" href="<?= site_url('/kps/editProfile'); ?>">Profile</a></li>
             <li><a class="dropdown-item text-white" href="<?= site_url('/kps/gantiPassword'); ?>">Ganti Password</a></li>
-            <li><a class="dropdown-item text-white" href="<?= base_url('/logout'); ?>">Logout</a></li>
+            <li><a class="dropdown-item text-white" href="<?= base_url('logout'); ?>" id="logoutBtn">Logout</a></li>
           </ul>
         </div>
       </div>

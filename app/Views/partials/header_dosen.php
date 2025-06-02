@@ -1,4 +1,3 @@
-
 <!-- Header -->
 <header class="bg-dark-green py-2">
   <div class="container-fluid">
@@ -17,10 +16,13 @@
             <span class="profile-circle"><i class="bi bi-person-circle fs-4"></i></span>
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><hr class="dropdown-divider"></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
             <li><a class="dropdown-item text-white" href="<?= site_url('/dosen/editProfile'); ?>">Profile</a></li>
             <li><a class="dropdown-item text-white" href="<?= site_url('/dosen/changePassword'); ?>">Ganti Password</a></li>
-            <li><a class="dropdown-item text-white" href="<?= base_url('logout'); ?>">Logout</a></li>
+            <li><a class="dropdown-item text-white" href="<?= base_url('logout'); ?>" id="logoutBtn">Logout</a></li>
+
           </ul>
         </div>
       </div>
