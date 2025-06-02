@@ -4,26 +4,76 @@ namespace App\Controllers;
 
 use App\Models\DosenPembimbingModel; // Memanggil model dosen pembimbing
 use CodeIgniter\Exceptions\PageNotFoundException; // Untuk menangani exception
+use App\Models\MahasiswaModel; // Memanggil model mahasiswa
+use App\Models\LogbookBimbingan; // Memanggil model logbook bimbingan
+use App\Models\PedomanMagangModel; // Memanggil model pedoman magang
+use App\Models\Bimbingan; // Memanggil model bimbingan
+use App\Models\PenilaianDosenModel; // Memanggil model penilaian dosen
 
 class DosenPembimbingController extends BaseController
 {
-    public function index()
-    {
-        $dosenModel = new DosenPembimbingModel(); // Membuat instance dari model
-        $userId = session()->get('user_id'); // Mengambil user_id dari session
+public function index()
+{
+    $userId = session()->get('user_id');
 
-        // Mencari dosen berdasarkan user_id
-        $dosen = $dosenModel->where('dosen_id', $userId)->first();
+    $dosenModel = new DosenPembimbingModel();
+    $dosen = $dosenModel->where('dosen_id', $userId)->first();
 
-        // Memastikan data dosen ditemukan
-        if (!$dosen) {
-            return redirect()->to('/login')->with('error', 'Data dosen tidak ditemukan.'); // Redirect jika tidak ditemukan
-        }
-        // Mengembalikan view dashboard dengan data dosen
-        return view('dosen/dashboard', ['dosen' => $dosen]);
+    $profilLengkap = $dosen && $dosen['nama_lengkap'] && $dosen['nip'] && $dosen['email'] && $dosen['no_telepon'];
+
+    $pedomanModel = new PedomanMagangModel();
+    $pedoman = $pedomanModel->orderBy('created_at', 'DESC')->first();
+
+    // Tambahan model
+    $bimbinganModel = new Bimbingan();
+    $logbookModel = new LogbookBimbingan();
+    $penilaianModel = new PenilaianDosenModel();
+
+    $bimbinganList = $bimbinganModel->where('dosen_id', $userId)->findAll();
+    $mahasiswaIds = array_column($bimbinganList, 'mahasiswa_id');
+    $bimbinganIds = array_column($bimbinganList, 'bimbingan_id');
+
+    $jumlahMahasiswaBimbingan = count($mahasiswaIds);
+
+    $jumlahBimbinganMasuk = 0;
+    $jumlahLaporanDiterima = 0;
+    $jumlahLaporanMenunggu = 0;
+    $jumlahSudahDinilai = 0;
+    $jumlahBelumDinilai = 0;
+
+    if (!empty($mahasiswaIds)) {
+        $jumlahBimbinganMasuk = $logbookModel->whereIn('mahasiswa_id', $mahasiswaIds)->countAllResults();
+
+        $jumlahLaporanDiterima = $logbookModel
+            ->whereIn('mahasiswa_id', $mahasiswaIds)
+            ->where('status_validasi', 'disetujui')
+            ->countAllResults();
+
+        $jumlahLaporanMenunggu = $logbookModel
+            ->whereIn('mahasiswa_id', $mahasiswaIds)
+            ->where('status_validasi', 'menunggu')
+            ->countAllResults();
     }
 
+    if (!empty($bimbinganIds)) {
+        $jumlahSudahDinilai = $penilaianModel
+            ->whereIn('bimbingan_id', $bimbinganIds)
+            ->countAllResults();
 
+        $jumlahBelumDinilai = count($bimbinganIds) - $jumlahSudahDinilai;
+    }
+
+    return view('dosen/dashboard', [
+        'profilLengkap'             => $profilLengkap,
+        'pedoman'                   => $pedoman,
+        'jumlahMahasiswaBimbingan'  => $jumlahMahasiswaBimbingan,
+        'jumlahBimbinganMasuk'      => $jumlahBimbinganMasuk,
+        'jumlahLaporanDiterima'     => $jumlahLaporanDiterima,
+        'jumlahLaporanMenunggu'     => $jumlahLaporanMenunggu,
+        'jumlahSudahDinilai'        => $jumlahSudahDinilai,
+        'jumlahBelumDinilai'        => $jumlahBelumDinilai,
+    ]);
+}
 
     // Fungsi untuk edit profil
     public function editProfile()
@@ -66,7 +116,7 @@ class DosenPembimbingController extends BaseController
             // Tambahkan kolom lain sesuai kebutuhan
         ]);
 
-        return redirect()->to('/dosen/dashboard')->with('success', 'Profil berhasil diperbarui.');
+        return redirect()->to('/dosen/editProfile')->with('success', 'Profil berhasil diperbarui.');
     }
 
     // Fungsi untuk ganti password

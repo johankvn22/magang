@@ -65,5 +65,14 @@ class Bimbingan extends Model
             ->getResultArray();
     }
 
+    public function getDosenPembimbingByMahasiswa($mahasiswaId)
+    {
+        return $this->db->table('bimbingan')
+            ->select('dosen_id')
+            ->where('mahasiswa_id', $mahasiswaId)
+            ->get()
+            ->getResultArray();
+    }
+
 
 }

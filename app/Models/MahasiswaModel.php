@@ -28,6 +28,7 @@ class MahasiswaModel extends Model
         'nama_pembimbing_perusahaan',
         'no_hp_pembimbing_perusahaan',
         'email_pembimbing_perusahaan',
+        'alamat_perusahaan',
         'judul_magang',
         'dospem1',
         'dospem2',

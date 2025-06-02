@@ -110,7 +110,7 @@ public function uploadPedoman()
 
         $pedomanModel->insert([
             'judul' => $judul,
-            'file_path' => 'uploads/pedoman/' . $newName,
+            'file_path' => '' . $newName,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
 

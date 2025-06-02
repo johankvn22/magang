@@ -86,6 +86,9 @@ $routes->group('mahasiswa', function ($routes) {
     $routes->get('ganti-password', 'MahasiswaController::ganti_password');
     $routes->post('ganti-password', 'MahasiswaController::update_password');
 
+    // Pedoman Routes
+    $routes->get('pedoman-download/(:num)', 'PedomanController::download/$1');
+
 
     // // Upload Laporan
     // $routes->post('upload', 'MahasiswaController::upload');
@@ -129,6 +132,8 @@ $routes->group('dosen', ['filter' => 'auth'], function ($routes) {
     // Rute untuk User Requirement
     $routes->get('user-requirement', 'UserRequirementDosenController::index');
     $routes->get('user-requirement/detail/(:num)', 'UserRequirementDosenController::detail/$1');
+
+
 });
 
 $routes->get('/admin/form-tambah-akun', 'Admin::formTambahAkun');

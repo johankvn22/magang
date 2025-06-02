@@ -7,10 +7,17 @@
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-lg-8">
+            <!-- Card for Edit Profile -->
             <div class="card shadow-sm">
                 <div class="card-header bg-success text-white">
                     <h4 class="mb-0">Edit Profil Dosen Pembimbing</h4>
                 </div>
+
+                <?php if(session()->getFlashdata('success')): ?>
+                    <div class="alert alert-success">
+                        <?= session()->getFlashdata('success') ?>
+                    </div>
+                <?php endif; ?>
                 
                 <div class="card-body">
                     <?php if (session()->getFlashdata('error')): ?>
@@ -23,40 +30,40 @@
                     <?php endif; ?>
 
                     <?= form_open('dosen/updateProfile'); ?>
-                        <div class="form-group">
-                            <label for="nama_lengkap" class="font-weight-bold">Nama Lengkap</label>
+                        <div class="form-group mt-3">
+                            <label for="nama_lengkap" class="font-weight-bold">Nama Lengkap <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="nama_lengkap" name="nama" 
                                    value="<?= esc($dosen['nama_lengkap']) ?>" required>
                         </div>
 
-                        <div class="form-row">
+                        <div class="form-row mt-3">
                             <div class="form-group col-md-6">
-                                <label for="nip" class="font-weight-bold">NIP</label>
+                                <label for="nip" class="font-weight-bold">NIP <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="nip" name="nip" 
                                        value="<?= esc($dosen['nip']) ?>" required>
                             </div>
                             
-                            <div class="form-group col-md-6">
-                                <label for="no_telepon" class="font-weight-bold">No Telepon</label>
+                            <div class="form-group col-md-6 mt-3">
+                                <label for="no_telepon" class="font-weight-bold">No Telepon <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="no_telepon" name="no_telepon" 
                                        value="<?= esc($dosen['no_telepon']) ?>" required>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="email" class="font-weight-bold">Email</label>
+                        <div class="form-group mt-3">
+                            <label for="email" class="font-weight-bold">Email <span class="text-danger">*</span></label>
                             <input type="email" class="form-control" id="email" name="email" 
                                    value="<?= esc($dosen['email']) ?>" required>
                         </div>
 
-                        <div class="form-group">
-                            <label for="link_whatsapp" class="font-weight-bold">Link WhatsApp</label>
+                        <div class="form-group mt-3">
+                            <label for="link_whatsapp" class="font-weight-bold">Link Grup Bimbingan WhatsApp</label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="fab fa-whatsapp"></i></span>
                                 </div>
                                 <input type="url" class="form-control" id="link_whatsapp" name="link_whatsapp" 
-                                       placeholder="https://wa.me/6281234567890" 
+                                       placeholder="https://wa.me/" 
                                        value="<?= esc($dosen['link_whatsapp']) ?>">
                             </div>
 

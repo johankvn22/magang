@@ -49,20 +49,22 @@
                             <tr>
                                 <th class="text-center" width="5%">No</th>
                                 <th width="15%">Nama</th>
-                                <th width="10%">NIM</th>
-                                <th class="sortable" width="8%">Kelas</th>
+                                <th class="sortable" width="15%">Kelas</th>
                                 <th class="sortable" width="20%">Perusahaan</th>
                                 <th width="15%">Divisi</th>
-                                <th class="sortable" width="27%">Dosen Pembimbing</th>
+                                <th class="sortable" width="25%">Dosen Pembimbing</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($mahasiswa as $index => $m): ?>
                                 <tr class="<?= empty($m['dosen_terpilih']) ? 'table-warning' : '' ?>">
                                     <td class="text-center"><?= $offset + $index + 1 ?></td>
-                                    <td><?= esc($m['nama_lengkap']) ?></td>
-                                    <td><?= esc($m['nim']) ?></td>
-                                    <td><?= esc($m['kelas']) ?></td>
+                                    <td>
+                                        <div class="fw-semibold"><?= esc($m['nama_lengkap']) ?></div>
+                                        <div class="text-muted small"><?= esc($m['nim']) ?></div>                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary-subtle text-primary"><?= esc($m['program_studi']) ?></span><br>
+                                        <span class="badge bg-secondary-subtle text-secondary"><?= esc($m['kelas']) ?></span>                                    </td>
                                     <td style="max-width: 250px;" title="<?= esc($m['nama_perusahaan']) ?>">
                                         <?= esc($m['nama_perusahaan']) ?>
                                     </td>
