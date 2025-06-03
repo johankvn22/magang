@@ -39,8 +39,118 @@ class AdminController extends BaseController
         ]);
     }
 
+    // Tampilkan daftar dosen pembimbing dengan mahasiswa bimbingannya
+    public function daftarDosen()
+    {
+        $mahasiswaModel = new MahasiswaModel();
+        $bimbinganModel = new Bimbingan();
+        $dosenModel = new DosenPembimbingModel();
 
-    // FORM BIMBINGAN DOSEN
+        // Ambil parameter search & pagination
+        $keyword = $this->request->getGet('keyword');
+        $perPage = (int) ($this->request->getGet('perPage') ?? 10); // Added missing parenthesis
+        if (!in_array($perPage, [5, 10, 25, 50, 100])) {
+            $perPage = 10;
+        }
+        $currentPage = (int) ($this->request->getGet('page') ?? 1);
+        $offset = ($currentPage - 1) * $perPage;
+
+        // Ambil data mahasiswa + dosen
+        $allMahasiswa = $mahasiswaModel->getMahasiswaWithDosen();
+        if ($allMahasiswa instanceof \CodeIgniter\Model) {
+            $allMahasiswa = $allMahasiswa->findAll();
+        }
+
+
+        // Ambil data mahasiswa + dosen
+        $allMahasiswa = $mahasiswaModel->getMahasiswaWithDosen();
+        if ($allMahasiswa instanceof \CodeIgniter\Model) {
+            $allMahasiswa = $allMahasiswa->findAll();
+        }
+
+        // Filter jika ada keyword
+        if ($keyword) {
+            $allMahasiswa = array_filter($allMahasiswa, function ($m) use ($keyword) {
+                $kw = mb_strtolower($keyword);
+                return str_contains(mb_strtolower($m['nama_lengkap']), $kw)
+                    || str_contains(mb_strtolower($m['nim']), $kw)
+                    || str_contains(mb_strtolower($m['program_studi']), $kw)
+                    || str_contains(mb_strtolower($m['kelas']), $kw)
+                    || str_contains(mb_strtolower($m['nama_perusahaan'] ?? ''), $kw);
+            });
+            $allMahasiswa = array_values($allMahasiswa); // reindex
+        }
+
+        $total = count($allMahasiswa);
+        $pagedMahasiswa = array_slice($allMahasiswa, $offset, $perPage);
+
+        // Mahasiswa + dosen terpilih
+        foreach ($pagedMahasiswa as &$m) {
+            $m['dosen_terpilih'] = array_column(
+                $bimbinganModel->where('mahasiswa_id', $m['mahasiswa_id'])->findAll(),
+                'dosen_id'
+            );
+        }
+
+        // Ambil semua dosen
+        $listDosen = $dosenModel->findAll();
+
+        // Jumlah bimbingan per dosen
+        $bimbinganCount = $bimbinganModel->select('dosen_id, COUNT(*) as total')
+            ->groupBy('dosen_id')
+            ->findAll();
+
+        $bimbinganMap = [];
+        foreach ($bimbinganCount as $bc) {
+            $bimbinganMap[$bc['dosen_id']] = $bc['total'];
+        }
+
+        // Tambahkan total ke listDosen
+        foreach ($listDosen as &$d) {
+            $d['total_bimbingan'] = $bimbinganMap[$d['dosen_id']] ?? 0;
+        }
+
+        // Pager manual
+        $pager = \Config\Services::pager();
+        $pager->makeLinks($currentPage, $perPage, $total, 'default_full');
+
+        return view('atur_bimbingan', [
+            'mahasiswa' => $pagedMahasiswa,
+            'pager' => $pager,
+            'offset' => $offset,
+            'listDosen' => $listDosen,
+            'keyword' => $keyword,
+            'perPage' => $perPage,
+        ]);
+    }
+
+    // Update pembagian dosen pembimbing
+    public function updateDosen()
+    {
+        $mahasiswaIds = $this->request->getPost('mahasiswa_id');
+        $bimbinganModel = new Bimbingan();
+
+        if (is_array($mahasiswaIds)) {
+            foreach ($mahasiswaIds as $mahasiswaId) {
+                $dosenId = $this->request->getPost('dosen_id_' . $mahasiswaId);
+
+                if ($dosenId) {
+                    // Hapus pembimbing lama hanya untuk mahasiswa ini
+                    $bimbinganModel->where('mahasiswa_id', $mahasiswaId)->delete();
+
+                    // Simpan dosen baru
+                    $bimbinganModel->insert([
+                        'mahasiswa_id' => $mahasiswaId,
+                        'dosen_id'     => $dosenId
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->to('atur_bimbingan')->with('success', 'Data pembimbing berhasil diperbarui.');
+    }
+
+    // FORM TAMBAH BIMBINGAN (untuk multiple assignment)
     public function tambahBimbingan()
     {
         $mahasiswaModel = new MahasiswaModel();
@@ -55,10 +165,10 @@ class AdminController extends BaseController
         ]);
     }
 
-
+    // SIMPAN BIMBINGAN (untuk multiple assignment)
     public function saveBimbingan()
     {
-        $bimbinganModel = new Bimbingan(); // model untuk relasi bimbingan_dosen
+        $bimbinganModel = new Bimbingan();
 
         $mahasiswa_id = $this->request->getPost('mahasiswa_id'); // array
         $dosen_id = $this->request->getPost('dosen_id');         // array
@@ -67,16 +177,25 @@ class AdminController extends BaseController
         $failed = 0;
 
         foreach ($mahasiswa_id as $index => $mhs_id) {
-            $dosen_id = $dosen_id[$index];
+            $current_dosen_id = $dosen_id[$index] ?? null;
 
             // Validasi agar dosen dipilih
-            if (!empty($dosen_id)) {
-                $inserted = $bimbinganModel->insert([
-                    'mahasiswa_id' => $mhs_id,
-                    'dosen_id'     => $dosen_id
-                ]);
+            if (!empty($current_dosen_id)) {
+                // Cek apakah bimbingan sudah ada
+                $existing = $bimbinganModel->where('mahasiswa_id', $mhs_id)
+                    ->where('dosen_id', $current_dosen_id)
+                    ->first();
 
-                $inserted ? $success++ : $failed++;
+                if (!$existing) {
+                    $inserted = $bimbinganModel->insert([
+                        'mahasiswa_id' => $mhs_id,
+                        'dosen_id'     => $current_dosen_id
+                    ]);
+
+                    $inserted ? $success++ : $failed++;
+                } else {
+                    $success++; // Skip jika sudah ada
+                }
             }
         }
 
@@ -87,54 +206,54 @@ class AdminController extends BaseController
         }
     }
 
-//fungsi untuk memasukkan pedoman magang
-public function uploadPedoman()
-{
-    $file = $this->request->getFile('file_pedoman');
-    $judul = $this->request->getPost('judul');
+    //fungsi untuk memasukkan pedoman magang
+    public function uploadPedoman()
+    {
+        $file = $this->request->getFile('file_pedoman');
+        $judul = $this->request->getPost('judul');
 
-    if ($file && $file->isValid() && !$file->hasMoved()) {
-        $newName = $file->getRandomName();
-        $file->move('uploads/pedoman', $newName);
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            $newName = $file->getRandomName();
+            $file->move('uploads/pedoman', $newName);
 
-        $pedomanModel = new PedomanMagangModel();
+            $pedomanModel = new PedomanMagangModel();
 
-        // Hapus file lama jika ada
-        $lama = $pedomanModel->first();
-        if ($lama) {
-            if (file_exists($lama['file_path'])) {
-                unlink($lama['file_path']);
+            // Hapus file lama jika ada
+            $lama = $pedomanModel->first();
+            if ($lama) {
+                if (file_exists($lama['file_path'])) {
+                    unlink($lama['file_path']);
+                }
+                $pedomanModel->delete($lama['id']);
             }
-            $pedomanModel->delete($lama['id']);
+
+            $pedomanModel->insert([
+                'judul' => $judul,
+                'file_path' => '' . $newName,
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+
+            return redirect()->back()->with('success', 'File pedoman berhasil diupload.');
         }
 
-        $pedomanModel->insert([
-            'judul' => $judul,
-            'file_path' => '' . $newName,
-            'created_at' => date('Y-m-d H:i:s'),
-        ]);
-
-        return redirect()->back()->with('success', 'File pedoman berhasil diupload.');
+        return redirect()->back()->with('error', 'Gagal mengupload file.');
     }
 
-    return redirect()->back()->with('error', 'Gagal mengupload file.');
-}
+    public function deletePedoman($id)
+    {
+        $pedomanModel = new PedomanMagangModel();
+        $data = $pedomanModel->find($id);
 
-public function deletePedoman($id)
-{
-    $pedomanModel = new PedomanMagangModel();
-    $data = $pedomanModel->find($id);
-
-    if ($data) {
-        if (file_exists($data['file_path'])) {
-            unlink($data['file_path']);
+        if ($data) {
+            if (file_exists($data['file_path'])) {
+                unlink($data['file_path']);
+            }
+            $pedomanModel->delete($id);
+            return redirect()->back()->with('success', 'File pedoman berhasil dihapus.');
         }
-        $pedomanModel->delete($id);
-        return redirect()->back()->with('success', 'File pedoman berhasil dihapus.');
-    }
 
-    return redirect()->back()->with('error', 'File tidak ditemukan.');
-}
+        return redirect()->back()->with('error', 'File tidak ditemukan.');
+    }
 
 
     // 🔽 FORM BIMBINGAN INDUSTRI

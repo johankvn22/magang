@@ -2,16 +2,104 @@
 
 namespace App\Controllers;
 
+use App\Models\LogbookIndustri;
 use App\Models\UserModel;
 use App\Models\PembimbingIndustri;
+use App\Models\BimbinganIndustriModel;
+use App\Models\MahasiswaModel;
 
 class PembimbingIndustriController extends BaseController
 {
+    // Fungsi dashboard tetap seperti yang ada
     public function dashboard()
     {
-        return view('industri/dashboard');
+        $userId = session()->get('user_id');
+
+        // Get industrial supervisor data
+        $pembimbingModel = new PembimbingIndustri();
+        $pembimbing = $pembimbingModel->where('pembimbing_id', $userId)->first();
+
+        // Check if profile is complete
+        $profilLengkap = $pembimbing && $pembimbing['nama'] && $pembimbing['no_telepon'] && $pembimbing['email'];
+
+        // Initialize models
+        $logbookModel = new LogbookIndustri();
+        $bimbinganModel = new BimbinganIndustriModel();
+
+        // Get all students supervised by this industrial supervisor
+        $bimbinganList = $bimbinganModel->where('pembimbing_id', $userId)->findAll();
+        $mahasiswaIds = array_column($bimbinganList, 'mahasiswa_id');
+
+        // Calculate various statistics
+        $totalMahasiswa = count(array_unique($mahasiswaIds));
+
+        $jumlahBimbinganMasuk = 0;
+        $jumlahLaporanDiterima = 0;
+        $jumlahLaporanMenunggu = 0;
+        $jumlahLaporanDitolak = 0;
+
+        if (!empty($mahasiswaIds)) {
+            $jumlahBimbinganMasuk = $logbookModel->whereIn('mahasiswa_id', $mahasiswaIds)->countAllResults();
+
+            $jumlahLaporanDiterima = $logbookModel
+                ->whereIn('mahasiswa_id', $mahasiswaIds)
+                ->where('status_validasi', 'disetujui')
+                ->countAllResults();
+
+            $jumlahLaporanMenunggu = $logbookModel
+                ->whereIn('mahasiswa_id', $mahasiswaIds)
+                ->where('status_validasi', 'menunggu')
+                ->countAllResults();
+
+            $jumlahLaporanDitolak = $logbookModel
+                ->whereIn('mahasiswa_id', $mahasiswaIds)
+                ->where('status_validasi', 'ditolak')
+                ->countAllResults();
+        }
+
+        return view('industri/dashboard', [
+            'profilLengkap'         => $profilLengkap,
+            'totalMahasiswa'        => $totalMahasiswa,
+            'jumlahBimbinganMasuk'  => $jumlahBimbinganMasuk,
+            'laporanDisetujui'      => $jumlahLaporanDiterima,
+            'laporanMenunggu'       => $jumlahLaporanMenunggu,
+            'laporanDitolak'        => $jumlahLaporanDitolak,
+        ]);
     }
 
+    // Fungsi baru untuk menampilkan daftar mahasiswa bimbingan
+    public function index()
+    {
+        $userId = session()->get('user_id');
+
+        // Get industrial supervisor's students with logbook counts
+        $bimbinganModel = new BimbinganIndustriModel();
+        $logbookModel = new LogbookIndustri();
+
+        $mahasiswaList = $bimbinganModel
+            ->select('mahasiswa.*, perusahaan.nama as nama_perusahaan')
+            ->join('mahasiswa', 'mahasiswa.mahasiswa_id = bimbingan_industri.mahasiswa_id')
+            ->join('perusahaan', 'perusahaan.perusahaan_id = mahasiswa.perusahaan_id', 'left')
+            ->where('bimbingan_industri.pembimbing_id', $userId)
+            ->findAll();
+
+        // Add logbook counts for each student
+        foreach ($mahasiswaList as &$mhs) {
+            $mhs['total_bimbingan'] = $logbookModel
+                ->where('mahasiswa_id', $mhs['mahasiswa_id'])
+                ->countAllResults();
+
+            $mhs['bimbingan_disetujui'] = $logbookModel
+                ->where('mahasiswa_id', $mhs['mahasiswa_id'])
+                ->where('status_validasi', 'disetujui')
+                ->countAllResults();
+        }
+
+        return view('industri/bimbingan/index', [
+            'mahasiswaList' => $mahasiswaList,
+            'keyword' => $this->request->getGet('search')
+        ]);
+    }
     public function editProfil()
     {
         $industriModel = new PembimbingIndustri();
