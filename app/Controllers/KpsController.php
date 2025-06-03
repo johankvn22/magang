@@ -206,30 +206,7 @@ class KpsController extends BaseController
         ]);
     }
 
-    // public function updateDosen()
-    // {
-    //     $mahasiswaIds = $this->request->getPost('mahasiswa_id');
-    //     $bimbinganModel = new Bimbingan();
-
-    //     if (is_array($mahasiswaIds)) {
-    //         foreach ($mahasiswaIds as $mahasiswaId) {
-    //             // Hapus pembimbing lama
-    //             $bimbinganModel->where('mahasiswa_id', $mahasiswaId)->delete();
-
-    //             // Ambil dosen baru dari input
-    //             $dosenId = $this->request->getPost('dosen_id_' . $mahasiswaId);
-    //             if (!empty($dosenId)) {
-    //                 $bimbinganModel->insert([
-    //                     'mahasiswa_id' => $mahasiswaId,
-    //                     'dosen_id' => $dosenId
-    //                 ]);
-    //             }
-    //         }
-    //     }
-
-    //     return redirect()->to('kps/daftar-dosen')->with('success', 'Semua data pembimbing diperbarui.');
-    // }
-
+   
     public function updateDosen()
     {
         $mahasiswaIds = $this->request->getPost('mahasiswa_id');
