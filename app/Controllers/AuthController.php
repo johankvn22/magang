@@ -8,6 +8,7 @@ use App\Models\DosenPembimbingModel;
 use App\Models\Kps;
 use App\Models\Panitia;
 use App\Models\PembimbingIndustri;
+use App\Models\Bimbingan;
 
 class AuthController extends BaseController
 {
@@ -89,8 +90,8 @@ class AuthController extends BaseController
 
     public function register()
     {
-        return view('register');
-    }
+    $prodiList = ['TI', 'TMJ', 'TMD'];
+    return view('register', ['prodi' => $prodiList]);    }
 
     public function create()
     {
@@ -100,12 +101,14 @@ class AuthController extends BaseController
         $kpsModel = new Kps();
         $panitiaModel = new Panitia();
         $pembimbingModel = new PembimbingIndustri();
+        $bimbinganModel = new Bimbingan();
 
 
         $nomorInduk = $this->request->getPost('nomor_induk');
         $nama = $this->request->getPost('nama');
         $email = $this->request->getPost('email');
         $password = password_hash($this->request->getPost('password'), PASSWORD_DEFAULT);
+        $prodi = $this->request->getPost('prodi');
         $role = $this->request->getPost('role');
 
         $data = [
@@ -113,7 +116,8 @@ class AuthController extends BaseController
             'password' => $password,
             'nama' => $nama,
             'email' => $email,
-            'role' => $role
+            'role' => $role,
+            'prodi' => $prodi // ← Tambahkan ini
         ];
 
         if ($userModel->insert($data)) {
@@ -125,7 +129,7 @@ class AuthController extends BaseController
                         'mahasiswa_id' => $userId,
                         'nama_lengkap' => $nama,
                         'nim' => $nomorInduk,
-                        'program_studi' => 'Sistem Informasi',
+                        'program_studi' => $prodi,
                         'email' => $email,
                         'kelas' => $this->request->getPost('kelas'),
                         'no_hp' => $this->request->getPost('no_hp'),
@@ -139,9 +143,20 @@ class AuthController extends BaseController
                         'email_pembimbing_perusahaan' => $this->request->getPost('email_pembimbing_perusahaan'),
                     ];
                     if (!$mahasiswaModel->insert($mahasiswaData)) {
-                        log_message('error', 'Gagal insert mahasiswa: ' 
-                        . json_encode($mahasiswaModel->errors()));
-                    }
+                        // Insert ke tabel bimbingan
+                $bimbinganData = [
+                    'mahasiswa_id' => $userId,
+                    'dosen_id' => null // default null
+                ];
+
+                if (!$bimbinganModel->insert($bimbinganData)) {
+                    log_message('error', 'Gagal insert bimbingan: ' . json_encode($bimbinganModel->errors()));
+                }
+            } else {
+                log_message('error', 'Gagal insert mahasiswa: ' . json_encode($mahasiswaModel->errors()));
+            }
+        
+                    
                     break;
 
                     case 'pembimbing_dosen':
@@ -153,7 +168,8 @@ class AuthController extends BaseController
                                 'nip' => $nomorInduk,
                                 'no_telepon' => $this->request->getPost('no_telepon'),
                                 'email' => $email,
-                                'link_whatsapp' => $this->request->getPost('link_whatsapp')
+                                'link_whatsapp' => $this->request->getPost('link_whatsapp'),
+                                'prodi' => $prodi
                             ];
                             if (!$dosenModel->insert($dosenData)) {
                                 log_message('error', 'Gagal insert dosen: ' 
@@ -172,6 +188,7 @@ class AuthController extends BaseController
                                 'email' => $email,
                                 'no_telepon' => $this->request->getPost('no_telepon') ?: '',
                                 'nama' => $nama,
+                                'prodi' => $prodi
                             ];
         
         

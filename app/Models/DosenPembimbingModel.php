@@ -12,7 +12,7 @@ class DosenPembimbingModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['dosen_id', 'nama_lengkap', 'nip', 'no_telepon', 'email', 'link_whatsapp']; // Kolom yang diizinkan
+    protected $allowedFields    = ['dosen_id', 'nama_lengkap', 'nip', 'no_telepon', 'email', 'link_whatsapp', 'prodi']; // Kolom yang diizinkan
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

@@ -33,6 +33,16 @@
                 <input type="password" name="password" id="password" class="form-control" required>
             </div>
             <div class="form-group">
+                <label for="prodi">Program Studi</label>
+                <select name="prodi" class="form-control" required>
+                    <option value="">-- Pilih Program Studi --</option>
+                    <?php foreach ($prodi as $p): ?>
+                        <option value="<?= $p ?>"><?= $p ?></option>
+                    <?php endforeach; ?>
+                </select>
+
+            </div>
+            <div class="form-group">
                 <label for="role">Role</label>
                 <select name="role" id="role" class="form-control" required>
                     <option value="mahasiswa">Mahasiswa</option>

@@ -37,6 +37,7 @@
               <th>Password</th>
               <th>Role</th>
               <th>Nomor Induk</th>
+              <th>Prodi (TI, TMJ, TMD)</th>
 
             </tr>
           </thead>

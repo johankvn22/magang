@@ -76,18 +76,29 @@
                                                id="dosen_id_<?= $m['mahasiswa_id'] ?>" 
                                                value="<?= $m['dosen_terpilih'][0] ?? '' ?>">
 
-                                        <input list="dosen_list_<?= $index ?>" 
-                                               class="form-control form-control-sm dosen-input" 
-                                               data-target="<?= $m['mahasiswa_id'] ?>"
-                                               value="<?php
-                                                    $selectedId = $m['dosen_terpilih'][0] ?? '';
-                                                    $selectedDosen = array_filter($listDosen, fn($d) => $d['dosen_id'] == $selectedId);
-                                                    if (!empty($selectedDosen)) {
-                                                        $dosen = array_values($selectedDosen)[0];
-                                                        echo esc($dosen['nama_lengkap']) . ' (' . esc($dosen['nip']) . ')';
-                                                    }
-                                               ?>"
-                                               placeholder="Ketik nama atau NIP...">
+                                        <div class="input-group input-group-sm">
+                                            <input list="dosen_list_<?= $index ?>" 
+                                                   class="form-control dosen-input"
+                                                   data-target="<?= $m['mahasiswa_id'] ?>"
+                                                   value="<?php
+                                                        $selectedId = $m['dosen_terpilih'][0] ?? '';
+                                                        $selectedDosen = array_filter($listDosen, fn($d) => $d['dosen_id'] == $selectedId);
+                                                        if (!empty($selectedDosen)) {
+                                                            $dosen = array_values($selectedDosen)[0];
+                                                            echo esc($dosen['nama_lengkap']) . ' (' . esc($dosen['nip']) . ')';
+                                                        }
+                                                   ?>"
+                                                   placeholder="Ketik nama atau NIP..."
+                                                   required
+                                                   autocomplete="off"
+                                                   onfocus="this.setAttribute('list', 'dosen_list_<?= $index ?>')"
+                                                   oninput="if(this.value===''){this.setAttribute('list', 'dosen_list_<?= $index ?>');}">
+
+                                            <button type="button" class="btn btn-outline-secondary btn-clear-dosen" tabindex="-1"
+                                                onclick="this.previousElementSibling.value='';this.previousElementSibling.dispatchEvent(new Event('input'));this.previousElementSibling.focus();">
+                                                &times;
+                                            </button>
+                                        </div>
 
                                         <datalist id="dosen_list_<?= $index ?>">
                                             <?php foreach ($listDosen as $dsn): ?>

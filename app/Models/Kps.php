@@ -12,7 +12,7 @@ class Kps extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields = ['kps_id', 'nip', 'email', 'no_telepon', 'nama']; 
+    protected $allowedFields = ['kps_id', 'nip', 'email', 'no_telepon', 'nama', 'prodi']; 
     // Sesuaikan dengan kolom tabel kps Anda
 
     protected bool $allowEmptyInserts = false;
