@@ -8,9 +8,7 @@
         <h2 class="mb-0 text-success fw-bold">
             <i class="fas fa-clipboard-check me-2"></i>Detail Nilai Industri
         </h2>
-        <a href="<?= base_url('dosen/penilaian-dosen/listNilai') ?>" class="btn btn-outline-primary">
-            <i class="fas fa-arrow-left me-1"></i> Kembali
-        </a>
+        
         <button class="btn btn-outline-primary" onclick="window.print()">
             <i class="fas fa-print me-1"></i>Cetak
         </button>
@@ -263,6 +261,10 @@
                     </div>
                 </div>
             <?php endif; ?>
-        </div>x`
+            <br></br>
+            <a href="<?= base_url('dosen/penilaian-dosen/listNilai') ?>" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-1"></i> Kembali
+        </a>
+        </div>
 
 <?= $this->endSection(); ?>

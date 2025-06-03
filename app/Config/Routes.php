@@ -72,6 +72,8 @@ $routes->group('mahasiswa', function ($routes) {
     $routes->get('logbook_industri/edit/(:num)', 'LogbookIndustriController::edit/$1');
     $routes->post('logbook_industri/update/(:num)', 'LogbookIndustriController::update/$1');
     $routes->get('logbook_industri/delete/(:num)', 'LogbookIndustriController::delete/$1');
+    $routes->post('logbook_industri/delete/(:num)', 'LogbookIndustriController::delete/$1');
+
 
     // User Requirement
     $routes->get('user-requirement', 'UserRequirementController::index');
@@ -132,8 +134,6 @@ $routes->group('dosen', ['filter' => 'auth'], function ($routes) {
     // Rute untuk User Requirement
     $routes->get('user-requirement', 'UserRequirementDosenController::index');
     $routes->get('user-requirement/detail/(:num)', 'UserRequirementDosenController::detail/$1');
-
-
 });
 
 $routes->get('/admin/form-tambah-akun', 'Admin::formTambahAkun');
@@ -175,7 +175,6 @@ $routes->group('kps', ['filter' => 'kpsauth'], function ($routes) {
     $routes->get('nilai/detail/(:num)', 'KpsController::detail_nilai/$1');
 
     $routes->get('review-kinerja/export', 'KpsController::downloadReviewExcel');
-
 });
 
 $routes->group('panitia', ['filter' => 'auth'], function ($routes) {
