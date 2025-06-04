@@ -16,7 +16,7 @@ use App\Models\UserModel;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use App\Controllers\PedomanMagangModel; // Pastikan ini sesuai dengan controller pedoman
+use App\Models\PedomanMagangModel;
 
 class KpsController extends BaseController
 {
@@ -37,6 +37,9 @@ class KpsController extends BaseController
         $kpsId = session()->get('kps_id');
         $kps = $this->kpsModel->find($kpsId);
 
+        $pedomanModel = new PedomanMagangModel();
+        $pedoman = $pedomanModel->orderBy('created_at', 'DESC')->first();
+
         // Ambil jumlah user berdasarkan role
         $jumlahMahasiswa = $userModel->where('role', 'mahasiswa')->countAllResults();
         $jumlahDosen = $userModel->where('role', 'pembimbing_dosen')->countAllResults();
@@ -47,7 +50,8 @@ class KpsController extends BaseController
             'kps'   => $kps,
             'jumlahMahasiswa' => $jumlahMahasiswa,
             'jumlahDosen' => $jumlahDosen,
-            'jumlahIndustri' => $jumlahIndustri
+            'jumlahIndustri' => $jumlahIndustri,
+            'pedoman' => $pedoman,
         ]);
     }
 
@@ -472,12 +476,23 @@ class KpsController extends BaseController
     {
         $logbookModel = new LogbookIndustri();
         $mahasiswaModel = new MahasiswaModel();
+        $dosenModel = new DosenPembimbingModel();
+        $bimbinganModel = new Bimbingan();
+
 
         // Ambil data logbook industri untuk mahasiswa terkait
         $data['logbook_industri'] = $logbookModel->where('mahasiswa_id', $mahasiswa_id)->findAll();
 
         // Ambil data mahasiswa
         $data['mahasiswa'] = $mahasiswaModel->find($mahasiswa_id);
+
+        // Ambil dosen pembimbing
+        $bimbingan = $bimbinganModel->where('mahasiswa_id', $mahasiswa_id)->findAll();
+        $dosenIds = array_column($bimbingan, 'dosen_id');
+        $data['dosen_pembimbing'] = [];
+        if (!empty($dosenIds)) {
+            $data['dosen_pembimbing'] = $dosenModel->whereIn('dosen_id', $dosenIds)->findAll();
+        }
 
         // Jika mahasiswa tidak ditemukan, redirect dengan error
         if (!$data['mahasiswa']) {
@@ -673,19 +688,33 @@ class KpsController extends BaseController
         }
 
         $mahasiswaModel = new MahasiswaModel();
+        $dosenModel = new DosenPembimbingModel();
         $nilaiIndustriModel = new PenilaianIndustriModel();
         $nilaiDosenModel = new PenilaianDosenModel();
+        $bimbinganModel = new Bimbingan(); // Relasi mahasiswa - dosen
 
+        // Ambil data mahasiswa
         $mahasiswa = $mahasiswaModel->find($mahasiswa_id);
-        $nilai_industri = $nilaiIndustriModel->getNilaiByMahasiswa($mahasiswa_id);
-        $nilai_dosen = $nilaiDosenModel->getNilaiByMahasiswa($mahasiswa_id);
-
         if (!$mahasiswa) {
             return redirect()->to('/kps/nilai')->with('error', 'Mahasiswa tidak ditemukan.');
         }
 
+        // Ambil data dosen pembimbing dari tabel bimbingan
+        $bimbingan = $bimbinganModel->where('mahasiswa_id', $mahasiswa_id)->findAll();
+        $dosenIds = array_column($bimbingan, 'dosen_id');
+        $dosenPembimbing = [];
+        if (!empty($dosenIds)) {
+            $dosenPembimbing = $dosenModel->whereIn('dosen_id', $dosenIds)->findAll();
+        }
+
+        // Ambil nilai
+        $nilai_industri = $nilaiIndustriModel->getNilaiByMahasiswa($mahasiswa_id);
+        $nilai_dosen = $nilaiDosenModel->getNilaiByMahasiswa($mahasiswa_id);
+
+        // Kirim data ke view
         return view('kps/detail_nilai_mahasiswa', [
             'mahasiswa' => $mahasiswa,
+            'dosen_pembimbing' => $dosenPembimbing,
             'nilai_industri' => $nilai_industri,
             'nilai_dosen' => $nilai_dosen
         ]);

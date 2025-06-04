@@ -65,16 +65,39 @@
                                   </span>
                               </div>
 
-                              <div class="list-group-item d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center py-3">
-                                  <div class="mb-2 mb-sm-0 d-flex align-items-center">
-                                      <i class="fas fa-user-tie me-2 text-primary"></i>
-                                      <span>Pembimbing Industri</span>
-                                  </div>
-                                  <span class="badge bg-primary bg-opacity-10 text-primary text-wrap text-start" style="max-width: 200px;">
-                                      <?= esc($mahasiswa['nama_pembimbing_perusahaan']) ?>
-                                  </span>
-                              </div>
-                          </div>
+                              <!-- Pembimbing Industri -->
+                                <div class="list-group-item d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center py-3">
+                                    <div class="mb-2 mb-sm-0 d-flex align-items-center">
+                                        <i class="fas fa-user-tie me-2 text-primary"></i>
+                                        <span>Pembimbing Industri</span>
+                                    </div>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary text-wrap text-start" style="max-width: 200px;">
+                                        <?= esc($mahasiswa['nama_pembimbing_perusahaan']) ?>
+                                    </span>
+                                </div>
+
+                                <!-- Dosen Pembimbing -->
+                                <?php if (!empty($dosen_pembimbing)): ?>
+                                    <?php foreach ($dosen_pembimbing as $dosen): ?>
+                                        <div class="list-group-item d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center py-3">
+                                            <div class="mb-2 mb-sm-0 d-flex align-items-center">
+                                                <i class="fas fa-user-graduate me-2 text-success"></i>
+                                                <span>Dosen Pembimbing</span>
+                                            </div>
+                                            <span class="badge bg-success bg-opacity-10 text-success text-wrap text-start" style="max-width: 200px;">
+                                                <?= esc($dosen['nama_lengkap']) ?>
+                                            </span>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user-graduate me-2 text-muted"></i>
+                                            <span class="text-muted">Dosen pembimbing belum ditentukan</span>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
                       </div>
                   </div>
               </div>

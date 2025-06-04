@@ -53,7 +53,7 @@
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <span class="text-muted small">Nama Perusahaan:</span>
-                                    <p class="mb-0 fw-medium"><?= esc($mahasiswa['nama_pembimbing_perusahaan']) ?></p>
+                                    <p class="mb-0 fw-medium"><?= esc($mahasiswa['nama_perusahaan']) ?></p>
                                 </div>
                                 <div class="col-md-6 mb-2">
                                     <span class="text-muted small">Judul Magang:</span>
@@ -61,6 +61,26 @@
                                 </div>
                     </div>
                 </div>
+
+                </div>
+                        <div class="row">
+                        <?php if (!empty($dosen_pembimbing)) : ?>
+                            <?php foreach ($dosen_pembimbing as $dosen) : ?>
+                                <div class="col-md-6 mb-2">
+                                    <span class="text-muted small">Nama Dosen:</span>
+                                    <p class="mb-0 fw-medium"><?= esc($dosen['nama_lengkap']) ?></p>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <span class="text-muted small">NIP:</span>
+                                    <p class="mb-0 fw-medium"><?= esc($dosen['nip']) ?></p>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else : ?>
+                            <div class="col-12">
+                                <p class="text-muted">Belum ada dosen pembimbing terdaftar.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
             </div>
         </div>
     </div>
