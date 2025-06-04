@@ -30,10 +30,10 @@
                     <table class="table table-hover align-middle mb-0" style="table-layout: fixed;">
                         <thead class="table-light">
                             <tr>
-                                <th class="ps-4" style="width: 25%;">Mahasiswa</th>
-                                <th style="width: 20%;">Program Studi</th>
-                                <th style="width: 25%;">Perusahaan</th>
-                                <th style="width: 15%;">Bimbingan</th>
+                                <th class="ps-4" style="width: 30%;">Mahasiswa</th>
+                                <th style="width: 15%;">Program Studi</th>
+                                <th style="width: 30%;">Perusahaan</th>
+                                <th style="width: 10%;">Bimbingan</th>
                                 <th style="width: 15%;">Detail</th>
                             </tr>
                         </thead>
@@ -45,7 +45,7 @@
                                             <div class="avatar avatar-sm me-3 bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center">
                                                 <i class="bi bi-person-fill"></i>
                                             </div>
-                                            <div style="word-wrap: break-word;">
+                                            <div style="word-break: break-word;">
                                                 <h6 class="mb-0 fw-medium"><?= esc($mhs['nama_lengkap']) ?></h6>
                                                 <small class="text-muted"><?= esc($mhs['nim'] ?? '-') ?></small>
                                             </div>
@@ -64,9 +64,13 @@
                                     </td>
                                     <td>
                                         <?php if (!empty($mhs['jumlah_verifikasi'])): ?>
-                                            <span class="badge bg-success"><?= esc($mhs['jumlah_verifikasi']) ?>x Disetujui</span>
+                                            <?php if ($mhs['jumlah_verifikasi'] < 6): ?>
+                                                <span class="badge bg-warning-subtle text-warning"><?= esc($mhs['jumlah_verifikasi']) ?>x Disetujui</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-success-subtle text-success"><?= esc($mhs['jumlah_verifikasi']) ?>x Disetujui</span>
+                                            <?php endif; ?>
                                         <?php else: ?>
-                                            <span class="badge bg-secondary-subtle text-secondary">belum ada bimbingan</span>
+                                            <span class="badge bg-secondary-subtle text-secondary">belum ada</span>
                                         <?php endif; ?>
                                     </td>
                                     <td>

@@ -6,6 +6,7 @@ use App\Models\PenilaianDosenModel;
 use App\Models\PenilaianIndustriModel;
 use App\Models\Bimbingan;
 use App\Models\MahasiswaModel;
+use App\Models\LogbookBimbingan;
 
 class PenilaianDosenController extends BaseController
 {
@@ -88,6 +89,7 @@ class PenilaianDosenController extends BaseController
         $bimbinganModel = new Bimbingan();
         $mahasiswaModel = new MahasiswaModel();
         $penilaianModel = new PenilaianDosenModel();
+        $logbookModel = new LogbookBimbingan();
 
         // Ambil keyword dari input pencarian
         $keyword = $this->request->getGet('keyword');
@@ -105,7 +107,18 @@ class PenilaianDosenController extends BaseController
                 $penilaian = $penilaianModel->where('bimbingan_id', $bimbingan['bimbingan_id'])->first();
                 $mhs['sudah_dinilai'] = $penilaian ? true : false;
 
+                // Hitung jumlah logbook yang sudah diverifikasi
+                $jumlah_verifikasi = $logbookModel
+                    ->where('mahasiswa_id', $mhs['mahasiswa_id'])
+                    ->where('status_validasi', 'disetujui')
+                    ->countAllResults();
+
+                // Set flag memenuhi syarat jika logbook >= 6
+                $mhs['memenuhi_syarat_penilaian'] = ($jumlah_verifikasi >= 6);
+
                 $mahasiswaList[] = $mhs;
+
+
             }
         }
 
@@ -202,5 +215,26 @@ private function hitungTotal()
 
     return redirect()->to('dosen/penilaian-dosen/detail/' . $bimbingan_id)->with('success', 'Penilaian berhasil disimpan.');
     }
+
+    public function calculate()
+{
+    if (!$this->request->isAJAX()) {
+        return $this->response->setStatusCode(403)->setJSON(['error' => 'Forbidden']);
+    }
+
+    $nilaiIndustri = $this->request->getPost('nilai_industri');
+    $data = $this->request->getPost();
+
+    // Hitung total nilai dosen
+    $totalDosen = $this->hitungTotal();
+
+    // Hitung total akhir
+    $totalAkhir = ($nilaiIndustri * 0.6) + ($totalDosen * 0.4);
+
+    return $this->response->setJSON([
+        'totalDosen' => $totalDosen,
+        'totalAkhir' => $totalAkhir
+    ]);
+}
 
 }

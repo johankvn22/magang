@@ -7,6 +7,7 @@ use App\Models\DosenPembimbingModel;
 use App\Models\MahasiswaModel;
 use App\Models\Bimbingan;
 
+
 class UserRequirementDosenController extends BaseController
 {
     public function index()
@@ -27,6 +28,13 @@ class UserRequirementDosenController extends BaseController
             if ($mahasiswa) {
                 $mahasiswaList[] = $mahasiswa;
             }
+        }
+
+        foreach ($mahasiswaList as &$mhs) {
+        $userRequirementModel = new UserRequirement();
+        $mhs['jumlah_user_requirement'] = $userRequirementModel
+            ->where('mahasiswa_id', $mhs['mahasiswa_id'])
+            ->countAllResults();
         }
 
         // Filter jika ada keyword pencarian

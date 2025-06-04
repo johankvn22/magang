@@ -54,4 +54,51 @@
       });
     });
   </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Konfirmasi untuk tombol "Setujui"
+        document.querySelectorAll('.btn-confirm-setujui-bimbingan').forEach(button => {
+            button.addEventListener('click', function () {
+                const form = this.closest('form');
+                Swal.fire({
+                    title: 'Setujui Logbook?',
+                    text: "Logbook yang disetujui tidak dapat diubah.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#198754',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, Setujui!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+
+        // Konfirmasi untuk tombol "Tolak"
+        document.querySelectorAll('.btn-confirm-tolak-bimbingan').forEach(button => {
+            button.addEventListener('click', function () {
+                const form = this.closest('form');
+                Swal.fire({
+                    title: 'Tolak Logbook?',
+                    text: "Jangan lupa untuk memberikan catatan untuk mahasiswa.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Tolak!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    });
+  </script>
+
 </header>

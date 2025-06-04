@@ -202,11 +202,6 @@
                                         <h5 class="mb-0 fw-bold">Nilai Akhir</h5>
                                         <div class="display-5 fw-bold text-dark"><?= number_format($total_nilai, 2) ?></div>
                                     </div>
-
-                                    <div class="d-flex justify-content-between mt-2">
-                                        <small class="text-muted">0</small>
-                                        <small class="text-muted">10</small>
-                                    </div>
                                 </div>
                             </div>
                         <?php else: ?>

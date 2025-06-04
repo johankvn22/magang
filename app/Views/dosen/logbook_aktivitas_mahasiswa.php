@@ -33,10 +33,10 @@
                     <table class="table table-hover align-middle mb-0" style="table-layout: fixed;">
                         <thead class="table-light">
                             <tr>
-                                <th class="ps-4" style="width: 25%;">Mahasiswa</th>
-                                <th style="width: 20%;">Program Studi</th>
-                                <th style="width: 25%;">Perusahaan</th>
-                                <th style="width: 15%;">Aktivitas</th>
+                                <th class="ps-4" style="width: 30%;">Mahasiswa</th>
+                                <th style="width: 15%;">Program Studi</th>
+                                <th style="width: 30%;">Perusahaan</th>
+                                <th style="width: 10%;">Aktivitas</th>
                                 <th style="width: 15%;">Detail</th>
                             </tr>
                         </thead>
@@ -69,13 +69,19 @@
                                     </td>
                                     <td>
                                         <?php if (!empty($mhs['jumlah_aktivitas'])): ?>
-                                            <span class="badge bg-success rounded-pill">
-                                                <?= esc($mhs['jumlah_aktivitas']) ?> aktivitas
-                                            </span>
+                                            <?php if ($mhs['jumlah_aktivitas'] < 3): ?>
+                                                <span class="badge bg-warning-subtle text-warning">
+                                                    <?= esc($mhs['jumlah_aktivitas']) ?> aktivitas
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="badge bg-success-subtle text-success">
+                                                    <?= esc($mhs['jumlah_aktivitas']) ?> aktivitas
+                                                </span>
+                                            <?php endif; ?>
                                         <?php else: ?>
                                             <span class="badge bg-secondary-subtle text-secondary">0 aktivitas</span>
                                         <?php endif; ?>
-                                    </td>
+                                    </td></td>
                                     <td>
                                         <a href="<?= site_url('dosen/logbook/' . $mhs['mahasiswa_id']) ?>" 
                                            class="btn btn-sm btn-success rounded-pill px-3">

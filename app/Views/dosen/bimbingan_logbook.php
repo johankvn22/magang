@@ -106,6 +106,17 @@
                 </span>
             <?php endif; ?>
         </div>
+    <!-- Assessment Button -->
+    <div class="d-flex justify-content-end align-items-center mb-3 mt-3">
+        <?php if (!$penilaian_sudah_ada && $jumlahDisetujui >= 6 && !empty($bimbingan_id)) : ?>
+            <a href="<?= site_url('dosen/penilaian-dosen/form/' . $bimbingan_id) ?>" class="btn btn-primary">
+                <i class="bi bi-pencil-square me-1"></i> Beri Penilaian
+            </a>
+        <?php elseif ($penilaian_sudah_ada) : ?>
+            <a href="<?= site_url('dosen/penilaian-dosen/detail/' . $bimbingan_id) ?>" class="btn btn-outline-success">
+                <i class="bi bi-eye me-1"></i> Lihat Penilaian
+            </a>
+        <?php endif; ?>
     </div>
 
     <!-- Logbook Table -->
@@ -136,7 +147,7 @@
                         </thead>
                         <tbody>
                             <?php foreach ($logbooks as $log): ?>
-                                <tr>
+                                <tr id="logbook-<?= $log['logbook_id'] ?>">
                                     <td class="fw-medium">
                                         <?= date('d M Y', strtotime($log['tanggal'])) ?>
                                     </td>
@@ -163,10 +174,21 @@
                                     </td>
 
                                     <td>
+                                        
                                         <?php if ($log['status_validasi'] === 'menunggu') : ?>
-                                            <form action="<?= site_url('dosen/update_catatan/' . $log['logbook_id']) ?>" method="post">
-                                                <textarea name="catatan_dosen" class="form-control form-control-sm mb-2" rows="2" required><?= esc($log['catatan_dosen']) ?></textarea>
-                                                <button type="submit" class="btn btn-primary btn-sm w-100">Simpan Catatan</button>
+                                            <form action="<?= site_url('dosen/update_catatan/' . $log['logbook_id']) ?>?highlight=logbook-<?= $log['logbook_id'] ?>" method="post">
+                                                <div class="mb-2">
+                                                    <textarea 
+                                                        name="catatan_dosen" 
+                                                        class="form-control form-control-sm" 
+                                                        rows="3"
+                                                        placeholder="Tulis catatan untuk mahasiswa..." 
+                                                        required><?= esc($log['catatan_dosen']) ?></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-sm btn-outline-primary w-100">
+                                                    <i class="bi bi-save me-1"></i>
+                                                    <?= !empty($log['catatan_dosen']) ? 'Update Catatan' : 'Simpan Catatan' ?>
+                                                </button>
                                             </form>
                                         <?php else : ?>
                                             <div class="scrollable-cell" style="max-height: 100px; overflow-y: auto;">
@@ -174,6 +196,8 @@
                                             </div>
                                         <?php endif; ?>
                                     </td>
+
+
                                     <td>
                                         <?php if ($log['status_validasi'] === 'disetujui') : ?>
                                             <span class="badge bg-success rounded-pill w-100">Disetujui</span>
@@ -186,16 +210,17 @@
                                     <td>
                                         <?php if ($log['status_validasi'] === 'menunggu') : ?>
                                             <div class="d-grid gap-2">
-                                                <form action="<?= site_url('dosen/bimbingan/setujui/' . $log['logbook_id']) ?>" method="post">
-                                                    <button type="submit" class="btn btn-success btn-sm w-100 mb-1">
+                                                <form action="<?= site_url('dosen/bimbingan/setujui/' . $log['logbook_id']) ?>?highlight=logbook-<?= $log['logbook_id'] ?>" method="post" class="form-setujui">
+                                                    <button type="button" class="btn btn-success btn-sm w-100 mb-1 btn-confirm-setujui-bimbingan">
                                                         <i class="bi bi-check-lg"></i>
                                                     </button>
                                                 </form>
-                                                <form action="<?= site_url('dosen/bimbingan/tolak/' . $log['logbook_id']) ?>" method="post">
-                                                    <button type="submit" class="btn btn-danger btn-sm w-100">
+                                                <form action="<?= site_url('dosen/bimbingan/tolak/' . $log['logbook_id']) ?>?highlight=logbook-<?= $log['logbook_id'] ?>" method="post" class="form-tolak">
+                                                    <button type="button" class="btn btn-danger btn-sm w-100 btn-confirm-tolak-bimbingan">
                                                         <i class="bi bi-x-lg"></i>
                                                     </button>
                                                 </form>
+
                                             </div>
                                         <?php else : ?>
                                             <span class="text-muted small">Telah divalidasi</span>
@@ -211,21 +236,7 @@
     </div>
 
     <!-- Assessment Button -->
-    <div class="d-flex justify-content-between align-items-center">
-        <?php if (!$penilaian_sudah_ada && $jumlahDisetujui >= 6 && !empty($bimbingan_id)) : ?>
-            <a href="<?= site_url('dosen/penilaian-dosen/form/' . $bimbingan_id) ?>" class="btn btn-success">
-                <i class="bi bi-pencil-square me-1"></i> Beri Penilaian
-            </a>
-        <?php elseif ($penilaian_sudah_ada) : ?>
-            <a href="<?= site_url('dosen/penilaian-dosen/detail/' . $bimbingan_id) ?>" class="btn btn-outline-success">
-                <i class="bi bi-eye me-1"></i> Lihat Penilaian
-            </a>
-        <?php else : ?>
-            <div class="alert alert-warning mb-0 w-100">
-                <i class="bi bi-exclamation-triangle me-2"></i>
-                Mahasiswa belum memenuhi syarat penilaian (minimal 6 logbook disetujui)
-            </div>
-        <?php endif; ?>
+    <div class="d-flex justify-content-end align-items-center">
         <a href="<?= site_url('dosen/bimbingan') ?>" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar
         </a>

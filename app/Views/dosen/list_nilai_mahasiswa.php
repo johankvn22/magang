@@ -35,8 +35,8 @@
                         <thead class="table-light">
                             <tr>
                                 <th class="ps-4" style="width: 30%;">Mahasiswa</th>
-                                <th style="width: 25%;">Program Studi</th>
-                                <th style="width: 25%;">Status Penilaian</th>
+                                <th style="width: 20%;">Program Studi</th>
+                                <th style="width: 30%;">Status Penilaian</th>
                                 <th style="width: 20%;">Aksi</th>
                             </tr>
                         </thead>
@@ -60,10 +60,14 @@
                                         <small class="text-muted"><?= esc($mhs['kelas'] ?? '-') ?></small>
                                     </td>
                                     
-                                    <td>
+                                   <td>
                                         <?php if ($mhs['sudah_dinilai']) : ?>
                                             <span class="badge bg-success-subtle text-success">
                                                 <i class="bi bi-check-circle me-1"></i> Sudah Dinilai
+                                            </span>
+                                        <?php elseif ($mhs['memenuhi_syarat_penilaian']) : ?>
+                                            <span class="badge bg-info-subtle text-primary">
+                                                <i class="bi bi-clock-history me-1"></i> Memenuhi Syarat Penilaian
                                             </span>
                                         <?php else : ?>
                                             <span class="badge bg-warning-subtle text-warning">
@@ -71,12 +75,17 @@
                                             </span>
                                         <?php endif; ?>
                                     </td>
-                                    
+
                                     <td>
                                         <?php if ($mhs['sudah_dinilai']) : ?>
                                             <a href="<?= site_url('dosen/penilaian-dosen/detail/' . $mhs['bimbingan_id']) ?>" 
-                                               class="btn btn-sm btn-success rounded-pill px-3">
+                                            class="btn btn-sm btn-success rounded-pill px-3">
                                                 <i class="bi bi-eye me-1"></i> Detail
+                                            </a>
+                                        <?php elseif ($mhs['memenuhi_syarat_penilaian']) : ?>
+                                            <a href="<?= site_url('dosen/penilaian-dosen/form/' . $mhs['bimbingan_id']) ?>" 
+                                            class="btn btn-sm btn-primary rounded-pill px-3">
+                                                <i class="bi bi-pencil-square me-1"></i> Nilai
                                             </a>
                                         <?php else : ?>
                                             <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" disabled>
@@ -84,6 +93,7 @@
                                             </button>
                                         <?php endif; ?>
                                     </td>
+
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
