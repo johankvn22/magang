@@ -61,6 +61,14 @@ class AdminController extends BaseController
             $allMahasiswa = $allMahasiswa->findAll();
         }
 
+        // sort berdasarkan program studi
+        $sortProdi = $this->request->getGet('sortProdi');
+        if ($sortProdi && in_array($sortProdi, ['TI', 'TMJ', 'TMD'])) {
+            $allMahasiswa = array_filter($allMahasiswa, function ($m) use ($sortProdi) {
+                return $m['program_studi'] === $sortProdi;
+            });
+            $allMahasiswa = array_values($allMahasiswa); // Reindex
+        }
 
         // Ambil data mahasiswa + dosen
         $allMahasiswa = $mahasiswaModel->getMahasiswaWithDosen();
@@ -135,14 +143,21 @@ class AdminController extends BaseController
                 $dosenId = $this->request->getPost('dosen_id_' . $mahasiswaId);
 
                 if ($dosenId) {
-                    // Hapus pembimbing lama hanya untuk mahasiswa ini
-                    $bimbinganModel->where('mahasiswa_id', $mahasiswaId)->delete();
+                    // Cek apakah ada entri bimbingan untuk mahasiswa ini
+                    $existingBimbingan = $bimbinganModel->where('mahasiswa_id', $mahasiswaId)->first();
 
-                    // Simpan dosen baru
-                    $bimbinganModel->insert([
-                        'mahasiswa_id' => $mahasiswaId,
-                        'dosen_id'     => $dosenId
-                    ]);
+                    if ($existingBimbingan) {
+                        // Update dosen pembimbing
+                        $bimbinganModel->update($existingBimbingan['bimbingan_id'], [
+                            'dosen_id' => $dosenId
+                        ]);
+                    } else {
+                        // Jika belum ada entri, tambahkan baru
+                        $bimbinganModel->insert([
+                            'mahasiswa_id' => $mahasiswaId,
+                            'dosen_id'     => $dosenId
+                        ]);
+                    }
                 }
             }
         }
@@ -155,56 +170,82 @@ class AdminController extends BaseController
     {
         $mahasiswaModel = new MahasiswaModel();
         $dosenModel = new DosenPembimbingModel();
+        $bimbinganModel = new Bimbingan();
 
+        // Ambil semua mahasiswa
         $mahasiswa = $mahasiswaModel->findAll();
+
+        // Ambil semua dosen
         $dosen = $dosenModel->findAll();
+
+        // Ambil semua data bimbingan dan join ke dosen
+        $bimbinganList = $bimbinganModel
+            ->select('bimbingan.mahasiswa_id, bimbingan.dosen_id, dosen_pembimbing.nama_lengkap as nama_dosen')
+            ->join('dosen_pembimbing', 'dosen_pembimbing.dosen_id = bimbingan.dosen_id')
+            ->findAll();
+
+        // Buat mapping: mahasiswa_id => array of dosen
+        $bimbinganMap = [];
+        foreach ($bimbinganList as $b) {
+            $bimbinganMap[$b['mahasiswa_id']][] = [
+                'dosen_id' => $b['dosen_id'],
+                'nama_dosen' => $b['nama_dosen']
+            ];
+        }
 
         return view('atur_bimbingan', [
             'mahasiswa' => $mahasiswa,
-            'dosen' => $dosen
+            'dosen' => $dosen,
+            'bimbinganMap' => $bimbinganMap
         ]);
     }
 
     // SIMPAN BIMBINGAN (untuk multiple assignment)
-    public function saveBimbingan()
-    {
-        $bimbinganModel = new Bimbingan();
+   public function saveBimbingan()
+{
+    $bimbinganModel = new Bimbingan();
+    
+    // Ambil data dari form
+    $mahasiswaIds = $this->request->getPost('mahasiswa_id');
+    $dosenIds = $this->request->getPost('dosen_id');
+    
+    $success = 0;
+    $failed = 0;
 
-        $mahasiswa_id = $this->request->getPost('mahasiswa_id'); // array
-        $dosen_id = $this->request->getPost('dosen_id');         // array
-
-        $success = 0;
-        $failed = 0;
-
-        foreach ($mahasiswa_id as $index => $mhs_id) {
-            $current_dosen_id = $dosen_id[$index] ?? null;
-
-            // Validasi agar dosen dipilih
-            if (!empty($current_dosen_id)) {
+    // Pastikan kedua array memiliki panjang yang sama
+    if (is_array($mahasiswaIds) && is_array($dosenIds) && count($mahasiswaIds) === count($dosenIds)) {
+        foreach ($mahasiswaIds as $index => $mahasiswaId) {
+            $dosenId = $dosenIds[$mahasiswaId] ?? null; // Perhatikan perubahan di sini
+            
+            if (!empty($dosenId)) {
                 // Cek apakah bimbingan sudah ada
-                $existing = $bimbinganModel->where('mahasiswa_id', $mhs_id)
-                    ->where('dosen_id', $current_dosen_id)
-                    ->first();
-
-                if (!$existing) {
-                    $inserted = $bimbinganModel->insert([
-                        'mahasiswa_id' => $mhs_id,
-                        'dosen_id'     => $current_dosen_id
+                $existing = $bimbinganModel->where('mahasiswa_id', $mahasiswaId)
+                                          ->first();
+                
+                if ($existing) {
+                    // Update bimbingan yang sudah ada
+                    $bimbinganModel->update($existing['bimbingan_id'], [
+                        'dosen_id' => $dosenId
                     ]);
-
-                    $inserted ? $success++ : $failed++;
+                    $success++;
                 } else {
-                    $success++; // Skip jika sudah ada
+                    // Tambahkan bimbingan baru
+                    $inserted = $bimbinganModel->insert([
+                        'mahasiswa_id' => $mahasiswaId,
+                        'dosen_id' => $dosenId
+                    ]);
+                    $inserted ? $success++ : $failed++;
                 }
             }
         }
-
-        if ($success > 0) {
-            return redirect()->to('/admin/tambah-bimbingan')->with('success', "$success bimbingan berhasil disimpan. $failed gagal.");
-        } else {
-            return redirect()->back()->with('error', 'Tidak ada data bimbingan yang berhasil disimpan.');
-        }
     }
+
+    if ($success > 0) {
+        return redirect()->to('/admin/daftar-dosen')->with('success', "Berhasil menyimpan $success bimbingan.");
+    } else {
+        return redirect()->back()->with('error', 'Gagal menyimpan data bimbingan.');
+    }
+}
 
     //fungsi untuk memasukkan pedoman magang
     public function uploadPedoman()

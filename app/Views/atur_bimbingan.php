@@ -42,30 +42,56 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($mahasiswa as $index => $mhs): ?>
-                                <tr>
-                                    <td class="text-center"><?= $index + 1 ?></td>
-                                    <td>
-                                        <div class="fw-semibold"><?= esc($mhs['nama_lengkap']) ?></div>
-                                        <input type="hidden" name="mahasiswa_id[]" value="<?= $mhs['mahasiswa_id'] ?>">
-                                    </td>
-                                    <td><?= esc($mhs['nim']) ?></td>
-                                    <td><span class="badge bg-secondary-subtle text-secondary"><?= esc($mhs['kelas']) ?></span></td>
-                                    <td><?= esc($mhs['nama_perusahaan']) ?></td>
-                                    <td><?= esc($mhs['dospem1']) ?></td>
-                                    <td><?= esc($mhs['dospem2']) ?></td>
-                                    <td><?= esc($mhs['dospem3']) ?></td>
-                                    <td>
-                                        <input list="dosen_list_<?= $index ?>" class="form-control form-control-sm dosen-input" name="dosen_id[]" placeholder="Ketik nama atau NIP..." required>
-                                        <datalist id="dosen_list_<?= $index ?>">
-                                            <?php foreach ($dosen as $dsn): ?>
-                                                <option value="<?= esc($dsn['nama_lengkap']) ?> (<?= esc($dsn['nip']) ?>)" data-id="<?= $dsn['dosen_id'] ?>">
-                                                    <?= $dsn['total_bimbingan'] ?? 0 ?> bimbingan
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </datalist>
-                                    </td>
-                                </tr>
+                           <?php foreach ($mahasiswa as $index => $mhs): ?>
+    <tr>
+        <td class="text-center"><?= $index + 1 ?></td>
+        <td>
+            <div class="fw-semibold"><?= esc($mhs['nama_lengkap']) ?></div>
+            <input type="hidden" name="mahasiswa_id[]" value="<?= $mhs['mahasiswa_id'] ?>">
+        </td>
+        <td><?= esc($mhs['nim']) ?></td>
+        <td><span class="badge bg-secondary-subtle text-secondary"><?= esc($mhs['kelas']) ?></span></td>
+        <td><?= esc($mhs['nama_perusahaan']) ?></td>
+        <td><?= esc($mhs['dospem1']) ?></td>
+        <td><?= esc($mhs['dospem2']) ?></td>
+        <td><?= esc($mhs['dospem3']) ?></td>
+        <td>
+            <?php
+                $selectedName = '';
+                $selectedId = '';
+                if (isset($bimbinganMap[$mhs['mahasiswa_id']])) {
+                    foreach ($bimbinganMap[$mhs['mahasiswa_id']] as $b) {
+                        $selectedId = $b['dosen_id'];
+                        foreach ($dosen as $dsn) {
+                            if ($dsn['dosen_id'] == $selectedId) {
+                                $selectedName = $dsn['nama_lengkap'] . ' (' . $dsn['nip'] . ')';
+                                break;
+                            }
+                        }
+                    }
+                }
+            ?>
+            <input 
+                list="dosen_list_<?= $index ?>" 
+                class="form-control form-control-sm dosen-input" 
+                name="dosen_label[<?= $mhs['mahasiswa_id'] ?>]" 
+                placeholder="Ketik nama atau NIP..." 
+                value="<?= esc($selectedName) ?>" 
+                required
+            >
+            <input type="hidden" name="dosen_id[<?= $mhs['mahasiswa_id'] ?>]" class="dosen-id-hidden" value="<?= esc($selectedId) ?>">
+
+            <datalist id="dosen_list_<?= $index ?>">
+                <?php foreach ($dosen as $dsn): ?>
+                    <option 
+                        value="<?= esc($dsn['nama_lengkap']) ?> (<?= esc($dsn['nip']) ?>)" 
+                        data-id="<?= $dsn['dosen_id'] ?>">
+                        <?= esc($dsn['nama_lengkap']) ?> (<?= esc($dsn['nip']) ?>) - <?= $dsn['total_bimbingan'] ?? 0 ?> bimbingan
+                    </option>
+                <?php endforeach; ?>
+            </datalist>
+        </td>
+    </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
