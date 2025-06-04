@@ -18,22 +18,24 @@
           <div class="card-body">
             <h5 class="fw-bold mb-2">Alur Monitoring dan Evaluasi KPS</h5>
             <p class="text-muted mb-3">Panduan proses pengelolaan monitoring dan evaluasi magang</p>
-            <img src="<?= base_url('assets/img/alur_kps.png') ?>" class="img-fluid rounded" alt="Alur Admin">
+            <img src="<?= base_url('assets/img/1.png') ?>" class="img-fluid rounded" alt="Alur Admin">
+          </div>
+        </div>
+      </div>
+      
+ <div class="row g-4">
+      <!-- Alur -->
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            <h5 class="fw-bold mb-2">Alur Monitoring dan Evaluasi KPS</h5>
+            <p class="text-muted mb-3">Panduan proses pengelolaan monitoring dan evaluasi magang</p>
+            <img src="<?= base_url('assets/img/2.png') ?>" class="img-fluid rounded" alt="Alur Admin">
           </div>
         </div>
       </div>
 
-      <!-- Buku Pedoman -->
-      <div class="col-lg-4">
-        <!-- Selamat Datang dan Info KPS -->
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="card-body">
-            <h5 class="fw-bold mb-3">Selamat Datang, <?= esc(session('nama')) ?>!</h5>
-            <p><strong>NIP:</strong> <?= esc($kps['nip']) ?></p>
-            <p><strong>Email:</strong> <?= esc($kps['email']) ?></p>
-            <p><strong>No Telepon:</strong> <?= esc($kps['no_telepon']) ?></p>
-          </div>
-        </div>
+     
 
         <!-- Buku Pedoman -->
         <div class="card border-0 shadow-sm">
