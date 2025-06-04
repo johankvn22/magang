@@ -13,18 +13,40 @@ use App\Models\PenilaianDosenModel;
 use App\Models\PenilaianIndustriModel;
 use App\Models\UserRequirement;
 use App\Models\ReviewKinerjaModel;
+use App\Models\UserModel;
 
 class PanitiaController extends BaseController
 {
+    protected $panitiaModel;
+
+    public function __construct()
+    {
+        $this->panitiaModel = new Panitia(); // Inisialisasi model Kps
+    }
     public function index()
     {
-        // Cek apakah user sudah login dan role-nya panitia
-        if (session()->get('logged_in') && session()->get('role') === 'panitia') {
-            return view('panitia/dashboard');
-        } else {
+        if (session()->get('role') !== 'panitia') {
             return redirect()->to('/login')->with('error', 'Akses ditolak.');
         }
+
+        $userModel = new UserModel();
+        $panitiaId = session()->get('panitia_id');
+        $panitia = $this->panitiaModel->find($panitiaId); // Pastikan ada $this->panitiaModel
+
+        // Ambil jumlah user berdasarkan role
+        $jumlahMahasiswa = $userModel->where('role', 'mahasiswa')->countAllResults();
+        $jumlahDosen = $userModel->where('role', 'pembimbing_dosen')->countAllResults();
+        $jumlahIndustri = $userModel->where('role', 'pembimbing_industri')->countAllResults();
+
+        return view('panitia/dashboard', [
+            'title' => 'Dashboard Panitia',
+            'panitia' => $panitia,
+            'jumlahMahasiswa' => $jumlahMahasiswa,
+            'jumlahDosen' => $jumlahDosen,
+            'jumlahIndustri' => $jumlahIndustri
+        ]);
     }
+
 
     public function editProfil()
     {
@@ -186,8 +208,59 @@ class PanitiaController extends BaseController
         }
 
         $model = new MahasiswaModel();
-        $data['mahasiswa'] = $model->getMahasiswaWithStatus(); // method sama seperti admin
-        return view('panitia/logbook_mahasiswa', $data);
+        $logbookModel   = new LogbookBimbingan();
+
+        // 1. Ambil semua data mahasiswa + status
+        $allData = $model->getMahasiswaWithStatus();
+
+        // Tambahkan jumlah bimbingan diverifikasi ke setiap mahasiswa
+        foreach ($allData as &$mhs) {
+            $mhs['jumlah_verifikasi'] = $logbookModel
+                ->where('mahasiswa_id', $mhs['mahasiswa_id'])
+                ->where('status_validasi', 'disetujui')
+                ->countAllResults();
+        }
+
+        // 2. Ambil parameter search & perPage dari query string
+        $keyword = $this->request->getGet('keyword');
+        $perPage = (int) ($this->request->getGet('perPage') ?? 10);
+        if (! in_array($perPage, [5, 10, 25, 50, 100])) {
+            $perPage = 10;
+        }
+        $currentPage = (int) ($this->request->getGet('page') ?? 1);
+
+        // 3. Filter data jika ada keyword
+        if ($keyword) {
+            $allData = array_filter($allData, function ($mhs) use ($keyword) {
+                $kw = mb_strtolower($keyword);
+                return str_contains(mb_strtolower($mhs['nama_lengkap']), $kw)
+                    || str_contains(mb_strtolower($mhs['nim']), $kw)
+                    || str_contains(mb_strtolower($mhs['program_studi']), $kw)
+                    || str_contains(mb_strtolower($mhs['kelas']), $kw)
+                    || str_contains(mb_strtolower($mhs['status']), $kw);
+            });
+            // reindex array agar pagination benar
+            $allData = array_values($allData);
+        }
+
+        // 4. Hitung total & slice untuk pagination
+        $total      = count($allData);
+        $offset     = ($currentPage - 1) * $perPage;
+        $pagedData  = array_slice($allData, $offset, $perPage);
+
+        // 5. Buat pager manual
+        $pager = \Config\Services::pager();
+        // 'default_full' bisa diganti ke template pager custom-mu
+        $pager->makeLinks($currentPage, $perPage, $total, 'default_full');
+
+        // 6. Kirim ke view
+        return view('panitia/logbook_mahasiswa', [
+            'mahasiswa' => $pagedData,
+            'pager'     => $pager,
+            'offset'    => $offset,
+            'perPage'   => $perPage,
+            'keyword'   => $keyword,
+        ]);
     }
 
     public function detailLogbook($id)
@@ -197,7 +270,24 @@ class PanitiaController extends BaseController
         }
 
         $logbookModel = new LogbookBimbingan();
+        $mahasiswaModel = new MahasiswaModel();
+        $bimbinganModel = new Bimbingan();
+        $dosenModel = new DosenPembimbingModel();
+
+        // Ambil data logbook
         $data['logbook'] = $logbookModel->where('mahasiswa_id', $id)->findAll();
+
+        // Ambil data mahasiswa
+        $data['mahasiswa'] = $mahasiswaModel->find($id);
+
+        // Ambil dosen pembimbing
+        $bimbingan = $bimbinganModel->where('mahasiswa_id', $id)->findAll();
+        $dosenIds = array_column($bimbingan, 'dosen_id');
+        $data['dosen_pembimbing'] = [];
+        if (!empty($dosenIds)) {
+            $data['dosen_pembimbing'] = $dosenModel->whereIn('dosen_id', $dosenIds)->findAll();
+        }
+
         return view('panitia/detail_logbook', $data);
     }
 

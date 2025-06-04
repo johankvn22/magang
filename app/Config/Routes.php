@@ -191,7 +191,7 @@ $routes->group('panitia', ['filter' => 'auth'], function ($routes) {
     // Tambahan berdasarkan view dashboard.php:
     $routes->get('daftar_mahasiswa', 'PanitiaController::daftarMahasiswa');
     $routes->get('logbook-mahasiswa', 'PanitiaController::logbookMahasiswa');
-    $routes->get('detail-logbook/(:num)', 'PanitiaController::detailLogbook/$1');
+    $routes->get('logbook/(:num)', 'PanitiaController::detailLogbook/$1');
     $routes->get('logbook-aktivitas', 'PanitiaController::logbookAktivitas');
     $routes->get('detail-aktivitas/(:num)', 'PanitiaController::detailAktivitas/$1');
 

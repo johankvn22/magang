@@ -4,69 +4,119 @@
 <?= $this->extend('layouts/template_panitia'); ?>
 <?= $this->section('content'); ?>
 
+<div class="container-fluid px-2">
 
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-10">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-success mb-0">📖 Monitoring Logbook Mahasiswa</h2>
 
-      <h2 class="mb-4 text-center">Monitoring Logbook Mahasiswa</h2>
-
-      <div class="mb-3">
-        <input type="text" id="searchInput" class="form-control" placeholder="Cari Mahasiswa...">
+    <form method="get" action="<?= site_url('panitia/logbook') ?>" class="row mb-3">
+      <div class="col-md-9">
+        <input type="text" name="keyword" value="<?= esc($keyword ?? '') ?>" class="form-control" placeholder="Cari Nama / NIM / Prodi...">
       </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-success">Cari</button>
+      </div>
+    </form>
 
+    <form method="get" action="<?= site_url('panitia/logbook') ?>" class="row mb-3 g-2">
+      <div class="col-md-12">
+        <select name="perPage" class="form-select" onchange="this.form.submit()">
+          <?php foreach ([5, 10, 25, 50, 100] as $option): ?>
+            <option value="<?= $option ?>" <?= $perPage == $option ? 'selected' : '' ?>>
+              Tampilkan <?= $option ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+    </form>
+  </div>
+
+  <!-- Flash Message -->
+  <?php if (session()->getFlashdata('success')): ?>
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+      <?= session()->getFlashdata('success') ?>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <?php endif; ?>
+
+  <!-- Table -->
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body">
       <div class="table-responsive">
-        <table class="table table-hover align-middle" id="logbookTable">
-          <thead class="table-light">
+        <table class="table table-hover text-nowrap align-middle small" id="logbookTable">
+          <thead class="table-light align-middle">
             <tr>
-              <th>Detail</th>
-              <th>Nama Mahasiswa</th>
-              <th>NIM</th>
-              <th>Prodi</th>
-              <th>Kelas</th>
-              <th>Status</th>
+              <th class="text-center">No</th>
+              <th>Nama & NIM</th>
+              <th>Prodi & Kelas</th>
+              <th class="text-center">Status</th>
+              <th class="text-center">Detail</th>
             </tr>
           </thead>
           <tbody>
-            <?php foreach ($mahasiswa as $mhs): ?>
+            <?php foreach ($mahasiswa as $index => $mhs): ?>
               <tr>
+                <td class="text-center"><?= $index + 1 ?></td>
                 <td>
-                  <a href="<?= base_url('panitia/detail-logbook/' . $mhs['mahasiswa_id']) ?>" class="btn btn-sm btn-outline-primary">Lihat</a>
+                  <div class="fw-semibold"><?= esc($mhs['nama_lengkap']) ?></div>
+                  <div class="text-muted small"><?= esc($mhs['nim']) ?></div>
                 </td>
-                <td><?= esc($mhs['nama_lengkap']) ?></td>
-                <td><?= esc($mhs['nim']) ?></td>
-                <td><?= esc($mhs['program_studi']) ?></td>
-                <td><?= esc($mhs['kelas']) ?></td>
                 <td>
-                  <span class="badge <?= $mhs['status'] === 'Sudah Verifikasi' ? 'bg-success' : 'bg-secondary' ?>">
-                    <?= esc($mhs['status']) ?>
-                  </span>
+                  <span class="badge bg-primary-subtle text-primary"><?= esc($mhs['program_studi']) ?></span><br>
+                  <span class="badge bg-secondary-subtle text-secondary"><?= esc($mhs['kelas']) ?></span>
+                </td>
+                <td class="text-center">
+                  <?php if (!empty($mhs['jumlah_verifikasi'])): ?>
+                    <span class="badge bg-success rounded-pill">
+                      <?= esc($mhs['jumlah_verifikasi']) ?> disetujui
+                    </span>
+                  <?php else: ?>
+                    <span class="badge bg-secondary-subtle text-secondary">belum ada bimbingan</span>
+                  <?php endif; ?>
+                </td>             
+                <td class="text-center">
+                  <a href="<?= base_url('panitia/logbook/' . $mhs['mahasiswa_id']) ?>" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                    Lihat Bimbingan
+                  </a>
                 </td>
               </tr>
             <?php endforeach; ?>
           </tbody>
         </table>
       </div>
-
+      
+      <!-- Pagination -->
+      <div class="d-flex justify-content-center mt-3">
+        <?= $pager->links('default', 'custom_pagination') ?>
+      </div>
     </div>
   </div>
+
 </div>
 
-
-    <script>
-        const searchInput = document.getElementById("searchInput");
-        const table = document.getElementById("logbookTable").getElementsByTagName("tbody")[0];
-
-        searchInput.addEventListener("keyup", function() {
-            const filter = searchInput.value.toLowerCase();
-            for (let row of table.rows) {
-                row.style.display = [...row.cells].some(cell =>
-                    cell.textContent.toLowerCase().includes(filter)
-                ) ? "" : "none";
-            }
-        });
-    </script>
-
-
+<script>
+  // Client-side search functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.className = 'form-control mb-3';
+    searchInput.placeholder = 'Cari dalam tabel...';
+    searchInput.id = 'tableSearch';
+    
+    const cardHeader = document.querySelector('.card-body');
+    cardHeader.insertBefore(searchInput, cardHeader.firstChild);
+    
+    searchInput.addEventListener('keyup', function() {
+      const filter = this.value.toLowerCase();
+      const rows = document.querySelectorAll('#logbookTable tbody tr');
+      
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+      });
+    });
+  });
+</script>
 
 <?= $this->endSection(); ?>
