@@ -34,10 +34,11 @@
                     <table class="table table-hover align-middle mb-0" style="table-layout: fixed;">
                         <thead class="table-light">
                             <tr>
-                                <th class="ps-4" style="width: 25%;">Mahasiswa</th>
-                                <th style="width: 20%;">Program Studi</th>
-                                <th style="width: 25%;">Perusahaan</th>
-                                <th style="width: 15%;" >Aksi</th>
+                                <th class="ps-4" style="width: 30%;">Mahasiswa</th>
+                                <th style="width: 15%;">Program Studi</th>
+                                <th style="width: 30%;">Perusahaan</th>
+                                <th style="width: 15%;">User Requirement</th>
+                                <th class="ps-4" style="width: 10%;" >Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -54,7 +55,6 @@
                                             </div>
                                         </div>
                                     </td>
-
                                     <td style="word-break: break-word;">
                                                 <h6 class="mb-0 fw-medium"><?= esc($mhs['program_studi']) ?></h6>
                                                 <small class="text-muted"><?= esc($mhs['kelas'] ?? '-') ?></small>
@@ -65,10 +65,20 @@
                                         <?php else : ?>
                                             <span class="badge bg-secondary-subtle text-secondary">Tidak ada perusahaan</span>
                                         <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <?php if (!empty($mhs['jumlah_user_requirement'])): ?>
+                                            <?php if ($mhs['jumlah_user_requirement']): ?>
+                                                <span class="badge bg-success-subtle text-success"><?= esc($mhs['jumlah_user_requirement']) ?> User Requirement</span>
+                                            <?php endif; ?>
+                                        <?php else: ?>
+                                            <span class="badge bg-secondary-subtle text-secondary">Belum ada</span>
+                                        <?php endif; ?>
+                                    </td>
                                     <td>
                                         <a href="<?= base_url('dosen/user-requirement/detail/' . $mhs['mahasiswa_id']) ?>" 
                                            class="btn btn-sm btn-success rounded-pill px-3">
-                                            <i class="bi bi-eye me-1"></i> User Requirement
+                                            <i class="bi bi-eye me-1"></i> Lihat
                                         </a>
                                     </td>
                                 </tr>

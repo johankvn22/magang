@@ -59,18 +59,18 @@
                 </div>
                 <div class="row g-2">
                     <div class="col-6">
-                        <div class="card text-warning border-0 shadow-sm mb-2">
+                        <div class="card border-0 shadow-sm mb-2">
                             <div class="card-body text-center">
                                 <h5 class="card-title mb-1">Sudah Dinilai</h5>
-                                <p class="card-text fs-4 fw-bold mb-0"><?= $jumlahSudahDinilai ?></p>
+                                <p class="card-text text-warning fs-4 fw-bold mb-0"><?= $jumlahSudahDinilai ?></p>
                             </div>
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="card text-success  border-0 shadow-sm mb-2">
+                        <div class="card border-0 shadow-sm mb-2">
                             <div class="card-body text-center">
                                 <h5 class="card-title mb-1">Belum Dinilai</h5>
-                                <p class="card-text fs-4 fw-bold mb-0"><?= $jumlahBelumDinilai ?></p>
+                                <p class="card-text text-success fs-4 fw-bold mb-0"><?= $jumlahBelumDinilai ?></p>
                             </div>
                         </div>
                     </div>
