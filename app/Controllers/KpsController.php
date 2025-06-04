@@ -135,6 +135,11 @@ class KpsController extends BaseController
         $bimbinganModel = new Bimbingan();
         $dosenModel = new DosenPembimbingModel();
 
+        if (session()->get('role') !== 'kps') {
+            return redirect()->to('/login')->with('error', 'Akses ditolak.');
+        }
+
+
         // Ambil parameter search & pagination
         $keyword = $this->request->getGet('keyword');
         $perPage = (int) ($this->request->getGet('perPage') ?? 10);
@@ -148,6 +153,33 @@ class KpsController extends BaseController
         $allMahasiswa = $mahasiswaModel->getMahasiswaWithDosen();
         if ($allMahasiswa instanceof \CodeIgniter\Model) {
             $allMahasiswa = $allMahasiswa->findAll();
+        }
+
+        // sort berdasarkan program studi
+        $sortProdi = $this->request->getGet('sortProdi');
+        if ($sortProdi && in_array($sortProdi, ['TI', 'TMJ', 'TMD'])) {
+            $allMahasiswa = array_filter($allMahasiswa, function($m) use ($sortProdi) {
+                return $m['program_studi'] === $sortProdi;
+            });
+            $allMahasiswa = array_values($allMahasiswa); // Reindex
+        }
+        
+        $sortDosen = $this->request->getGet('sortDosen');
+        if ($sortDosen !== null && $sortDosen !== '') {
+            $allMahasiswa = array_filter($allMahasiswa, function ($m) use ($sortDosen, $bimbinganModel) {
+                $dosenIds = array_column(
+                    $bimbinganModel->where('mahasiswa_id', $m['mahasiswa_id'])->findAll(),
+                    'dosen_id'
+                );
+
+                if ($sortDosen == '-1') {
+                    // Belum ada dosen pembimbing
+                    return empty($dosenIds);
+                } else {
+                    return in_array((int) $sortDosen, $dosenIds);
+                }
+            });
+            $allMahasiswa = array_values($allMahasiswa); // Reindex
         }
 
         // Filter jika ada keyword
@@ -203,6 +235,10 @@ class KpsController extends BaseController
             'listDosen' => $listDosen,
             'keyword' => $keyword,
             'perPage' => $perPage,
+            'sortProdi' => $sortProdi,
+            'sortDosen' => $sortDosen,
+
+
         ]);
     }
 

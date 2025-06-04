@@ -34,13 +34,12 @@
             </div>
             <div class="form-group">
                 <label for="prodi">Program Studi</label>
-                <select name="prodi" class="form-control" required>
+                <select name="prodi" id="prodi" class="form-control">
                     <option value="">-- Pilih Program Studi --</option>
                     <?php foreach ($prodi as $p): ?>
                         <option value="<?= $p ?>"><?= $p ?></option>
                     <?php endforeach; ?>
                 </select>
-
             </div>
             <div class="form-group">
                 <label for="role">Role</label>
@@ -53,6 +52,23 @@
                     <option value="kps">KPS</option>
                 </select>
             </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var roleSelect = document.getElementById('role');
+                    var prodiSelect = document.getElementById('prodi');
+
+                    function toggleProdiRequired() {
+                        if (roleSelect.value === 'mahasiswa') {
+                            prodiSelect.setAttribute('required', 'required');
+                        } else {
+                            prodiSelect.removeAttribute('required');
+                        }
+                    }
+
+                    roleSelect.addEventListener('change', toggleProdiRequired);
+                    toggleProdiRequired();
+                });
+            </script>
             <button type="submit" class="btn btn-primary">Registrasi</button>
         </form>
         <p class="mt-3">Sudah punya akun? <a href="<?= site_url('login'); ?>">Login di sini</a>.</p>

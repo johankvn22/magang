@@ -30,7 +30,21 @@
     </form>
     </div>
 
+        <form method="get" action="<?= site_url('kps/daftar-dosen') ?>" class="row mb-3 g-2">
+        <input type="hidden" name="keyword" value="<?= esc($keyword) ?>">
+        <input type="hidden" name="perPage" value="<?= esc($perPage) ?>">
 
+        <div class="col-md-3">
+            <select name="sortProdi" class="form-select" onchange="this.form.submit()">
+                <option value="">Filter Program Studi</option>
+                <?php foreach (['TI', 'TMJ', 'TMD'] as $prodi): ?>
+                    <option value="<?= $prodi ?>" <?= ($sortProdi == $prodi) ? 'selected' : '' ?>>
+                        <?= $prodi ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        </form>
 
     <!-- Flash Message -->
     <?php if (session()->getFlashdata('success')): ?>
@@ -89,7 +103,6 @@
                                                         }
                                                    ?>"
                                                    placeholder="Ketik nama atau NIP..."
-                                                   required
                                                    autocomplete="off"
                                                    onfocus="this.setAttribute('list', 'dosen_list_<?= $index ?>')"
                                                    oninput="if(this.value===''){this.setAttribute('list', 'dosen_list_<?= $index ?>');}">
