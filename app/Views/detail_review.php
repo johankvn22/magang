@@ -1,150 +1,182 @@
 <?php
-
 /** @var \CodeIgniter\View\View $this */
 ?>
 <?= $this->extend('layouts/template_admin'); ?>
 <?= $this->section('content'); ?>
 
-<body class="container mt-4">
+<div class="container-fluid px-4 py-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary mb-0">
+            <i class="bi bi-clipboard2-data me-2"></i>Detail Review Kinerja
+        </h2>
+        <a href="<?= base_url('/admin/review-kinerja') ?>" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar
+        </a>
+    </div>
 
-    <h2>Detail Review Kinerja Mahasiswa</h2>
+    <!-- Student & Company Info -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-3 h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 fw-semibold">Informasi Mahasiswa</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <span class="text-muted small">Nama Mahasiswa:</span>
+                        <p class="fw-medium mb-0"><?= esc($review_id['nama_mahasiswa']) ?></p>
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-muted small">Email:</span>
+                        <p class="fw-medium mb-0"><?= esc($review_id['email']) ?></p>
+                    </div>
+                    <div class="mb-0">
+                        <span class="text-muted small">No HP:</span>
+                        <p class="fw-medium mb-0"><?= esc($review_id['no_hp']) ?></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-3 h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 fw-semibold">Informasi Pembimbing</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-2">
+                        <span class="text-muted small">Nama Pembimbing:</span>
+                        <p class="fw-medium mb-0"><?= esc($review_id['nama_pembimbing_perusahaan']) ?></p>
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-muted small">Perusahaan:</span>
+                        <p class="fw-medium mb-0"><?= esc($review_id['nama_perusahaan']) ?></p>
+                    </div>
+                    <div class="mb-2">
+                        <span class="text-muted small">Jabatan/Divisi:</span>
+                        <p class="fw-medium mb-0"><?= esc($review_id['jabatan']) ?> / <?= esc($review_id['divisi']) ?></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <table class="table table-bordered">
-        <tr>
-            <th>Nama Mahasiswa</th>
-            <td><?= esc($review_id['nama_mahasiswa']) ?></td>
-        </tr>
-        <tr>
-            <th>Email</th>
-            <td><?= esc($review_id['email']) ?></td>
-        </tr>
-        <tr>
-            <th>No HP</th>
-            <td><?= esc($review_id['no_hp']) ?></td>
-        </tr>
+    <!-- Assessment Section -->
+    <div class="card shadow-sm border-0 rounded-3 mb-4">
+        <div class="card-header bg-white border-bottom">
+            <h5 class="mb-0 fw-semibold">Penilaian Kompetensi</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-bordered mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="40%">Kompetensi</th>
+                            <th width="10%" class="text-center">Sangat Baik</th>
+                            <th width="10%"class="text-center">Baik</th>
+                            <th width="10%"class="text-center">Cukup</th>
+                            <th width="10%"class="text-center">Kurang</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                        $competencies = [
+                            'integritas' => 'Integritas (Etika dan Moral)',
+                            'keahlian_bidang' => 'Keahlian Berdasarkan Bidang Ilmu (Profesionalisme)',
+                            'kemampuan_bahasa_inggris' => 'Kemampuan Bahasa Inggris',
+                            'pengetahuan_bidang' => 'Pengetahuan di Bidang Teknik Informatika/Multimedia/Jaringan',
+                            'komunikasi_adaptasi' => 'Kemampuan Berkomunikasi/Adaptasi',
+                            'kerja_sama' => 'Kemampuan Bekerjasama',
+                            'kemampuan_belajar' => 'Kemampuan Belajar',
+                            'kreativitas' => 'Kreativitas',
+                            'menuangkan_ide' => 'Kemampuan Menuangkan Ide/Pendapat',
+                            'pemecahan_masalah' => 'Kemampuan Memecahkan Masalah',
+                            'sikap' => 'Sikap kepada Atasan/Teman/Setingkat/Bawahan',
+                            'kerja_dibawah_tekanan' => 'Kemampuan Bekerja Dibawah Tekanan',
+                            'manajemen_waktu' => 'Manajemen Waktu',
+                            'bekerja_mandiri' => 'Bekerja Secara Mandiri',
+                            'negosiasi' => 'Negosiasi',
+                            'analisis' => 'Kemampuan Analisis',
+                            'bekerja_dengan_budaya_berbeda' => 'Kemampuan Bekerja dengan Orang yang Berbeda Budaya/Latar Belakang',
+                            'kepemimpinan' => 'Kepemimpinan',
+                            'tanggung_jawab' => 'Kemampuan dalam Memegang Tanggung Jawab',
+                            'presentasi' => 'Kemampuan untuk Mempresentasikan Ide/Produk/Laporan',
+                            'menulis_dokumen' => 'Kemampuan dalam Menulis Laporan, Memo dan Dokumen'
+                        ];
+                        
+                        foreach ($competencies as $field => $label): 
+                            $value = $review_id[$field] ?? '';
+                        ?>
+                        <tr>
+                            <td><?= $label ?></td>
+                            <td class="text-center">
+                                <input type="radio" class="form-check-input" disabled <?= $value === 'sangat_baik' ? 'checked' : '' ?>>
+                            </td>
+                            <td class="text-center">
+                                <input type="radio" class="form-check-input" disabled <?= $value === 'baik' ? 'checked' : '' ?>>
+                            </td>
+                            <td class="text-center">
+                                <input type="radio" class="form-check-input" disabled <?= $value === 'cukup' ? 'checked' : '' ?>>
+                            </td>
+                            <td class="text-center">
+                                <input type="radio" class="form-check-input" disabled <?= $value === 'kurang' ? 'checked' : '' ?>>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-        <tr>
-            <th>Nama Pembimbing Perusahaan</th>
-            <td><?= esc($review_id['nama_pembimbing_perusahaan']) ?></td>
-        </tr>
-        <tr>
-            <th>Nama Perusahaan</th>
-            <td><?= esc($review_id['nama_perusahaan']) ?></td>
-        </tr>
-        <tr>
-            <th>Jabatan</th>
-            <td><?= esc($review_id['jabatan']) ?></td>
-        </tr>
-        <tr>
-            <th>Divisi</th>
-            <td><?= esc($review_id['divisi']) ?></td>
-        </tr>
+    <!-- Additional Info Section -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-3 h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 fw-semibold">Saran untuk Lulusan</h5>
+                </div>
+                <div class="card-body">
+                    <p><?= !empty($review_id['saran_lulusan']) ? esc($review_id['saran_lulusan']) : '-' ?></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-3 h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 fw-semibold">Kemampuan Teknik yang Dibutuhkan</h5>
+                </div>
+                <div class="card-body">
+                    <p><?= !empty($review_id['kemampuan_teknik_dibutuhkan']) ? esc($review_id['kemampuan_teknik_dibutuhkan']) : '-' ?></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0 rounded-3 h-100">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 fw-semibold">Profesi yang Cocok</h5>
+                </div>
+                <div class="card-body">
+                    <p><?= !empty($review_id['profesi_cocok']) ? esc($review_id['profesi_cocok']) : '-' ?></p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <tr>
-            <th>Integritas</th>
-            <td><?= esc($review_id['integritas']) ?></td>
-        </tr>
-        <tr>
-            <th>Keahlian di Bidangnya</th>
-            <td><?= esc($review_id['keahlian_bidang']) ?></td>
-        </tr>
-        <tr>
-            <th>Kemampuan Bahasa Inggris</th>
-            <td><?= esc($review_id['kemampuan_bahasa_inggris']) ?></td>
-        </tr>
-        <tr>
-            <th>Pengetahuan Bidang</th>
-            <td><?= esc($review_id['pengetahuan_bidang']) ?></td>
-        </tr>
-        <tr>
-            <th>Komunikasi & Adaptasi</th>
-            <td><?= esc($review_id['komunikasi_adaptasi']) ?></td>
-        </tr>
-        <tr>
-            <th>Kerja Sama</th>
-            <td><?= esc($review_id['kerja_sama']) ?></td>
-        </tr>
-        <tr>
-            <th>Kemampuan Belajar</th>
-            <td><?= esc($review_id['kemampuan_belajar']) ?></td>
-        </tr>
-        <tr>
-            <th>Kreativitas</th>
-            <td><?= esc($review_id['kreativitas']) ?></td>
-        </tr>
-        <tr>
-            <th>Menuangkan Ide</th>
-            <td><?= esc($review_id['menuangkan_ide']) ?></td>
-        </tr>
-        <tr>
-            <th>Pemecahan Masalah</th>
-            <td><?= esc($review_id['pemecahan_masalah']) ?></td>
-        </tr>
-        <tr>
-            <th>Sikap</th>
-            <td><?= esc($review_id['sikap']) ?></td>
-        </tr>
-        <tr>
-            <th>Kerja di Bawah Tekanan</th>
-            <td><?= esc($review_id['kerja_dibawah_tekanan']) ?></td>
-        </tr>
-        <tr>
-            <th>Manajemen Waktu</th>
-            <td><?= esc($review_id['manajemen_waktu']) ?></td>
-        </tr>
-        <tr>
-            <th>Bekerja Mandiri</th>
-            <td><?= esc($review_id['bekerja_mandiri']) ?></td>
-        </tr>
-        <tr>
-            <th>Negosiasi</th>
-            <td><?= esc($review_id['negosiasi']) ?></td>
-        </tr>
-        <tr>
-            <th>Analisis</th>
-            <td><?= esc($review_id['analisis']) ?></td>
-        </tr>
-        <tr>
-            <th>Bekerja dengan Budaya Berbeda</th>
-            <td><?= esc($review_id['bekerja_dengan_budaya_berbeda']) ?></td>
-        </tr>
-        <tr>
-            <th>Kepemimpinan</th>
-            <td><?= esc($review_id['kepemimpinan']) ?></td>
-        </tr>
-        <tr>
-            <th>Tanggung Jawab</th>
-            <td><?= esc($review_id['tanggung_jawab']) ?></td>
-        </tr>
-        <tr>
-            <th>Presentasi</th>
-            <td><?= esc($review_id['presentasi']) ?></td>
-        </tr>
-        <tr>
-            <th>Menulis Dokumen</th>
-            <td><?= esc($review_id['menulis_dokumen']) ?></td>
-        </tr>
+    <!-- Footer -->
+    <div class="text-end mt-4">
+        <small class="text-muted">Tanggal Review: <?= date('d M Y, H:i', strtotime($review_id['created_at'])) ?></small>
+    </div>
+</div>
 
-        <tr>
-            <th>Saran untuk Lulusan</th>
-            <td><?= esc($review_id['saran_lulusan']) ?></td>
-        </tr>
-        <tr>
-            <th>Kemampuan Teknik yang Dibutuhkan</th>
-            <td><?= esc($review_id['kemampuan_teknik_dibutuhkan']) ?></td>
-        </tr>
-        <tr>
-            <th>Profesi yang Cocok</th>
-            <td><?= esc($review_id['profesi_cocok']) ?></td>
-        </tr>
+<style>
+    .form-check-input {
+        transform: scale(1.2);
+        cursor: default;
+    }
+    .table th, .table td {
+        vertical-align: middle;
+    }
+</style>
 
-        <tr>
-            <th>Tanggal Review</th>
-            <td><?= date('d M Y, H:i', strtotime($review_id['created_at'])) ?></td>
-        </tr>
-    </table>
-
-<a href="<?= base_url('/kps/review-kinerja') ?>" class="btn btn-secondary">← Kembali ke Daftar</a>
-
-</body>
 <?= $this->endSection(); ?>

@@ -21,8 +21,8 @@ $routes->get('/logout', 'AuthController::logout'); // Menangani logout
 $routes->get('/admin/logbook', 'AdminLogbookController::index'); // Menampilkan logbook mahasiswa
 $routes->get('/admin/logbook/(:num)', 'AdminLogbookController::detail/$1');
 
-$routes->get('/admin/tambah-bimbingan', 'AdminController::tambahBimbingan'); // Menampilkan form untuk menambahkan bimbingan
-$routes->post('/admin/save-bimbingan', 'AdminController::saveBimbingan');
+$routes->get('/admin/tambah-bimbingan', 'AdminController::daftarDosen'); // Menampilkan form untuk menambahkan bimbingan
+$routes->post('/admin/save-bimbingan', 'AdminController::updateDosen');
 
 $routes->get('/admin/bimbingan-industri', 'AdminController::tambahBimbinganIndustri'); //atur bimbingan industri
 $routes->post('/admin/bimbingan-industri/save', 'AdminController::saveBimbinganIndustri'); // Menyimpan bimbingan industri
@@ -44,12 +44,15 @@ $routes->get('/admin/review-kinerja', 'AdminLogbookController::listreview');
 $routes->get('/admin/review-kinerja/detail/(:num)', 'AdminLogbookController::detailReview/$1');
 $routes->get('/admin/nilai', 'AdminController::listNilaiMahasiswa');
 
+$routes->get('admin/nilai_mahasiswa', 'AdminController::listNilaiMahasiswa'); // Menampilkan daftar nilai mahasiswa
 $routes->get('admin/nilai/detail/(:num)', 'AdminController::detail_nilai/$1');
 
 $routes->get('admin/upload-pedoman', 'AdminController::uploadPedoman'); // Menampilkan form upload pedoman
 $routes->post('admin/upload-pedoman', 'AdminController::uploadPedoman'); // Memproses upload pedoman
 $routes->get('admin/pedoman/download/(:any)', 'AdminController::downloadPedoman/$1'); // Download pedoman
 $routes->post('admin/delete-pedoman/(:num)', 'AdminController::deletePedoman/$1'); // Hapus pedoman
+
+
 
 
 
