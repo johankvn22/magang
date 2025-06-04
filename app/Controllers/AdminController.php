@@ -40,15 +40,21 @@ class AdminController extends BaseController
     }
 
     // Tampilkan daftar dosen pembimbing dengan mahasiswa bimbingannya
+    // Tampilkan daftar dosen pembimbing   
     public function daftarDosen()
     {
         $mahasiswaModel = new MahasiswaModel();
         $bimbinganModel = new Bimbingan();
         $dosenModel = new DosenPembimbingModel();
 
+        if (session()->get('role') !== 'admin') {
+            return redirect()->to('/login')->with('error', 'Akses ditolak.');
+        }
+
+
         // Ambil parameter search & pagination
         $keyword = $this->request->getGet('keyword');
-        $perPage = (int) ($this->request->getGet('perPage') ?? 10); // Added missing parenthesis
+        $perPage = (int) ($this->request->getGet('perPage') ?? 10);
         if (!in_array($perPage, [5, 10, 25, 50, 100])) {
             $perPage = 10;
         }
@@ -64,21 +70,33 @@ class AdminController extends BaseController
         // sort berdasarkan program studi
         $sortProdi = $this->request->getGet('sortProdi');
         if ($sortProdi && in_array($sortProdi, ['TI', 'TMJ', 'TMD'])) {
-            $allMahasiswa = array_filter($allMahasiswa, function ($m) use ($sortProdi) {
+            $allMahasiswa = array_filter($allMahasiswa, function($m) use ($sortProdi) {
                 return $m['program_studi'] === $sortProdi;
             });
             $allMahasiswa = array_values($allMahasiswa); // Reindex
         }
+        
+        $sortDosen = $this->request->getGet('sortDosen');
+        if ($sortDosen !== null && $sortDosen !== '') {
+            $allMahasiswa = array_filter($allMahasiswa, function ($m) use ($sortDosen, $bimbinganModel) {
+                $dosenIds = array_column(
+                    $bimbinganModel->where('mahasiswa_id', $m['mahasiswa_id'])->findAll(),
+                    'dosen_id'
+                );
 
-        // Ambil data mahasiswa + dosen
-        $allMahasiswa = $mahasiswaModel->getMahasiswaWithDosen();
-        if ($allMahasiswa instanceof \CodeIgniter\Model) {
-            $allMahasiswa = $allMahasiswa->findAll();
+                if ($sortDosen == '-1') {
+                    // Belum ada dosen pembimbing
+                    return empty($dosenIds);
+                } else {
+                    return in_array((int) $sortDosen, $dosenIds);
+                }
+            });
+            $allMahasiswa = array_values($allMahasiswa); // Reindex
         }
 
         // Filter jika ada keyword
         if ($keyword) {
-            $allMahasiswa = array_filter($allMahasiswa, function ($m) use ($keyword) {
+            $allMahasiswa = array_filter($allMahasiswa, function($m) use ($keyword) {
                 $kw = mb_strtolower($keyword);
                 return str_contains(mb_strtolower($m['nama_lengkap']), $kw)
                     || str_contains(mb_strtolower($m['nim']), $kw)
@@ -102,6 +120,19 @@ class AdminController extends BaseController
 
         // Ambil semua dosen
         $listDosen = $dosenModel->findAll();
+        
+        // Buat map ID => nama
+        $dosenMap = [];
+        foreach ($listDosen as $dosen) {
+            $dosenMap[$dosen['dosen_id']] = $dosen['nama_lengkap'];
+        }
+
+        // Tambahkan nama dospem ke data mahasiswa
+        foreach ($pagedMahasiswa as &$m) {
+            $m['nama_dospem1'] = $dosenMap[$m['dospem1']] ?? '-';
+            $m['nama_dospem2'] = $dosenMap[$m['dospem2']] ?? '-';
+            $m['nama_dospem3'] = $dosenMap[$m['dospem3']] ?? '-';
+        }
 
         // Jumlah bimbingan per dosen
         $bimbinganCount = $bimbinganModel->select('dosen_id, COUNT(*) as total')
@@ -129,123 +160,102 @@ class AdminController extends BaseController
             'listDosen' => $listDosen,
             'keyword' => $keyword,
             'perPage' => $perPage,
+            'sortProdi' => $sortProdi,
+            'sortDosen' => $sortDosen,
+
+
         ]);
     }
 
     // Update pembagian dosen pembimbing
     public function updateDosen()
-    {
-        $mahasiswaIds = $this->request->getPost('mahasiswa_id');
-        $bimbinganModel = new Bimbingan();
+{
+    $mahasiswaIds = $this->request->getPost('mahasiswa_id');
+    $bimbinganModel = new Bimbingan();
 
-        if (is_array($mahasiswaIds)) {
-            foreach ($mahasiswaIds as $mahasiswaId) {
-                $dosenId = $this->request->getPost('dosen_id_' . $mahasiswaId);
+    if (is_array($mahasiswaIds)) {
+        foreach ($mahasiswaIds as $mahasiswaId) {
+            $dosenId = $this->request->getPost('dosen_id_' . $mahasiswaId);
 
-                if ($dosenId) {
-                    // Cek apakah ada entri bimbingan untuk mahasiswa ini
-                    $existingBimbingan = $bimbinganModel->where('mahasiswa_id', $mahasiswaId)->first();
+            if ($dosenId) {
+                // Cek apakah ada entri bimbingan untuk mahasiswa ini
+                $existingBimbingan = $bimbinganModel->where('mahasiswa_id', $mahasiswaId)->first();
 
-                    if ($existingBimbingan) {
-                        // Update dosen pembimbing
-                        $bimbinganModel->update($existingBimbingan['bimbingan_id'], [
-                            'dosen_id' => $dosenId
-                        ]);
-                    } else {
-                        // Jika belum ada entri, tambahkan baru
-                        $bimbinganModel->insert([
-                            'mahasiswa_id' => $mahasiswaId,
-                            'dosen_id'     => $dosenId
-                        ]);
-                    }
+                if ($existingBimbingan) {
+                    // Update dosen pembimbing
+                    $bimbinganModel->update($existingBimbingan['bimbingan_id'], [
+                        'dosen_id' => $dosenId
+                    ]);
+                } else {
+                    // Jika belum ada entri, tambahkan baru
+                    $bimbinganModel->insert([
+                        'mahasiswa_id' => $mahasiswaId,
+                        'dosen_id'     => $dosenId
+                    ]);
                 }
             }
         }
-
-        return redirect()->to('atur_bimbingan')->with('success', 'Data pembimbing berhasil diperbarui.');
     }
+
+    return redirect()->to('admin/tambah-bimbingan')->with('success', 'Data pembimbing berhasil diperbarui.');
+}
+
 
     // FORM TAMBAH BIMBINGAN (untuk multiple assignment)
-    public function tambahBimbingan()
-    {
-        $mahasiswaModel = new MahasiswaModel();
-        $dosenModel = new DosenPembimbingModel();
-        $bimbinganModel = new Bimbingan();
+    // public function tambahBimbingan()
+    // {
+    //     $mahasiswaModel = new MahasiswaModel();
+    //     $dosenModel = new DosenPembimbingModel();
 
-        // Ambil semua mahasiswa
-        $mahasiswa = $mahasiswaModel->findAll();
+    //     $mahasiswa = $mahasiswaModel->findAll();
+    //     $dosen = $dosenModel->findAll();
 
-        // Ambil semua dosen
-        $dosen = $dosenModel->findAll();
+    //     return view('atur_bimbingan', [
+    //         'mahasiswa' => $mahasiswa,
+    //         'dosen' => $dosen
+    //     ]);
+    // }
 
-        // Ambil semua data bimbingan dan join ke dosen
-        $bimbinganList = $bimbinganModel
-            ->select('bimbingan.mahasiswa_id, bimbingan.dosen_id, dosen_pembimbing.nama_lengkap as nama_dosen')
-            ->join('dosen_pembimbing', 'dosen_pembimbing.dosen_id = bimbingan.dosen_id')
-            ->findAll();
+    // // SIMPAN BIMBINGAN (untuk multiple assignment)
+    // public function saveBimbingan()
+    // {
+    //     $bimbinganModel = new Bimbingan();
 
-        // Buat mapping: mahasiswa_id => array of dosen
-        $bimbinganMap = [];
-        foreach ($bimbinganList as $b) {
-            $bimbinganMap[$b['mahasiswa_id']][] = [
-                'dosen_id' => $b['dosen_id'],
-                'nama_dosen' => $b['nama_dosen']
-            ];
-        }
+    //     $mahasiswa_id = $this->request->getPost('mahasiswa_id'); // array
+    //     $dosen_id = $this->request->getPost('dosen_id');         // array
 
-        return view('atur_bimbingan', [
-            'mahasiswa' => $mahasiswa,
-            'dosen' => $dosen,
-            'bimbinganMap' => $bimbinganMap
-        ]);
-    }
+    //     $success = 0;
+    //     $failed = 0;
 
-    // SIMPAN BIMBINGAN (untuk multiple assignment)
-   public function saveBimbingan()
-{
-    $bimbinganModel = new Bimbingan();
-    
-    // Ambil data dari form
-    $mahasiswaIds = $this->request->getPost('mahasiswa_id');
-    $dosenIds = $this->request->getPost('dosen_id');
-    
-    $success = 0;
-    $failed = 0;
+    //     foreach ($mahasiswa_id as $index => $mhs_id) {
+    //         $current_dosen_id = $dosen_id[$index] ?? null;
 
-    // Pastikan kedua array memiliki panjang yang sama
-    if (is_array($mahasiswaIds) && is_array($dosenIds) && count($mahasiswaIds) === count($dosenIds)) {
-        foreach ($mahasiswaIds as $index => $mahasiswaId) {
-            $dosenId = $dosenIds[$mahasiswaId] ?? null; // Perhatikan perubahan di sini
-            
-            if (!empty($dosenId)) {
-                // Cek apakah bimbingan sudah ada
-                $existing = $bimbinganModel->where('mahasiswa_id', $mahasiswaId)
-                                          ->first();
-                
-                if ($existing) {
-                    // Update bimbingan yang sudah ada
-                    $bimbinganModel->update($existing['bimbingan_id'], [
-                        'dosen_id' => $dosenId
-                    ]);
-                    $success++;
-                } else {
-                    // Tambahkan bimbingan baru
-                    $inserted = $bimbinganModel->insert([
-                        'mahasiswa_id' => $mahasiswaId,
-                        'dosen_id' => $dosenId
-                    ]);
-                    $inserted ? $success++ : $failed++;
-                }
-            }
-        }
-    }
+    //         // Validasi agar dosen dipilih
+    //         if (!empty($current_dosen_id)) {
+    //             // Cek apakah bimbingan sudah ada
+    //             $existing = $bimbinganModel->where('mahasiswa_id', $mhs_id)
+    //                 ->where('dosen_id', $current_dosen_id)
+    //                 ->first();
 
-    if ($success > 0) {
-        return redirect()->to('/admin/daftar-dosen')->with('success', "Berhasil menyimpan $success bimbingan.");
-    } else {
-        return redirect()->back()->with('error', 'Gagal menyimpan data bimbingan.');
-    }
-}
+    //             if (!$existing) {
+    //                 $inserted = $bimbinganModel->insert([
+    //                     'mahasiswa_id' => $mhs_id,
+    //                     'dosen_id'     => $current_dosen_id
+    //                 ]);
+
+    //                 $inserted ? $success++ : $failed++;
+    //             } else {
+    //                 $success++; // Skip jika sudah ada
+    //             }
+    //         }
+    //     }
+
+    //     if ($success > 0) {
+    //         return redirect()->to('/admin/tambah-bimbingan')->with('success', "$success bimbingan berhasil disimpan. $failed gagal.");
+    //     } else {
+    //         return redirect()->back()->with('error', 'Tidak ada data bimbingan yang berhasil disimpan.');
+    //     }
+    // }
 
     //fungsi untuk memasukkan pedoman magang
     public function uploadPedoman()
@@ -453,17 +463,49 @@ class AdminController extends BaseController
 
         // Ambil semua data mahasiswa beserta total nilai akhir
         $mahasiswaList = $mahasiswaModel
-            ->select('mahasiswa_id, nama_lengkap, nim, program_studi, nama_perusahaan')
+            ->select('mahasiswa_id, nama_lengkap, nim, program_studi, kelas, nama_perusahaan')
             ->findAll();
+
+        $keyword = $this->request->getGet('keyword');
+        $perPage = (int) ($this->request->getGet('perPage') ?? 10);
+        if (!in_array($perPage, [5, 10, 25, 50, 100])) {
+            $perPage = 10;
+        }
+        $currentPage = (int) ($this->request->getGet('page') ?? 1);
+        $offset = ($currentPage - 1) * $perPage;
+
+        // Filter berdasarkan keyword
+        if ($keyword) {
+            $mahasiswaList = array_filter($mahasiswaList, function($mhs) use ($keyword) {
+                $kw = mb_strtolower($keyword);
+                return str_contains(mb_strtolower($mhs['nama_lengkap']), $kw)
+                    || str_contains(mb_strtolower($mhs['nim']), $kw)
+                    || str_contains(mb_strtolower($mhs['program_studi']), $kw)
+                    || str_contains(mb_strtolower($mhs['kelas']), $kw)
+                    || str_contains(mb_strtolower($mhs['nama_perusahaan'] ?? ''), $kw);
+            });
+            $mahasiswaList = array_values($mahasiswaList); // reindex
+        }
+
+        $total = count($mahasiswaList);
+        $mahasiswaList = array_slice($mahasiswaList, $offset, $perPage);
+
+        $pager = \Config\Services::pager();
+        $pager->makeLinks($currentPage, $perPage, $total, 'default_full');
+
+        $data['pager'] = $pager;
+        $data['keyword'] = $keyword;
+        $data['perPage'] = $perPage;
+        $data['offset'] = $offset;
 
         // Gabungkan dengan nilai dosen, industri, dan hitung total nilai
         foreach ($mahasiswaList as &$mhs) {
             $nilaiDosen = $penilaianDosenModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
             $nilaiIndustri = $penilaianIndustriModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
-
+            
             $mhs['nilai_dosen'] = $nilaiDosen;
             $mhs['nilai_industri'] = $nilaiIndustri;
-
+            
             // Hitung total nilai akhir (60% industri + 40% dosen)
             $totalNilaiDosen = $nilaiDosen ? $nilaiDosen['total_nilai'] : 0;
             $totalNilaiIndustri = $nilaiIndustri ? $nilaiIndustri['total_nilai_industri'] : 0;

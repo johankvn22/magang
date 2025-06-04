@@ -1,18 +1,50 @@
-<?php /** @var \CodeIgniter\View\View $this */ ?>
+<?php
+/** @var \CodeIgniter\View\View $this */
+?>
 <?= $this->extend('layouts/template_admin'); ?>
 <?= $this->section('content'); ?>
 
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-primary">Daftar Mahasiswa & Bimbingan Dosen</h2>
+        <h2 class="fw-bold text-success">Daftar Mahasiswa & Dosen Pembimbing</h2>
+            <!-- Search -->
+    <form method="get" action="<?= site_url('admin/daftar-dosen') ?>" class="row mb-3">
+      <div class="col-md-8">
+        <input type="text" name="keyword" value="<?= esc($keyword ?? '') ?>" class="form-control" placeholder="Cari Nama Mahasiswa/Perusahaan...">
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-success">Cari</button>
+      </div>
+    </form>
 
-        <!-- Search -->
-        <form method="get" action="<?= current_url() ?>" class="row mb-3">
-            <div class="col-md-8">
-                <input type="text" id="searchInput" class="form-control" placeholder="Cari Nama/NIM/Kelas/Perusahaan...">
-            </div>
-        </form>
+    <form method="get" action="<?= site_url('admin/tambah-bimbingan') ?>" class="row mb-3 g-2">
+      <div class="col-md-12">
+        <select name="perPage" class="form-select" onchange="this.form.submit()">
+          <?php foreach ([5, 10, 25, 50, 100] as $option): ?>
+            <option value="<?= $option ?>" <?= ($perPage ?? 10) == $option ? 'selected' : '' ?>>
+              Tampilkan <?= $option ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+    </form>
     </div>
+
+        <form method="get" action="<?= site_url('admin/tambah-bimbingan') ?>" class="row mb-3 g-2">
+        <input type="hidden" name="keyword" value="<?= esc($keyword) ?>">
+        <input type="hidden" name="perPage" value="<?= esc($perPage) ?>">
+
+        <div class="col-md-3">
+            <select name="sortProdi" class="form-select" onchange="this.form.submit()">
+                <option value="">Filter Program Studi</option>
+                <?php foreach (['TI', 'TMJ', 'TMD'] as $prodi): ?>
+                    <option value="<?= $prodi ?>" <?= ($sortProdi == $prodi) ? 'selected' : '' ?>>
+                        <?= $prodi ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        </form>
 
     <!-- Flash Message -->
     <?php if (session()->getFlashdata('success')): ?>
@@ -22,111 +54,150 @@
         </div>
     <?php endif; ?>
 
-    <!-- Form Table -->
-    <form method="POST" action="<?= site_url('admin/save-bimbingan'); ?>">
+    <form method="post" action="<?= base_url('admin/save-bimbingan') ?>">
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-striped align-middle mb-0" id="bimbinganTable">
+                    <table class="table table-striped align-middle mb-0" id="mahasiswaTable">
                         <thead class="table-light">
                             <tr>
-                                <th class="text-center" width="5%">No</th>
-                                <th width="20%">Nama Mahasiswa</th>
-                                <th width="10%">NIM</th>
-                                <th width="10%">Kelas</th>
-                                <th width="10%">Perusahaan</th>
-                                <th width="10%">Dospem 1</th>
-                                <th width="10%">Dospem 2</th>
-                                <th width="10%">Dospem 3</th>
-                                <th width="25%">Pilih Dosen Pembimbing</th>
+                                <th width="20%">Nama</th>
+                                <th class="sortable" width="15%">Kelas</th>
+                                <th class="sortable" width="20%">Perusahaan</th>
+                                <th class="sortable" width="10%">Dosen 1</th>
+                                <th class="sortable" width="10%">Dosen 1</th>
+                                <th class="sortable" width="10%">Dosen 1</th>
+
+                                <th class="sortable" width="15%">Dosen Pembimbing</th>
                             </tr>
                         </thead>
                         <tbody>
-                           <?php foreach ($mahasiswa as $index => $mhs): ?>
-    <tr>
-        <td class="text-center"><?= $index + 1 ?></td>
-        <td>
-            <div class="fw-semibold"><?= esc($mhs['nama_lengkap']) ?></div>
-            <input type="hidden" name="mahasiswa_id[]" value="<?= $mhs['mahasiswa_id'] ?>">
-        </td>
-        <td><?= esc($mhs['nim']) ?></td>
-        <td><span class="badge bg-secondary-subtle text-secondary"><?= esc($mhs['kelas']) ?></span></td>
-        <td><?= esc($mhs['nama_perusahaan']) ?></td>
-        <td><?= esc($mhs['dospem1']) ?></td>
-        <td><?= esc($mhs['dospem2']) ?></td>
-        <td><?= esc($mhs['dospem3']) ?></td>
-        <td>
-            <?php
-                $selectedName = '';
-                $selectedId = '';
-                if (isset($bimbinganMap[$mhs['mahasiswa_id']])) {
-                    foreach ($bimbinganMap[$mhs['mahasiswa_id']] as $b) {
-                        $selectedId = $b['dosen_id'];
-                        foreach ($dosen as $dsn) {
-                            if ($dsn['dosen_id'] == $selectedId) {
-                                $selectedName = $dsn['nama_lengkap'] . ' (' . $dsn['nip'] . ')';
-                                break;
-                            }
-                        }
-                    }
-                }
-            ?>
-            <input 
-                list="dosen_list_<?= $index ?>" 
-                class="form-control form-control-sm dosen-input" 
-                name="dosen_label[<?= $mhs['mahasiswa_id'] ?>]" 
-                placeholder="Ketik nama atau NIP..." 
-                value="<?= esc($selectedName) ?>" 
-                required
-            >
-            <input type="hidden" name="dosen_id[<?= $mhs['mahasiswa_id'] ?>]" class="dosen-id-hidden" value="<?= esc($selectedId) ?>">
+                            <?php foreach ($mahasiswa as $index => $m): ?>
+                                <tr class="<?= empty($m['dosen_terpilih']) ? 'table-warning' : '' ?>">
+                                    <td>
+                                        <div class="fw-semibold"><?= esc($m['nama_lengkap']) ?></div>
+                                        <div class="text-muted small"><?= esc($m['nim']) ?></div>                                    
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary-subtle text-primary"><?= esc($m['program_studi']) ?></span><br>
+                                        <span class="badge bg-secondary-subtle text-secondary"><?= esc($m['kelas']) ?></span>      
+                                    </td>
+                                    <td style="max-width: 250px;">
+                                        <div><?= esc($m['nama_perusahaan']) ?></div>
+                                        <div class="text-muted small"> <?= esc($m['divisi']) ?></div>
+                                    </td>
+                                        <td><?= esc($m['nama_dospem1']) ?></td>
+                                        <td><?= esc($m['nama_dospem2']) ?></td>
+                                        <td><?= esc($m['nama_dospem3']) ?></td>
+                                    <td>
+                                        <input type="hidden" name="mahasiswa_id[]" value="<?= $m['mahasiswa_id'] ?>">
+                                        <input type="hidden" 
+                                               name="dosen_id_<?= $m['mahasiswa_id'] ?>" 
+                                               id="dosen_id_<?= $m['mahasiswa_id'] ?>" 
+                                               value="<?= $m['dosen_terpilih'][0] ?? '' ?>">
 
-            <datalist id="dosen_list_<?= $index ?>">
-                <?php foreach ($dosen as $dsn): ?>
-                    <option 
-                        value="<?= esc($dsn['nama_lengkap']) ?> (<?= esc($dsn['nip']) ?>)" 
-                        data-id="<?= $dsn['dosen_id'] ?>">
-                        <?= esc($dsn['nama_lengkap']) ?> (<?= esc($dsn['nip']) ?>) - <?= $dsn['total_bimbingan'] ?? 0 ?> bimbingan
-                    </option>
-                <?php endforeach; ?>
-            </datalist>
-        </td>
-    </tr>
+                                        <div class="input-group input-group-sm">
+                                            <input list="dosen_list_<?= $index ?>" 
+                                                   class="form-control dosen-input"
+                                                   data-target="<?= $m['mahasiswa_id'] ?>"
+                                                   value="<?php
+                                                        $selectedId = $m['dosen_terpilih'][0] ?? '';
+                                                        $selectedDosen = array_filter($listDosen, fn($d) => $d['dosen_id'] == $selectedId);
+                                                        if (!empty($selectedDosen)) {
+                                                            $dosen = array_values($selectedDosen)[0];
+                                                            echo esc($dosen['nama_lengkap']) . ' (' . esc($dosen['nip']) . ')';
+                                                        }
+                                                   ?>"
+                                                   placeholder="Ketik nama atau NIP..."
+                                                   autocomplete="off"
+                                                   onfocus="this.setAttribute('list', 'dosen_list_<?= $index ?>')"
+                                                   oninput="if(this.value===''){this.setAttribute('list', 'dosen_list_<?= $index ?>');}">
+
+                                            <button type="button" class="btn btn-outline-secondary btn-clear-dosen" tabindex="-1"
+                                                onclick="this.previousElementSibling.value='';this.previousElementSibling.dispatchEvent(new Event('input'));this.previousElementSibling.focus();">
+                                                &times;
+                                            </button>
+                                        </div>
+
+                                        <datalist id="dosen_list_<?= $index ?>">
+                                            <?php foreach ($listDosen as $dsn): ?>
+                                                <option data-id="<?= $dsn['dosen_id'] ?>" 
+                                                        value="<?= esc($dsn['nama_lengkap']) ?> (<?= esc($dsn['nip']) ?>)">
+                                                    <?= $dsn['total_bimbingan'] ?? 0 ?> bimbingan
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </datalist>
+                                    </td>
+                                </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Submit -->
+                <!-- Submit Button -->
                 <div class="text-end p-3 bg-light border-top">
-                    <button type="submit" class="btn btn-primary px-4">Simpan Semua Bimbingan</button>
+                    <button type="submit" class="btn btn-success px-4">Simpan Semua</button>
                 </div>
+
+                <!-- Pagination -->
+                <?php if (isset($pager)): ?>
+                <div class="d-flex justify-content-center p-3 border-top">
+                    <?= $pager->links('default', 'custom_pagination') ?>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </form>
+
+    <!-- Rekap Section -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Rekap Mahasiswa Bimbingan per Dosen</h5>
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="70%">Nama Dosen</th>
+                            <th width="30%">Total Mahasiswa Bimbingan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($listDosen as $d): ?>
+                            <tr>
+                                <td><?= esc($d['nama_lengkap']) ?> (<?= esc($d['nip']) ?>)</td>
+                                <td><?= $d['total_bimbingan'] ?? 0 ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Search Script -->
+<!-- Scripts (unchanged) -->
 <script>
-    const searchInput = document.getElementById("searchInput");
-    const table = document.getElementById("bimbinganTable").getElementsByTagName("tbody")[0];
+document.querySelectorAll('.dosen-input').forEach(input => {
+    input.addEventListener('change', function () {
+        const mahasiswaId = this.dataset.target;
+        const selectedValue = this.value.toLowerCase();
+        const listId = this.getAttribute('list');
+        const datalist = document.getElementById(listId);
+        const options = datalist.getElementsByTagName('option');
 
-    searchInput.addEventListener("keyup", function() {
-        const filter = searchInput.value.toLowerCase();
+        let matchedId = '';
 
-        for (let row of table.rows) {
-            const nama = row.cells[1]?.textContent.toLowerCase() || '';
-            const nim = row.cells[2]?.textContent.toLowerCase() || '';
-            const kelas = row.cells[3]?.textContent.toLowerCase() || '';
-            const perusahaan = row.cells[4]?.textContent.toLowerCase() || '';
-            const dospem1 = row.cells[5]?.textContent.toLowerCase() || '';
-            const dospem2 = row.cells[6]?.textContent.toLowerCase() || '';
-            const dospem3 = row.cells[7]?.textContent.toLowerCase() || '';
-
-            const match = nama.includes(filter) || nim.includes(filter) || kelas.includes(filter) || perusahaan.includes(filter) || dospem1.includes(filter) || dospem2.includes(filter) || dospem3.includes(filter);
-            row.style.display = match ? '' : 'none';
+        for (let opt of options) {
+            if (opt.value.toLowerCase() === selectedValue) {
+                matchedId = opt.getAttribute('data-id');
+                break;
+            }
         }
+
+        document.getElementById('dosen_id_' + mahasiswaId).value = matchedId;
     });
+});
+
 </script>
 
 <?= $this->endSection(); ?>

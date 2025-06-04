@@ -75,10 +75,12 @@
                                     <td class="text-center"><?= $offset + $index + 1 ?></td>
                                     <td>
                                         <div class="fw-semibold"><?= esc($m['nama_lengkap']) ?></div>
-                                        <div class="text-muted small"><?= esc($m['nim']) ?></div>                                    </td>
+                                        <div class="text-muted small"><?= esc($m['nim']) ?></div>                                    
+                                    </td>
                                     <td>
                                         <span class="badge bg-primary-subtle text-primary"><?= esc($m['program_studi']) ?></span><br>
-                                        <span class="badge bg-secondary-subtle text-secondary"><?= esc($m['kelas']) ?></span>                                    </td>
+                                        <span class="badge bg-secondary-subtle text-secondary"><?= esc($m['kelas']) ?></span>                                    
+                                    </td>
                                     <td style="max-width: 250px;" title="<?= esc($m['nama_perusahaan']) ?>">
                                         <?= esc($m['nama_perusahaan']) ?>
                                     </td>
