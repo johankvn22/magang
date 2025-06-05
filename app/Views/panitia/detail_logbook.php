@@ -9,7 +9,7 @@
         <div class="card-header bg-white border-bottom py-3">
             <div class="d-flex justify-content-between align-items-center">
                 <h4 class="mb-0 fw-semibold">📋 Detail Logbook Bimbingan</h4>
-                <a href="<?= base_url('panitia/logbook') ?>" class="btn btn-outline-secondary btn-sm">
+                <a href="<?= base_url('panitia/logbook-mahasiswa') ?>" class="btn btn-outline-secondary btn-sm">
                     <i class="bi bi-arrow-left me-1"></i> Kembali
                 </a>
             </div>
