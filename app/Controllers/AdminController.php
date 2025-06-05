@@ -421,35 +421,45 @@ class AdminController extends BaseController
         return view('daftar_mahasiswa', $data);
     }
 
-
-
-
-
     public function detail_nilai($mahasiswa_id)
     {
-        // Validasi role admin
         if (session()->get('role') !== 'admin') {
             return redirect()->to('/login')->with('error', 'Akses ditolak.');
         }
 
         $mahasiswaModel = new MahasiswaModel();
+        $dosenModel = new DosenPembimbingModel();
         $nilaiIndustriModel = new PenilaianIndustriModel();
         $nilaiDosenModel = new PenilaianDosenModel();
+        $bimbinganModel = new Bimbingan(); // Relasi mahasiswa - dosen
 
+        // Ambil data mahasiswa
         $mahasiswa = $mahasiswaModel->find($mahasiswa_id);
-        $nilai_industri = $nilaiIndustriModel->getNilaiByMahasiswa($mahasiswa_id);
-        $nilai_dosen = $nilaiDosenModel->getNilaiByMahasiswa($mahasiswa_id);
-
         if (!$mahasiswa) {
             return redirect()->to('/admin/nilai')->with('error', 'Mahasiswa tidak ditemukan.');
         }
 
-        return view('detail_nilai_mahasiswa', [
+        // Ambil data dosen pembimbing dari tabel bimbingan
+        $bimbingan = $bimbinganModel->where('mahasiswa_id', $mahasiswa_id)->findAll();
+        $dosenIds = array_column($bimbingan, 'dosen_id');
+        $dosenPembimbing = [];
+        if (!empty($dosenIds)) {
+            $dosenPembimbing = $dosenModel->whereIn('dosen_id', $dosenIds)->findAll();
+        }
+
+        // Ambil nilai
+        $nilai_industri = $nilaiIndustriModel->getNilaiByMahasiswa($mahasiswa_id);
+        $nilai_dosen = $nilaiDosenModel->getNilaiByMahasiswa($mahasiswa_id);
+
+        // Kirim data ke view
+        return view('kps/detail_nilai_mahasiswa', [
             'mahasiswa' => $mahasiswa,
+            'dosen_pembimbing' => $dosenPembimbing,
             'nilai_industri' => $nilai_industri,
             'nilai_dosen' => $nilai_dosen
         ]);
     }
+
     public function listNilaiMahasiswa()
     {
         // Pastikan hanya admin yang bisa akses

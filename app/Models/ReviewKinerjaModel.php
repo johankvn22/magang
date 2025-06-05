@@ -57,5 +57,12 @@ class ReviewKinerjaModel extends Model
         return $this->where('review_id', $id)->first();
     }
 
-    
+    public function getAllWithMahasiswa()
+    {
+        return $this->select('review_kinerja.*, mahasiswa.nim')
+                    ->join('mahasiswa', 'mahasiswa.mahasiswa_id = review_kinerja.mahasiswa_id')
+                    ->orderBy('review_kinerja.created_at', 'DESC')
+                    ->findAll();
+    }
+
 }
