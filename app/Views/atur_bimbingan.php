@@ -79,7 +79,18 @@
                                         <div class="text-muted small"><?= esc($m['nim']) ?></div>                                    
                                     </td>
                                     <td>
-                                        <span class="badge bg-primary-subtle text-primary"><?= esc($m['program_studi']) ?></span><br>
+                                        <?php
+                                            $prodi = $m['program_studi'];
+                                            $badgeClass = 'bg-secondary-subtle text-secondary';
+                                            if ($prodi === 'TI') {
+                                                $badgeClass = 'bg-success-subtle text-success'; // Hijau
+                                            } elseif ($prodi === 'TMJ') {
+                                                $badgeClass = 'bg-warning-subtle text-warning'; // Kuning
+                                            } elseif ($prodi === 'TMD') {
+                                                $badgeClass = 'bg-primary-subtle text-primary'; // Biru
+                                            }
+                                        ?>
+                                        <span class="badge <?= $badgeClass ?>"><?= esc($prodi) ?></span><br>
                                         <span class="badge bg-secondary-subtle text-secondary"><?= esc($m['kelas']) ?></span>      
                                     </td>
                                     <td style="max-width: 250px;">

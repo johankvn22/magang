@@ -1,3 +1,6 @@
+<?php
+/** @var \CodeIgniter\View\View $this */
+?>
 <?= $this->extend('layouts/template_industri'); ?>
 <?= $this->section('content'); ?>
 
@@ -98,7 +101,7 @@
                         'presentasi' => 'Presentasi',
                         'menulis_dokumen' => 'Menulis Dokumen'
                     ];
-                    $options = ['kurang', 'cukup', 'baik', 'sangat_baik'];
+                    $options = ['1', '2', '3', '4'];
 
                     foreach ($fields as $field => $label): ?>
                         <tr>

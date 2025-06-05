@@ -72,10 +72,10 @@
                     <thead class="table-light">
                         <tr>
                             <th width="40%">Kompetensi</th>
-                            <th width="10%" class="text-center">Sangat Baik</th>
-                            <th width="10%"class="text-center">Baik</th>
+                            <th width="10%" class="text-center">Kurang</th>
                             <th width="10%"class="text-center">Cukup</th>
-                            <th width="10%"class="text-center">Kurang</th>
+                            <th width="10%"class="text-center">Baik</th>
+                            <th width="10%"class="text-center">Sangat Baik</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -110,16 +110,16 @@
                         <tr>
                             <td><?= $label ?></td>
                             <td class="text-center">
-                                <input type="radio" class="form-check-input" disabled <?= $value === 'sangat_baik' ? 'checked' : '' ?>>
+                                <input type="radio" class="form-check-input" disabled <?= $value === '1' ? 'checked' : '' ?>>
                             </td>
                             <td class="text-center">
-                                <input type="radio" class="form-check-input" disabled <?= $value === 'baik' ? 'checked' : '' ?>>
+                                <input type="radio" class="form-check-input" disabled <?= $value === '2' ? 'checked' : '' ?>>
                             </td>
                             <td class="text-center">
-                                <input type="radio" class="form-check-input" disabled <?= $value === 'cukup' ? 'checked' : '' ?>>
+                                <input type="radio" class="form-check-input" disabled <?= $value === '3' ? 'checked' : '' ?>>
                             </td>
                             <td class="text-center">
-                                <input type="radio" class="form-check-input" disabled <?= $value === 'kurang' ? 'checked' : '' ?>>
+                                <input type="radio" class="form-check-input" disabled <?= $value === '4' ? 'checked' : '' ?>>
                             </td>
                         </tr>
                         <?php endforeach; ?>

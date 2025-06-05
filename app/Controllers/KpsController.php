@@ -723,7 +723,9 @@ class KpsController extends BaseController
     public function downloadReviewExcel()
 {
     $reviewModel = new ReviewKinerjaModel();
-    $reviews = $reviewModel->findAll(); // ambil semua data
+    // $reviews = $reviewModel->findAll(); // ambil semua data
+    $reviews = $reviewModel->getAllWithMahasiswa(); 
+
 
     $spreadsheet = new Spreadsheet();
     $sheet = $spreadsheet->getActiveSheet();
@@ -745,8 +747,8 @@ class KpsController extends BaseController
     $row = 2;
     foreach ($reviews as $i => $review) {
         $sheet->setCellValue('A' . $row, $i + 1);
-        $sheet->setCellValue('B' . $row, $review['nama_mahasiswa']);
-        $sheet->setCellValue('C' . $row, $review['nim'] ?? '-');
+$sheet->setCellValue('B' . $row, isset($review['nama_mahasiswa']) ? $review['nama_mahasiswa'] : '');
+    $sheet->setCellValue('C' . $row, isset($review['nim']) ? $review['nim'] : '');
         $sheet->setCellValue('D' . $row, $review['nama_perusahaan']);
         $sheet->setCellValue('E' . $row, $review['nama_pembimbing_perusahaan']);
         $sheet->setCellValue('F' . $row, $review['jabatan']);
