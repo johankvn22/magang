@@ -50,7 +50,7 @@
                                   <div class="me-2">
                                     <span class="fw-semibold">Grup WhatsApp:</span>
                                   </div>
-                                  <a href="https://chat.whatsapp.com/<?= esc($dosen['link_whatsapp']) ?>" 
+                                  <a href="<?= esc($dosen['link_whatsapp']) ?>" 
                                      class="btn btn-sm btn-success" 
                                      target="_blank">
                                     <i class="fab fa-whatsapp me-1"></i> WhatsApp
