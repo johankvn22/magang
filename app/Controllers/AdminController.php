@@ -452,7 +452,7 @@ class AdminController extends BaseController
         $nilai_dosen = $nilaiDosenModel->getNilaiByMahasiswa($mahasiswa_id);
 
         // Kirim data ke view
-        return view('kps/detail_nilai_mahasiswa', [
+        return view('detail_nilai_mahasiswa', [
             'mahasiswa' => $mahasiswa,
             'dosen_pembimbing' => $dosenPembimbing,
             'nilai_industri' => $nilai_industri,
