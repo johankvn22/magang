@@ -22,39 +22,54 @@ class LogbookController extends BaseController
     public function create()
     {
         $logbookModel = new LogbookBimbingan();
-        $mahasiswaId = session()->get('user_id'); // Mengambil user_id mahasiswa dari session
+        $mahasiswaId = session()->get('user_id');
 
-        // Inisialisasi variabel untuk file dan link
+        // Validasi input dasar
+        $validation = \Config\Services::validation();
+        $validation->setRules([
+            'tanggal' => 'required|valid_date',
+            'aktivitas' => 'required|min_length[10]',
+            'file_dokumen' => 'max_size[file_dokumen,5120]|ext_in[file_dokumen,pdf]|mime_in[file_dokumen,application/pdf]',
+            'link_drive' => 'permit_empty|valid_url'
+        ]);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return redirect()->back()->withInput()->with('errors', $validation->getErrors());
+        }
+
+        // Proses upload file
         $fileName = null;
-        
-        // Handle file upload
         $file = $this->request->getFile('file_dokumen');
+        
         if ($file && $file->isValid() && !$file->hasMoved()) {
-            if ($file->getSize() > 5 * 1024 * 1024) { // 5MB
-                return redirect()->back()->with('error', 'Ukuran file maksimal adalah 5MB.');
+            // Validasi tambahan untuk memastikan
+            if ($file->getSize() > 5 * 1024 * 1024) {
+                return redirect()->back()
+                    ->with('error', 'Ukuran file melebihi 5MB')
+                    ->withInput();
             }
 
             $fileName = $file->getRandomName();
             $file->move(ROOTPATH . 'public/uploads/logbook/', $fileName);
         }
 
-
-        // Mengambil data dari form
+        // Persiapkan data
         $data = [
-            'mahasiswa_id'   => $mahasiswaId,
-            'tanggal'        => $this->request->getPost('tanggal'),
-            'aktivitas'      => $this->request->getPost('aktivitas'),
-            'file_dokumen'   => $fileName,
-            'link_drive'     => $this->request->getPost('link_drive'),
-            'status_validasi'  => 'menunggu'
+            'mahasiswa_id' => $mahasiswaId,
+            'tanggal' => $this->request->getPost('tanggal'),
+            'aktivitas' => $this->request->getPost('aktivitas'),
+            'file_dokumen' => $fileName,
+            'link_drive' => $this->request->getPost('link_drive'),
+            'status_validasi' => 'menunggu'
         ];
 
-        // Menyimpan logbook
-        if ($logbookModel->insert($data)) {
-            return redirect()->to('/mahasiswa/logbook')->with
-            ('success', 'Logbook berhasil ditambahkan.');
+        // Simpan ke database
+        if ($logbookModel->save($data)) {
+            return redirect()->to('/mahasiswa/logbook')->with('success', 'Logbook berhasil ditambahkan.');
         } else {
-            return redirect()->back()->with('error', 'Gagal menambahkan logbook.');
+            return redirect()->back()
+                ->with('error', 'Gagal menambahkan logbook')
+                ->withInput();
         }
     }
 

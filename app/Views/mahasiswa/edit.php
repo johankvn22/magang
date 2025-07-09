@@ -39,15 +39,16 @@
                 
                 <div class="form-group mt-3">
                   <label for="nama_lengkap" class="font-weight-bold">Nama Lengkap <span class="text-danger">*</span></label>
-                  <input type="text" name="nama_lengkap" id="nama_lengkap" class="form-control" 
-                         value="<?= esc($mahasiswa['nama_lengkap'] ?? '') ?>" required minlength="3" maxlength="100">
+                  <input type="text" name="nama_lengkap" id="nama_lengkap" class="form-control"
+                        value="<?= esc($mahasiswa['nama_lengkap'] ?? '') ?>" readonly>
                 </div>
 
                 <div class="form-group mt-3">
                   <label for="nim" class="font-weight-bold">NIM <span class="text-danger">*</span></label>
-                  <input type="text" name="nim" id="nim" class="form-control" 
-                         value="<?= esc($mahasiswa['nim'] ?? '') ?>" required pattern="[0-9]+" minlength="8" maxlength="15">
+                  <input type="text" name="nim" id="nim" class="form-control"
+                        value="<?= esc($mahasiswa['nim'] ?? '') ?>" readonly>
                 </div>
+
 
                 <div class="form-group mt-3">
                   <label for="program_studi" class="font-weight-bold">Program Studi <span class="text-danger">*</span></label>

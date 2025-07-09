@@ -27,13 +27,32 @@
                 </div>
             <?php endif; ?>
 
+            <?php if (session()->has('error')): ?>
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <?= session('error') ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+
+            <?php if (session()->has('errors')): ?>
+                <div class="alert alert-danger alert-dismissible fade show">
+                    <ul class="mb-0">
+                        <?php foreach (session('errors') as $error): ?>
+                            <li><?= $error ?></li>
+                        <?php endforeach ?>
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+
             <!-- Logbook Form -->
             <div class="card shadow-sm mb-4 border-0 rounded-3">
                 <div class="card-header bg-success text-white rounded-top-3">
                     <h5 class="mb-0">Form Tambah Logbook</h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="<?= site_url('mahasiswa/logbook/create'); ?>" enctype="multipart/form-data">
+                    <form method="POST" action="<?= site_url('mahasiswa/logbook/create'); ?>" enctype="multipart/form-data"
+                        onsubmit="return validateFile()">
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <label for="tanggal" class="form-label">Tanggal Bimbingan</label>
@@ -49,8 +68,9 @@
 
                             <div class="col-md-6">
                                 <label for="file_dokumen" class="form-label">Dokumen Pendukung (PDF)</label>
-                                <input type="file" name="file_dokumen" id="file_dokumen" class="form-control" accept=".pdf">
+                                <input type="file" name="file_dokumen" id="file_dokumen" class="form-control" accept=".pdf" onchange="validateFile()">
                                 <small class="text-muted">Maksimal ukuran file: 5MB. Format PDF saja.</small>
+                                <div id="fileError" class="text-danger"></div>
                             </div>
 
                             <div class="col-md-6">
@@ -199,5 +219,44 @@
     </div>
 </div>
 </div>
+
+    <script>
+    function validateFile() {
+        const fileInput = document.getElementById('file_dokumen');
+        const fileError = document.getElementById('fileError');
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        let isValid = true;
+        
+        // Reset error message
+        fileError.textContent = '';
+        
+        // Jika ada file yang dipilih
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            
+            // Validasi ukuran file
+            if (file.size > maxSize) {
+                fileError.textContent = `File terlalu besar (${(file.size/(1024*1024)).toFixed(2)}MB). Maksimal 5MB.`;
+                isValid = false;
+            }
+            
+            // Validasi tipe file
+            if (file.type !== 'application/pdf') {
+                fileError.textContent = 'Hanya file PDF yang diperbolehkan';
+                isValid = false;
+            }
+        }
+        
+        return isValid;
+    }
+
+    // Validasi form saat submit
+    document.querySelector('form').addEventListener('submit', function(e) {
+        if (!validateFile()) {
+            e.preventDefault();
+            alert('Silakan periksa kembali file yang diupload.');
+        }
+    });
+    </script>
 
 <?= $this->endSection(); ?>
