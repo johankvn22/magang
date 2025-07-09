@@ -1,0 +1,129 @@
+CRITICAL - 2025-06-06 04:15:30 --> CodeIgniter\View\Exceptions\ViewException: Invalid file: "login.php"
+[Method: GET, Route: login]
+in SYSTEMPATH/Exceptions/FrameworkException.php on line 39.
+ 1 SYSTEMPATH/View/View.php(212): CodeIgniter\Exceptions\FrameworkException::forInvalidFile('login.php')
+ 2 SYSTEMPATH/Common.php(1173): CodeIgniter\View\View->render('login', [], true)
+ 3 APPPATH/Controllers/AuthController.php(17): view('login')
+ 4 SYSTEMPATH/CodeIgniter.php(933): App\Controllers\AuthController->index()
+ 5 SYSTEMPATH/CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\AuthController))
+ 6 SYSTEMPATH/CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 7 SYSTEMPATH/Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 8 SYSTEMPATH/Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 9 FCPATH/index.php(67): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-06 04:40:32 --> Error: Class "App\Models\PedomanMagangModel" not found
+[Method: GET, Route: kps/dashboard]
+in APPPATH/Controllers/KpsController.php on line 40.
+ 1 SYSTEMPATH/CodeIgniter.php(933): App\Controllers\KpsController->dashboard()
+ 2 SYSTEMPATH/CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\KpsController))
+ 3 SYSTEMPATH/CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH/Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH/Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH/index.php(67): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-06 04:40:45 --> Error: Class "App\Models\PedomanMagangModel" not found
+[Method: GET, Route: kps/dashboard]
+in APPPATH/Controllers/KpsController.php on line 40.
+ 1 SYSTEMPATH/CodeIgniter.php(933): App\Controllers\KpsController->dashboard()
+ 2 SYSTEMPATH/CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\KpsController))
+ 3 SYSTEMPATH/CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH/Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH/Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH/index.php(67): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-06 04:40:55 --> Error: Class "App\Models\PedomanMagangModel" not found
+[Method: GET, Route: mahasiswa/dashboard]
+in APPPATH/Controllers/MahasiswaController.php on line 44.
+ 1 SYSTEMPATH/CodeIgniter.php(933): App\Controllers\MahasiswaController->index()
+ 2 SYSTEMPATH/CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\MahasiswaController))
+ 3 SYSTEMPATH/CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH/Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH/Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH/index.php(67): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-06 04:44:45 --> Error: Class "App\Models\PedomanMagangModel" not found
+[Method: GET, Route: kps/dashboard]
+in APPPATH/Controllers/KpsController.php on line 40.
+ 1 SYSTEMPATH/CodeIgniter.php(933): App\Controllers\KpsController->dashboard()
+ 2 SYSTEMPATH/CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\KpsController))
+ 3 SYSTEMPATH/CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH/Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH/Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH/index.php(67): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-06 04:48:59 --> Error: Class "App\Models\PedomanMagangModel" not found
+[Method: GET, Route: kps/dashboard]
+in APPPATH/Controllers/KpsController.php on line 40.
+ 1 SYSTEMPATH/CodeIgniter.php(933): App\Controllers\KpsController->dashboard()
+ 2 SYSTEMPATH/CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\KpsController))
+ 3 SYSTEMPATH/CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH/Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH/Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH/index.php(67): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-06 04:49:22 --> Error: Class "App\Models\PedomanMagangModel" not found
+[Method: GET, Route: mahasiswa/dashboard]
+in APPPATH/Controllers/MahasiswaController.php on line 44.
+ 1 SYSTEMPATH/CodeIgniter.php(933): App\Controllers\MahasiswaController->index()
+ 2 SYSTEMPATH/CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\MahasiswaController))
+ 3 SYSTEMPATH/CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH/Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH/Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH/index.php(67): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-06 04:49:24 --> Error: Class "App\Models\PedomanMagangModel" not found
+[Method: GET, Route: mahasiswa/dashboard]
+in APPPATH/Controllers/MahasiswaController.php on line 44.
+ 1 SYSTEMPATH/CodeIgniter.php(933): App\Controllers\MahasiswaController->index()
+ 2 SYSTEMPATH/CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\MahasiswaController))
+ 3 SYSTEMPATH/CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH/Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH/Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH/index.php(67): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-06 04:49:37 --> Error: Class "App\Models\PedomanMagangModel" not found
+[Method: GET, Route: dosen]
+in APPPATH/Controllers/DosenPembimbingController.php on line 24.
+ 1 SYSTEMPATH/CodeIgniter.php(933): App\Controllers\DosenPembimbingController->index()
+ 2 SYSTEMPATH/CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\DosenPembimbingController))
+ 3 SYSTEMPATH/CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH/Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH/Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH/index.php(67): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-06 07:54:03 --> Error: Class "App\Models\PedomanMagangModel" not found
+[Method: GET, Route: kps/dashboard]
+in APPPATH/Controllers/KpsController.php on line 40.
+ 1 SYSTEMPATH/CodeIgniter.php(933): App\Controllers\KpsController->dashboard()
+ 2 SYSTEMPATH/CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\KpsController))
+ 3 SYSTEMPATH/CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH/Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH/Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH/index.php(67): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-06 07:56:58 --> Error: Class "App\Models\PedomanMagangModel" not found
+[Method: GET, Route: dosen]
+in APPPATH/Controllers/DosenPembimbingController.php on line 24.
+ 1 SYSTEMPATH/CodeIgniter.php(933): App\Controllers\DosenPembimbingController->index()
+ 2 SYSTEMPATH/CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\DosenPembimbingController))
+ 3 SYSTEMPATH/CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH/Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH/Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH/index.php(67): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-06 07:57:00 --> Error: Class "App\Models\PedomanMagangModel" not found
+[Method: GET, Route: dosen]
+in APPPATH/Controllers/DosenPembimbingController.php on line 24.
+ 1 SYSTEMPATH/CodeIgniter.php(933): App\Controllers\DosenPembimbingController->index()
+ 2 SYSTEMPATH/CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\DosenPembimbingController))
+ 3 SYSTEMPATH/CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH/Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH/Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH/index.php(67): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-06 08:03:17 --> Error: Class "App\Models\PedomanMagangModel" not found
+[Method: GET, Route: dosen]
+in APPPATH/Controllers/DosenPembimbingController.php on line 24.
+ 1 SYSTEMPATH/CodeIgniter.php(933): App\Controllers\DosenPembimbingController->index()
+ 2 SYSTEMPATH/CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\DosenPembimbingController))
+ 3 SYSTEMPATH/CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH/Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH/Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH/index.php(67): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+CRITICAL - 2025-06-06 15:24:22 --> Error: Class "App\Models\PedomanMagangModel" not found
+[Method: GET, Route: mahasiswa/dashboard]
+in APPPATH/Controllers/MahasiswaController.php on line 44.
+ 1 SYSTEMPATH/CodeIgniter.php(933): App\Controllers\MahasiswaController->index()
+ 2 SYSTEMPATH/CodeIgniter.php(507): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\MahasiswaController))
+ 3 SYSTEMPATH/CodeIgniter.php(354): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 4 SYSTEMPATH/Boot.php(334): CodeIgniter\CodeIgniter->run()
+ 5 SYSTEMPATH/Boot.php(67): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+ 6 FCPATH/index.php(67): CodeIgniter\Boot::bootWeb(Object(Config\Paths))

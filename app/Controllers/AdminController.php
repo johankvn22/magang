@@ -13,6 +13,9 @@ use App\Models\PenilaianDosenModel;
 use App\Models\PenilaianIndustriModel;
 use App\Models\UserModel; // Untuk mengambil data user
 use App\Models\PedomanMagangModel;
+use App\Models\ReviewKinerjaModel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class AdminController extends BaseController
 {
@@ -70,12 +73,12 @@ class AdminController extends BaseController
         // sort berdasarkan program studi
         $sortProdi = $this->request->getGet('sortProdi');
         if ($sortProdi && in_array($sortProdi, ['TI', 'TMJ', 'TMD'])) {
-            $allMahasiswa = array_filter($allMahasiswa, function($m) use ($sortProdi) {
+            $allMahasiswa = array_filter($allMahasiswa, function ($m) use ($sortProdi) {
                 return $m['program_studi'] === $sortProdi;
             });
             $allMahasiswa = array_values($allMahasiswa); // Reindex
         }
-        
+
         $sortDosen = $this->request->getGet('sortDosen');
         if ($sortDosen !== null && $sortDosen !== '') {
             $allMahasiswa = array_filter($allMahasiswa, function ($m) use ($sortDosen, $bimbinganModel) {
@@ -96,7 +99,7 @@ class AdminController extends BaseController
 
         // Filter jika ada keyword
         if ($keyword) {
-            $allMahasiswa = array_filter($allMahasiswa, function($m) use ($keyword) {
+            $allMahasiswa = array_filter($allMahasiswa, function ($m) use ($keyword) {
                 $kw = mb_strtolower($keyword);
                 return str_contains(mb_strtolower($m['nama_lengkap']), $kw)
                     || str_contains(mb_strtolower($m['nim']), $kw)
@@ -120,7 +123,7 @@ class AdminController extends BaseController
 
         // Ambil semua dosen
         $listDosen = $dosenModel->findAll();
-        
+
         // Buat map ID => nama
         $dosenMap = [];
         foreach ($listDosen as $dosen) {
@@ -169,36 +172,36 @@ class AdminController extends BaseController
 
     // Update pembagian dosen pembimbing
     public function updateDosen()
-{
-    $mahasiswaIds = $this->request->getPost('mahasiswa_id');
-    $bimbinganModel = new Bimbingan();
+    {
+        $mahasiswaIds = $this->request->getPost('mahasiswa_id');
+        $bimbinganModel = new Bimbingan();
 
-    if (is_array($mahasiswaIds)) {
-        foreach ($mahasiswaIds as $mahasiswaId) {
-            $dosenId = $this->request->getPost('dosen_id_' . $mahasiswaId);
+        if (is_array($mahasiswaIds)) {
+            foreach ($mahasiswaIds as $mahasiswaId) {
+                $dosenId = $this->request->getPost('dosen_id_' . $mahasiswaId);
 
-            if ($dosenId) {
-                // Cek apakah ada entri bimbingan untuk mahasiswa ini
-                $existingBimbingan = $bimbinganModel->where('mahasiswa_id', $mahasiswaId)->first();
+                if ($dosenId) {
+                    // Cek apakah ada entri bimbingan untuk mahasiswa ini
+                    $existingBimbingan = $bimbinganModel->where('mahasiswa_id', $mahasiswaId)->first();
 
-                if ($existingBimbingan) {
-                    // Update dosen pembimbing
-                    $bimbinganModel->update($existingBimbingan['bimbingan_id'], [
-                        'dosen_id' => $dosenId
-                    ]);
-                } else {
-                    // Jika belum ada entri, tambahkan baru
-                    $bimbinganModel->insert([
-                        'mahasiswa_id' => $mahasiswaId,
-                        'dosen_id'     => $dosenId
-                    ]);
+                    if ($existingBimbingan) {
+                        // Update dosen pembimbing
+                        $bimbinganModel->update($existingBimbingan['bimbingan_id'], [
+                            'dosen_id' => $dosenId
+                        ]);
+                    } else {
+                        // Jika belum ada entri, tambahkan baru
+                        $bimbinganModel->insert([
+                            'mahasiswa_id' => $mahasiswaId,
+                            'dosen_id'     => $dosenId
+                        ]);
+                    }
                 }
             }
         }
-    }
 
-    return redirect()->to('admin/tambah-bimbingan')->with('success', 'Data pembimbing berhasil diperbarui.');
-}
+        return redirect()->to('admin/tambah-bimbingan')->with('success', 'Data pembimbing berhasil diperbarui.');
+    }
 
 
     // FORM TAMBAH BIMBINGAN (untuk multiple assignment)
@@ -486,7 +489,7 @@ class AdminController extends BaseController
 
         // Filter berdasarkan keyword
         if ($keyword) {
-            $mahasiswaList = array_filter($mahasiswaList, function($mhs) use ($keyword) {
+            $mahasiswaList = array_filter($mahasiswaList, function ($mhs) use ($keyword) {
                 $kw = mb_strtolower($keyword);
                 return str_contains(mb_strtolower($mhs['nama_lengkap']), $kw)
                     || str_contains(mb_strtolower($mhs['nim']), $kw)
@@ -512,10 +515,10 @@ class AdminController extends BaseController
         foreach ($mahasiswaList as &$mhs) {
             $nilaiDosen = $penilaianDosenModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
             $nilaiIndustri = $penilaianIndustriModel->getNilaiByMahasiswa($mhs['mahasiswa_id']);
-            
+
             $mhs['nilai_dosen'] = $nilaiDosen;
             $mhs['nilai_industri'] = $nilaiIndustri;
-            
+
             // Hitung total nilai akhir (60% industri + 40% dosen)
             $totalNilaiDosen = $nilaiDosen ? $nilaiDosen['total_nilai'] : 0;
             $totalNilaiIndustri = $nilaiIndustri ? $nilaiIndustri['total_nilai_industri'] : 0;
@@ -525,5 +528,154 @@ class AdminController extends BaseController
         $data['mahasiswa_list'] = $mahasiswaList;
 
         return view('list_nilai_mahasiswa', $data);
+    }
+    public function listReview()
+    {
+        $reviewModel = new ReviewKinerjaModel();
+
+        $keyword = $this->request->getGet('keyword');
+        $perPage = (int) ($this->request->getGet('perPage') ?? 10);
+        $currentPage = (int) ($this->request->getGet('page') ?? 1);
+        $offset = ($currentPage - 1) * $perPage;
+
+        if (!in_array($perPage, [5, 10, 25, 50, 100])) {
+            $perPage = 10;
+        }
+
+        $allReviews = $reviewModel->getAll(); // pastikan sudah join ke mahasiswa
+
+        // Filter berdasarkan keyword
+        if ($keyword) {
+            $allReviews = array_filter($allReviews, function ($item) use ($keyword) {
+                $kw = mb_strtolower($keyword);
+                return str_contains(mb_strtolower($item['nama_mahasiswa'] ?? ''), $kw)
+                    || str_contains(mb_strtolower($item['nim'] ?? ''), $kw)
+                    || str_contains(mb_strtolower($item['nama_perusahaan'] ?? ''), $kw)
+                    || str_contains(mb_strtolower($item['nama_pembimbing_perusahaan'] ?? ''), $kw);
+            });
+            $allReviews = array_values($allReviews); // reindex
+        }
+
+        $total = count($allReviews);
+        $pagedData = array_slice($allReviews, $offset, $perPage);
+
+        $pager = \Config\Services::pager();
+        $pager->makeLinks($currentPage, $perPage, $total, 'default_full');
+
+        return view('admin/list_review', [ // Changed view path to admin/
+            'reviews' => $pagedData,
+            'pager' => $pager,
+            'keyword' => $keyword,
+            'perPage' => $perPage,
+            'offset' => $offset,
+        ]);
+    }
+
+    public function detailReview($id)
+    {
+        $reviewModel = new ReviewKinerjaModel();
+        $review = $reviewModel->getDetail($id);
+
+        if (!$review) {
+            return redirect()->to('/admin/review-kinerja')->with('error', 'Review tidak ditemukan.');
+        }
+
+        return view('admin/detail_review', ['review' => $review]); // Changed view path to admin/
+    }
+
+    public function downloadReviewExcel()
+    {
+        $reviewModel = new ReviewKinerjaModel();
+        $reviews = $reviewModel->getAllWithMahasiswa();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Header kolom
+        $headers = [
+            'No',
+            'Nama Mahasiswa',
+            'NIM',
+            'Nama Perusahaan',
+            'Nama Pembimbing Perusahaan',
+            'Jabatan',
+            'Divisi',
+            'Integritas',
+            'Keahlian Bidang',
+            'Kemampuan Bahasa Inggris',
+            'Pengetahuan Bidang',
+            'Komunikasi & Adaptasi',
+            'Kerja Sama',
+            'Kemampuan Belajar',
+            'Kreativitas',
+            'Menuangkan Ide',
+            'Pemecahan Masalah',
+            'Sikap',
+            'Kerja di Bawah Tekanan',
+            'Manajemen Waktu',
+            'Bekerja Mandiri',
+            'Negosiasi',
+            'Analisis',
+            'Bekerja dgn Budaya Berbeda',
+            'Kepemimpinan',
+            'Tanggung Jawab',
+            'Presentasi',
+            'Menulis Dokumen',
+            'Saran Lulusan',
+            'Kemampuan Teknik Diperlukan',
+            'Profesi Cocok',
+            'Created At'
+        ];
+
+        $sheet->fromArray($headers, null, 'A1');
+
+        // Isi data
+        $row = 2;
+        foreach ($reviews as $i => $review) {
+            $sheet->setCellValue('A' . $row, $i + 1);
+            $sheet->setCellValue('B' . $row, isset($review['nama_mahasiswa']) ? $review['nama_mahasiswa'] : '');
+            $sheet->setCellValue('C' . $row, isset($review['nim']) ? $review['nim'] : '');
+            $sheet->setCellValue('D' . $row, $review['nama_perusahaan']);
+            $sheet->setCellValue('E' . $row, $review['nama_pembimbing_perusahaan']);
+            $sheet->setCellValue('F' . $row, $review['jabatan']);
+            $sheet->setCellValue('G' . $row, $review['divisi']);
+            $sheet->setCellValue('H' . $row, $review['integritas']);
+            $sheet->setCellValue('I' . $row, $review['keahlian_bidang']);
+            $sheet->setCellValue('J' . $row, $review['kemampuan_bahasa_inggris']);
+            $sheet->setCellValue('K' . $row, $review['pengetahuan_bidang']);
+            $sheet->setCellValue('L' . $row, $review['komunikasi_adaptasi']);
+            $sheet->setCellValue('M' . $row, $review['kerja_sama']);
+            $sheet->setCellValue('N' . $row, $review['kemampuan_belajar']);
+            $sheet->setCellValue('O' . $row, $review['kreativitas']);
+            $sheet->setCellValue('P' . $row, $review['menuangkan_ide']);
+            $sheet->setCellValue('Q' . $row, $review['pemecahan_masalah']);
+            $sheet->setCellValue('R' . $row, $review['sikap']);
+            $sheet->setCellValue('S' . $row, $review['kerja_dibawah_tekanan']);
+            $sheet->setCellValue('T' . $row, $review['manajemen_waktu']);
+            $sheet->setCellValue('U' . $row, $review['bekerja_mandiri']);
+            $sheet->setCellValue('V' . $row, $review['negosiasi']);
+            $sheet->setCellValue('W' . $row, $review['analisis']);
+            $sheet->setCellValue('X' . $row, $review['bekerja_dengan_budaya_berbeda']);
+            $sheet->setCellValue('Y' . $row, $review['kepemimpinan']);
+            $sheet->setCellValue('Z' . $row, $review['tanggung_jawab']);
+            $sheet->setCellValue('AA' . $row, $review['presentasi']);
+            $sheet->setCellValue('AB' . $row, $review['menulis_dokumen']);
+            $sheet->setCellValue('AC' . $row, $review['saran_lulusan']);
+            $sheet->setCellValue('AD' . $row, $review['kemampuan_teknik_dibutuhkan']);
+            $sheet->setCellValue('AE' . $row, $review['profesi_cocok']);
+            $sheet->setCellValue('AF' . $row, $review['created_at']);
+            $row++;
+        }
+
+        // Set response
+        $filename = 'review_kinerja_mahasiswa_' . date('Ymd_His') . '.xlsx';
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment;filename=\"{$filename}\"");
+        header('Cache-Control: max-age=0');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
     }
 }
