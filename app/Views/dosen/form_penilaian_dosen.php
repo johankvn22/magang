@@ -379,7 +379,7 @@
                                 </div>
                                 <div class="text-center py-3">
                                     <button type="button" class="btn btn-primary mb-3" id="hitungNilaiBtn">
-                                        <i class="fas fa-calculator me-2"></i>Hitung Nilai Dosen
+                                        <i class="fas fa-calculator me-2"></i>Hitung Nilai Akhir
                                     </button>
                                     <div id="errorMessage" class="text-danger small mt-2"></div>
                                 </div>

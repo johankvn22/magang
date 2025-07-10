@@ -52,6 +52,7 @@ $routes->post('admin/upload-pedoman', 'AdminController::uploadPedoman'); // Memp
 $routes->get('admin/pedoman/download/(:any)', 'AdminController::downloadPedoman/$1'); // Download pedoman
 $routes->post('admin/delete-pedoman/(:num)', 'AdminController::deletePedoman/$1'); // Hapus pedoman
 
+$routes->get('admin/review-kinerja/export', 'AdminLogbookController::downloadReviewExcel');
 
 
 

@@ -16,22 +16,56 @@
           <?php if (session()->getFlashdata('error')): ?>
             <div class="alert alert-danger alert-dismissible fade show">
               <?= session()->getFlashdata('error') ?>
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
             </div>
           <?php endif; ?>
           
           <?php if (session()->getFlashdata('success')): ?>
             <div class="alert alert-success alert-dismissible fade show">
               <?= session()->getFlashdata('success') ?>
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
             </div>
           <?php endif; ?>
 
-          <form method="POST" action="<?= site_url('mahasiswa/update'); ?>" id="profileForm">
+          <form id="profileForm" method="POST" action="<?= site_url('mahasiswa/update'); ?>" enctype="multipart/form-data">
+            <div class="row">
+              <!-- Foto Profil Section -->
+              <div class="col-md-12 mb-4">
+                <div class="text-center">
+                  <div class="form-group">
+                    <div class="profile-img-container">
+                      <?php 
+                      // Perbaikan path gambar
+                      $defaultFoto = base_url('uploads/foto_profil/default.jpg');
+                      $currentFoto = (!empty($mahasiswa['foto_profil']) && file_exists(ROOTPATH.'public/uploads/foto_profil/'.$mahasiswa['foto_profil'])) 
+                                   ? base_url('uploads/foto_profil/'.$mahasiswa['foto_profil'])
+                                   : $defaultFoto;
+                      ?>
+                      <img src="<?= $currentFoto ?>" id="previewFoto" 
+                           class="img-thumbnail rounded-circle mb-3"
+                           style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #28a745;"
+                           onerror="this.onerror=null;this.src='<?= $defaultFoto ?>'"
+                           alt="Foto Profil">
+                      
+                      <br>
+                      <input type="file" name="foto_profil" id="foto_profil" 
+                             accept="image/jpeg,image/png,image/jpg" style="display: none;">
+                      
+                      <label for="foto_profil" class="btn btn-outline-success">
+                        <i class="fas fa-camera"></i> Ganti Foto
+                      </label>
+                      
+                      <button type="button" id="resetFoto" class="btn btn-outline-secondary ml-2" style="display: none;">
+                        <i class="fas fa-undo"></i> Reset
+                      </button>
+                      
+                      <br>
+                      <small class="text-muted">Max. 2MB (JPG/PNG)</small>
+                      <div id="fotoError" class="text-danger mt-2" style="display: none;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="row">
               <!-- Personal Information Column -->
               <div class="col-md-6">
@@ -48,7 +82,6 @@
                   <input type="text" name="nim" id="nim" class="form-control"
                         value="<?= esc($mahasiswa['nim'] ?? '') ?>" readonly>
                 </div>
-
 
                 <div class="form-group mt-3">
                   <label for="program_studi" class="font-weight-bold">Program Studi <span class="text-danger">*</span></label>
@@ -107,7 +140,7 @@
                     <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="form-control" 
                            value="<?= esc($mahasiswa['tanggal_mulai'] ?? '') ?>" required>
                   </div>
-                  <div class="form-group col-md-6 mt-3">
+                  <div class="form-group col-md-6">
                     <label for="tanggal_selesai" class="font-weight-bold">Tanggal Selesai <span class="text-danger">*</span></label>
                     <input type="date" name="tanggal_selesai" id="tanggal_selesai" class="form-control" 
                            value="<?= esc($mahasiswa['tanggal_selesai'] ?? '') ?>" required>
@@ -161,36 +194,36 @@
                 <div class="form-group mt-3">
                   <label for="dospem1" class="font-weight-bold">Dosen Pembimbing 1 <span class="text-danger">*</span></label>
                   <select name="dospem1" id="dospem1" class="form-control" required>
-                  <option value="">-- Pilih Dosen Pembimbing 1 --</option>
-                  <?php foreach ($dosen as $dsn): ?>
-                    <option value="<?= esc($dsn['dosen_id']) ?>" <?= ($mahasiswa['dospem1'] ?? '') == $dsn['dosen_id'] ? 'selected' : '' ?>>
-                    <?= esc($dsn['nama_lengkap']) ?> (<?= esc($dsn['nip']) ?>)
-                    </option>
-                  <?php endforeach; ?>
+                    <option value="">-- Pilih Dosen Pembimbing 1 --</option>
+                    <?php foreach ($dosen as $dsn): ?>
+                      <option value="<?= esc($dsn['dosen_id']) ?>" <?= ($mahasiswa['dospem1'] ?? '') == $dsn['dosen_id'] ? 'selected' : '' ?>>
+                        <?= esc($dsn['nama_lengkap']) ?> (<?= esc($dsn['nip']) ?>)
+                      </option>
+                    <?php endforeach; ?>
                   </select>
                 </div>
 
                 <div class="form-group mt-3">
                   <label for="dospem2" class="font-weight-bold">Dosen Pembimbing 2 <span class="text-danger">*</span></label>
                   <select name="dospem2" id="dospem2" class="form-control" required>
-                  <option value="">-- Pilih Dosen Pembimbing 2 --</option>
-                  <?php foreach ($dosen as $dsn): ?>
-                    <option value="<?= esc($dsn['dosen_id']) ?>" <?= ($mahasiswa['dospem2'] ?? '') == $dsn['dosen_id'] ? 'selected' : '' ?>>
-                    <?= esc($dsn['nama_lengkap']) ?> (<?= esc($dsn['nip']) ?>)
-                    </option>
-                  <?php endforeach; ?>
+                    <option value="">-- Pilih Dosen Pembimbing 2 --</option>
+                    <?php foreach ($dosen as $dsn): ?>
+                      <option value="<?= esc($dsn['dosen_id']) ?>" <?= ($mahasiswa['dospem2'] ?? '') == $dsn['dosen_id'] ? 'selected' : '' ?>>
+                        <?= esc($dsn['nama_lengkap']) ?> (<?= esc($dsn['nip']) ?>)
+                      </option>
+                    <?php endforeach; ?>
                   </select>
                 </div>
 
                 <div class="form-group mt-3">
                   <label for="dospem3" class="font-weight-bold">Dosen Pembimbing 3 <span class="text-danger">*</span></label>
                   <select name="dospem3" id="dospem3" class="form-control" required>
-                  <option value="">-- Pilih Dosen Pembimbing 3 --</option>
-                  <?php foreach ($dosen as $dsn): ?>
-                    <option value="<?= esc($dsn['dosen_id']) ?>" <?= ($mahasiswa['dospem3'] ?? '') == $dsn['dosen_id'] ? 'selected' : '' ?>>
-                    <?= esc($dsn['nama_lengkap']) ?> (<?= esc($dsn['nip']) ?>)
-                    </option>
-                  <?php endforeach; ?>
+                    <option value="">-- Pilih Dosen Pembimbing 3 --</option>
+                    <?php foreach ($dosen as $dsn): ?>
+                      <option value="<?= esc($dsn['dosen_id']) ?>" <?= ($mahasiswa['dospem3'] ?? '') == $dsn['dosen_id'] ? 'selected' : '' ?>>
+                        <?= esc($dsn['nama_lengkap']) ?> (<?= esc($dsn['nip']) ?>)
+                      </option>
+                    <?php endforeach; ?>
                   </select>
                 </div>
               </div>
@@ -211,24 +244,66 @@
   </div>
 </div>
 
-<?= $this->endSection(); ?>
-
-<?= $this->section('scripts'); ?>
 <script>
-$(document).ready(function() {
+$(document).ready(function () {
+  const $input = $('#foto_profil');
+  const $preview = $('#previewFoto');
+  const $resetBtn = $('#resetFoto');
+  const $errorDiv = $('#fotoError');
+  const originalSrc = $preview.attr('src');
+
+  $input.on('change', function () {
+    const file = this.files[0];
+    $errorDiv.hide().text('');
+
+    if (!file) {
+      console.log('Tidak ada file dipilih');
+      return;
+    }
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      $errorDiv.text('Hanya file JPG/PNG yang diperbolehkan!').show();
+      this.value = '';
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      $errorDiv.text('Ukuran file tidak boleh lebih dari 2MB!').show();
+      this.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      $preview.attr('src', e.target.result);
+      $resetBtn.show();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  $resetBtn.on('click', function () {
+    $preview.attr('src', originalSrc);
+    $input.val('');
+    $errorDiv.hide();
+    $(this).hide();
+  });
+
+
   // Form validation
   $('#profileForm').on('submit', function(e) {
     let isValid = true;
     
+    // Remove previous error messages
+    $('.invalid-feedback').remove();
+    $('.is-invalid').removeClass('is-invalid');
+    
     // Validate required fields
     $('[required]').each(function() {
-      if (!$(this).val()) {
+      if (!$(this).val() || $(this).val().trim() === '') {
         isValid = false;
         $(this).addClass('is-invalid');
         $(this).after('<div class="invalid-feedback">Field ini wajib diisi</div>');
-      } else {
-        $(this).removeClass('is-invalid');
-        $(this).next('.invalid-feedback').remove();
       }
     });
     
@@ -241,6 +316,30 @@ $(document).ready(function() {
       $('#email').after('<div class="invalid-feedback">Format email tidak valid</div>');
     }
     
+    // Validate company supervisor email
+    const emailPembimbing = $('#email_pembimbing_perusahaan').val();
+    if (emailPembimbing && !emailRegex.test(emailPembimbing)) {
+      isValid = false;
+      $('#email_pembimbing_perusahaan').addClass('is-invalid');
+      $('#email_pembimbing_perusahaan').after('<div class="invalid-feedback">Format email tidak valid</div>');
+    }
+    
+    // Validate phone number format
+    const phoneRegex = /^[0-9]{10,15}$/;
+    const phone = $('#no_hp').val();
+    if (phone && !phoneRegex.test(phone)) {
+      isValid = false;
+      $('#no_hp').addClass('is-invalid');
+      $('#no_hp').after('<div class="invalid-feedback">Nomor HP harus berupa angka 10-15 digit</div>');
+    }
+    
+    const phonePembimbing = $('#no_hp_pembimbing_perusahaan').val();
+    if (phonePembimbing && !phoneRegex.test(phonePembimbing)) {
+      isValid = false;
+      $('#no_hp_pembimbing_perusahaan').addClass('is-invalid');
+      $('#no_hp_pembimbing_perusahaan').after('<div class="invalid-feedback">Nomor HP harus berupa angka 10-15 digit</div>');
+    }
+    
     // Validate duration between 12-30 weeks
     const duration = $('#durasi_magang').val();
     if (duration && (duration < 12 || duration > 30)) {
@@ -249,15 +348,48 @@ $(document).ready(function() {
       $('#durasi_magang').after('<div class="invalid-feedback">Durasi magang harus antara 12-30 minggu</div>');
     }
     
+    // Validate date range
+    const startDate = new Date($('#tanggal_mulai').val());
+    const endDate = new Date($('#tanggal_selesai').val());
+    if (startDate && endDate && startDate >= endDate) {
+      isValid = false;
+      $('#tanggal_selesai').addClass('is-invalid');
+      $('#tanggal_selesai').after('<div class="invalid-feedback">Tanggal selesai harus setelah tanggal mulai</div>');
+    }
+    
+    // Validate supervisor selection (cannot select same supervisor)
+    const dospem1 = $('#dospem1').val();
+    const dospem2 = $('#dospem2').val();
+    const dospem3 = $('#dospem3').val();
+    
+    if (dospem1 && dospem2 && dospem1 === dospem2) {
+      isValid = false;
+      $('#dospem2').addClass('is-invalid');
+      $('#dospem2').after('<div class="invalid-feedback">Dosen pembimbing 2 tidak boleh sama dengan dosen pembimbing 1</div>');
+    }
+    
+    if (dospem1 && dospem3 && dospem1 === dospem3) {
+      isValid = false;
+      $('#dospem3').addClass('is-invalid');
+      $('#dospem3').after('<div class="invalid-feedback">Dosen pembimbing 3 tidak boleh sama dengan dosen pembimbing 1</div>');
+    }
+    
+    if (dospem2 && dospem3 && dospem2 === dospem3) {
+      isValid = false;
+      $('#dospem3').addClass('is-invalid');
+      $('#dospem3').after('<div class="invalid-feedback">Dosen pembimbing 3 tidak boleh sama dengan dosen pembimbing 2</div>');
+    }
+    
     if (!isValid) {
       e.preventDefault();
+      // Scroll to first error
       $('html, body').animate({
         scrollTop: $('.is-invalid').first().offset().top - 100
       }, 500);
     }
   });
   
-  // Clear validation on input
+  // Clear validation on input change
   $('input, select, textarea').on('input change', function() {
     if ($(this).hasClass('is-invalid')) {
       $(this).removeClass('is-invalid');
@@ -265,19 +397,39 @@ $(document).ready(function() {
     }
   });
   
-  // Date validation - end date should be after start date
-  $('#tanggal_mulai, #tanggal_selesai').change(function() {
-    const startDate = new Date($('#tanggal_mulai').val());
-    const endDate = new Date($('#tanggal_selesai').val());
-    
-    if (startDate && endDate && startDate > endDate) {
-      $('#tanggal_selesai').addClass('is-invalid');
-      $('#tanggal_selesai').after('<div class="invalid-feedback">Tanggal selesai harus setelah tanggal mulai</div>');
-    } else {
-      $('#tanggal_selesai').removeClass('is-invalid');
-      $('#tanggal_selesai').next('.invalid-feedback').remove();
-    }
-  });
+  // Auto-dismiss alerts after 5 seconds
+  setTimeout(function() {
+    $('.alert').fadeOut();
+  }, 5000);
 });
 </script>
+
+<style>
+.profile-img-container {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-img-container img {
+  transition: all 0.3s ease;
+}
+
+.profile-img-container:hover img {
+  opacity: 0.8;
+}
+
+.invalid-feedback {
+  display: block;
+}
+
+.form-control.is-invalid {
+  border-color: #dc3545;
+}
+
+.form-control.is-invalid:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+</style>
+
 <?= $this->endSection(); ?>

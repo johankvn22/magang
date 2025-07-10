@@ -11,6 +11,8 @@ use App\Models\BimbinganIndustriModel;
 use App\Models\LogbookIndustri;
 use App\Models\Bimbingan;
 use App\Models\DosenPembimbingModel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class AdminLogbookController extends BaseController
 {
@@ -276,6 +278,79 @@ class AdminLogbookController extends BaseController
 
         return view('detail_review', ['review_id' => $review]);
     }
+
+    public function downloadReviewExcel()
+{
+    $reviewModel = new ReviewKinerjaModel();
+    // $reviews = $reviewModel->findAll(); // ambil semua data
+    $reviews = $reviewModel->getAllWithMahasiswa(); 
+
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    // Header kolom
+    $headers = [
+        'No', 'Nama Mahasiswa', 'NIM', 'Nama Perusahaan', 'Nama Pembimbing Perusahaan', 'Jabatan', 'Divisi',
+        'Integritas', 'Keahlian Bidang', 'Kemampuan Bahasa Inggris', 'Pengetahuan Bidang',
+        'Komunikasi & Adaptasi', 'Kerja Sama', 'Kemampuan Belajar', 'Kreativitas', 'Menuangkan Ide',
+        'Pemecahan Masalah', 'Sikap', 'Kerja di Bawah Tekanan', 'Manajemen Waktu', 'Bekerja Mandiri',
+        'Negosiasi', 'Analisis', 'Bekerja dgn Budaya Berbeda', 'Kepemimpinan', 'Tanggung Jawab',
+        'Presentasi', 'Menulis Dokumen', 'Saran Lulusan', 'Kemampuan Teknik Diperlukan',
+        'Profesi Cocok', 'Created At'
+    ];
+
+    $sheet->fromArray($headers, null, 'A1');
+
+    // Isi data
+    $row = 2;
+    foreach ($reviews as $i => $review) {
+        $sheet->setCellValue('A' . $row, $i + 1);
+$sheet->setCellValue('B' . $row, isset($review['nama_mahasiswa']) ? $review['nama_mahasiswa'] : '');
+    $sheet->setCellValue('C' . $row, isset($review['nim']) ? $review['nim'] : '');
+        $sheet->setCellValue('D' . $row, $review['nama_perusahaan']);
+        $sheet->setCellValue('E' . $row, $review['nama_pembimbing_perusahaan']);
+        $sheet->setCellValue('F' . $row, $review['jabatan']);
+        $sheet->setCellValue('G' . $row, $review['divisi']);
+        $sheet->setCellValue('H' . $row, $review['integritas']);
+        $sheet->setCellValue('I' . $row, $review['keahlian_bidang']);
+        $sheet->setCellValue('J' . $row, $review['kemampuan_bahasa_inggris']);
+        $sheet->setCellValue('K' . $row, $review['pengetahuan_bidang']);
+        $sheet->setCellValue('L' . $row, $review['komunikasi_adaptasi']);
+        $sheet->setCellValue('M' . $row, $review['kerja_sama']);
+        $sheet->setCellValue('N' . $row, $review['kemampuan_belajar']);
+        $sheet->setCellValue('O' . $row, $review['kreativitas']);
+        $sheet->setCellValue('P' . $row, $review['menuangkan_ide']);
+        $sheet->setCellValue('Q' . $row, $review['pemecahan_masalah']);
+        $sheet->setCellValue('R' . $row, $review['sikap']);
+        $sheet->setCellValue('S' . $row, $review['kerja_dibawah_tekanan']);
+        $sheet->setCellValue('T' . $row, $review['manajemen_waktu']);
+        $sheet->setCellValue('U' . $row, $review['bekerja_mandiri']);
+        $sheet->setCellValue('V' . $row, $review['negosiasi']);
+        $sheet->setCellValue('W' . $row, $review['analisis']);
+        $sheet->setCellValue('X' . $row, $review['bekerja_dengan_budaya_berbeda']);
+        $sheet->setCellValue('Y' . $row, $review['kepemimpinan']);
+        $sheet->setCellValue('Z' . $row, $review['tanggung_jawab']);
+        $sheet->setCellValue('AA' . $row, $review['presentasi']);
+        $sheet->setCellValue('AB' . $row, $review['menulis_dokumen']);
+        $sheet->setCellValue('AC' . $row, $review['saran_lulusan']);
+        $sheet->setCellValue('AD' . $row, $review['kemampuan_teknik_dibutuhkan']);
+        $sheet->setCellValue('AE' . $row, $review['profesi_cocok']);
+        $sheet->setCellValue('AF' . $row, $review['created_at']);
+        $row++;
+    }
+
+    // Set response
+    $filename = 'review_kinerja_mahasiswa_' . date('Ymd_His') . '.xlsx';
+
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header("Content-Disposition: attachment;filename=\"{$filename}\"");
+    header('Cache-Control: max-age=0');
+
+    $writer = new Xlsx($spreadsheet);
+    $writer->save('php://output');
+    exit;
+}
 
     
     
