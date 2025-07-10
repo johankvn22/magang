@@ -6,6 +6,7 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
+
 $routes->get('/Admin', 'Admin::about');
 $routes->get('/', 'Home::index');
 $routes->get('/register', 'AuthController::register'); // Menampilkan halaman registrasi
@@ -43,6 +44,7 @@ $routes->get('/admin/user-requirement/detail/(:num)', 'AdminLogbookController::d
 $routes->get('/admin/review-kinerja', 'AdminLogbookController::listreview');
 $routes->get('/admin/review-kinerja/detail/(:num)', 'AdminLogbookController::detailReview/$1');
 $routes->get('/admin/nilai', 'AdminController::listNilaiMahasiswa');
+$routes->get('admin/review-kinerja/export', 'AdminController::downloadReviewExcel');
 
 $routes->get('admin/nilai_mahasiswa', 'AdminController::listNilaiMahasiswa'); // Menampilkan daftar nilai mahasiswa
 $routes->get('admin/nilai/detail/(:num)', 'AdminController::detail_nilai/$1');
@@ -51,8 +53,9 @@ $routes->get('admin/upload-pedoman', 'AdminController::uploadPedoman'); // Menam
 $routes->post('admin/upload-pedoman', 'AdminController::uploadPedoman'); // Memproses upload pedoman
 $routes->get('admin/pedoman/download/(:any)', 'AdminController::downloadPedoman/$1'); // Download pedoman
 $routes->post('admin/delete-pedoman/(:num)', 'AdminController::deletePedoman/$1'); // Hapus pedoman
+ $routes->get('review-kinerja', 'AdminController::listReview', ['as' => 'admin.review']);
 
-
+$routes->get('/admin/pemantauan-industri', 'AdminController::pemantauanIndustri');
 
 
 

@@ -13,8 +13,6 @@ class BimbinganIndustriModel extends Model
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
     protected $allowedFields    = ['mahasiswa_id', 'pembimbing_id', 'created_at', 'updated_at'];
-
-
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
 
@@ -53,5 +51,44 @@ class BimbinganIndustriModel extends Model
                     ->where('bimbingan_industri.pembimbing_id', $pembimbingId)
                     ->get()
                     ->getResultArray();
+    }
+
+    public function getPembimbingDenganMahasiswa()
+    {
+        $builder = $this->db->table('pembimbing_industri');
+        $builder->select('
+            pembimbing_industri.pembimbing_id,
+            pembimbing_industri.nama AS nama_pembimbing,
+            pembimbing_industri.perusahaan,
+            mahasiswa.nama_lengkap AS nama_mahasiswa,
+            mahasiswa.nim
+        ');
+        $builder->join('bimbingan_industri', 'bimbingan_industri.pembimbing_id = pembimbing_industri.pembimbing_id', 'left');
+        $builder->join('mahasiswa', 'mahasiswa.mahasiswa_id = bimbingan_industri.mahasiswa_id', 'left');
+        $builder->orderBy('pembimbing_industri.nama', 'ASC');
+
+        $result = $builder->get()->getResultArray();
+
+        // Kelompokkan mahasiswa berdasarkan pembimbing
+        $grouped = [];
+        foreach ($result as $row) {
+            $id = $row['pembimbing_id'];
+            if (!isset($grouped[$id])) {
+                $grouped[$id] = [
+                    'nama_pembimbing' => $row['nama_pembimbing'],
+                    'perusahaan' => $row['perusahaan'],
+                    'mahasiswa' => []
+                ];
+            }
+
+            if (!empty($row['nama_mahasiswa'])) {
+                $grouped[$id]['mahasiswa'][] = [
+                    'nama' => $row['nama_mahasiswa'],
+                    'nim' => $row['nim']
+                ];
+            }
+        }
+
+        return $grouped;
     }
 }

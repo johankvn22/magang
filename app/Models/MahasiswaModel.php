@@ -32,7 +32,8 @@ class MahasiswaModel extends Model
         'judul_magang',
         'dospem1',
         'dospem2',
-        'dospem3'
+        'dospem3',
+        'foto_profil',
     ];
     // Metode untuk mengambil semua mahasiswa
     public function getAllMahasiswa()

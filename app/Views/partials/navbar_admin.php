@@ -19,7 +19,7 @@
         <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('/admin/user-requirement'); ?>">User Requirement</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('/admin/review-kinerja'); ?>">Review Kinerja</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('/admin/tambah-bimbingan'); ?>">Tambah Bimbingan Dosen</a></li>
-        <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('/admin/bimbingan-industri'); ?>">Tambah Bimbingan Industri</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('/admin/pemantauan-industri'); ?>">Pantau Bimbingan Industri</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('/admin/daftar_user'); ?>">Generate Akun</a></li>
       </ul>
     </div>
