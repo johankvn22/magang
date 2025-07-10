@@ -16,6 +16,7 @@ if (version_compare(PHP_VERSION, $minPhpVersion, '<')) {
 
     header('HTTP/1.1 503 Service Unavailable.', true, 503);
     echo $message;
+
     exit(1);
 }
 
@@ -43,11 +44,9 @@ if (getcwd() . DIRECTORY_SEPARATOR !== FCPATH) {
  */
 
 // LOAD OUR PATHS CONFIG FILE
-// SUDAH DIUBAH untuk menyesuaikan struktur di hosting
-require FCPATH . 'app/Config/Paths.php';
-
-// LOAD COMPOSER AUTOLOADER
-require FCPATH . 'vendor/autoload.php';
+// This is the line that might need to be changed, depending on your folder structure.
+require FCPATH . '../app/Config/Paths.php';
+// ^^^ Change this line if you move your application folder
 
 $paths = new Config\Paths();
 
