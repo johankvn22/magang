@@ -1,23 +1,26 @@
 <?php
+
 /** @var \CodeIgniter\View\View $this */
 ?>
 <!DOCTYPE html>
 <html lang="id">
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
+<style>
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+  }
 
-        body {
-            display: flex;
-            flex-direction: column;
-        }
+  body {
+    display: flex;
+    flex-direction: column;
+  }
 
-        main {
-            flex: 1;
-        }
-    </style>
+  main {
+    flex: 1;
+  }
+</style>
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -31,8 +34,9 @@
 
 
 </head>
+
 <body class="d-flex flex-column min-vh-100">
-  
+
   <?php echo view('partials/header_admin'); ?>
   <?php echo view('partials/navbar_admin'); ?>
 
@@ -46,4 +50,5 @@
 
 
 </body>
+
 </html>

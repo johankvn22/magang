@@ -1,4 +1,5 @@
 <?php
+
 /** @var \CodeIgniter\View\View $this */
 ?>
 <?= $this->extend('layouts/template_dosen'); ?>
@@ -14,8 +15,18 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
+        <?php if (!empty($broadcasts)) : ?>
+            <div class="alert alert-info">
+                <h5>Pesan dari Admin:</h5>
+                <ul class="mb-0">
+                    <?php foreach ($broadcasts as $pesan): ?>
+                        <li><strong><?= esc($pesan['judul']) ?></strong>: <?= esc($pesan['isi']) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
         <div class="row g-4 mt-3">
-        <!-- Alur Section (Left Column) -->
+            <!-- Alur Section (Left Column) -->
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
@@ -36,9 +47,9 @@
                             <p class="text-muted mb-3">
                                 <i class="bi bi-file-earmark-pdf-fill me-2"></i><?= esc($pedoman['judul']) ?>
                             </p>
-                            <a href="<?= base_url('uploads/pedoman/' . $pedoman['file_path']) ?>" 
-                               target="_blank" 
-                               class="btn btn-primary w-100">
+                            <a href="<?= base_url('uploads/pedoman/' . $pedoman['file_path']) ?>"
+                                target="_blank"
+                                class="btn btn-primary w-100">
                                 <i class="bi bi-download me-1"></i>Download
                             </a>
                         <?php else: ?>
@@ -90,7 +101,7 @@
                 <div class="card text-center border-0 shadow-sm p-4">
                     <div class="card-body">
                         <i class="bi bi-file-earmark-text-fill text-primary fs-2 mb-2"></i>
-                            <h5 class="card-text"><?= $jumlahBimbinganMasuk ?></h5>
+                        <h5 class="card-text"><?= $jumlahBimbinganMasuk ?></h5>
                         <p class="text-muted mb-0">Total Logbook</p>
                     </div>
                 </div>

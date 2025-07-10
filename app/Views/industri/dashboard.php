@@ -13,7 +13,16 @@
                     Lengkapi profil Anda untuk mengakses semua fitur.
                 </div>
             <?php endif; ?>
-
+            <?php if (!empty($broadcasts)): ?>
+                <div class="alert alert-info">
+                    <h5>Pesan dari Admin:</h5>
+                    <ul class="mb-0">
+                        <?php foreach ($broadcasts as $pesan): ?>
+                            <li><strong><?= esc($pesan['judul']) ?></strong>: <?= esc($pesan['isi']) ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
             <p class="text-muted">Halaman utama untuk memantau kegiatan bimbingan industri.</p>
 
             <!-- Statistik -->

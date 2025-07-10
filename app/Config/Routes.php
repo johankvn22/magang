@@ -56,7 +56,9 @@ $routes->post('admin/delete-pedoman/(:num)', 'AdminController::deletePedoman/$1'
  $routes->get('review-kinerja', 'AdminController::listReview', ['as' => 'admin.review']);
 
 $routes->get('/admin/pemantauan-industri', 'AdminController::pemantauanIndustri');
-
+$routes->get('admin/broadcast', 'BroadcastController::index');
+$routes->get('admin/broadcast/kirim', 'BroadcastController::kirim');
+$routes->post('admin/broadcast/simpan', 'BroadcastController::simpan');
 
 
 

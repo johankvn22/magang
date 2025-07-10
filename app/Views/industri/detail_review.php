@@ -1,4 +1,5 @@
 <?php
+
 /** @var \CodeIgniter\View\View $this */
 ?>
 <?= $this->extend('layouts/template_industri'); ?>
@@ -73,13 +74,13 @@
                         <tr>
                             <th width="40%">Kompetensi</th>
                             <th width="10%" class="text-center">Kurang</th>
-                            <th width="10%"class="text-center">Cukup</th>
-                            <th width="10%"class="text-center">Baik</th>
-                            <th width="10%"class="text-center">Sangat Baik</th>
+                            <th width="10%" class="text-center">Cukup</th>
+                            <th width="10%" class="text-center">Baik</th>
+                            <th width="10%" class="text-center">Sangat Baik</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php 
+                        <?php
                         $competencies = [
                             'integritas' => 'Integritas (Etika dan Moral)',
                             'keahlian_bidang' => 'Keahlian Berdasarkan Bidang Ilmu (Profesionalisme)',
@@ -103,25 +104,26 @@
                             'presentasi' => 'Kemampuan untuk Mempresentasikan Ide/Produk/Laporan',
                             'menulis_dokumen' => 'Kemampuan dalam Menulis Laporan, Memo dan Dokumen'
                         ];
-                        
-                        foreach ($competencies as $field => $label): 
+
+                        foreach ($competencies as $field => $label):
                             $value = $review[$field] ?? '';
                         ?>
-                        <tr>
-                            <td><?= $label ?></td>
-                            <td class="text-center">
-                                <input type="radio" class="form-check-input" disabled <?= $value === '1' ? 'checked' : '' ?>>
-                            </td>
-                            <td class="text-center">
-                                <input type="radio" class="form-check-input" disabled <?= $value === '2' ? 'checked' : '' ?>>
-                            </td>
-                            <td class="text-center">
-                                <input type="radio" class="form-check-input" disabled <?= $value === '3' ? 'checked' : '' ?>>
-                            </td>
-                            <td class="text-center">
-                                <input type="radio" class="form-check-input" disabled <?= $value === '4' ? 'checked' : '' ?>>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td><?= $label ?></td>
+                                <td class="text-center">
+                                    <input type="radio" class="form-check-input" disabled <?= $value === 'kurang' ? 'checked' : '' ?>>
+                                </td>
+                                <td class="text-center">
+                                    <input type="radio" class="form-check-input" disabled <?= $value === 'cukup' ? 'checked' : '' ?>>
+                                </td>
+                                <td class="text-center">
+                                    <input type="radio" class="form-check-input" disabled <?= $value === 'baik' ? 'checked' : '' ?>>
+                                </td>
+                                <td class="text-center">
+                                    <input type="radio" class="form-check-input" disabled <?= $value === 'sangat_baik' ? 'checked' : '' ?>>
+                                </td>
+
+                            </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
@@ -174,7 +176,9 @@
         transform: scale(1.2);
         cursor: default;
     }
-    .table th, .table td {
+
+    .table th,
+    .table td {
         vertical-align: middle;
     }
 </style>

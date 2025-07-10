@@ -7,6 +7,7 @@ use App\Models\UserModel;
 use App\Models\PembimbingIndustri;
 use App\Models\BimbinganIndustriModel;
 use App\Models\MahasiswaModel;
+use App\Models\BroadcastModel;
 
 class PembimbingIndustriController extends BaseController
 {
@@ -14,6 +15,22 @@ class PembimbingIndustriController extends BaseController
     public function dashboard()
     {
         $userId = session()->get('user_id');
+        $model = new BroadcastModel();
+
+        $role = session()->get('role'); // contoh: 'mahasiswa', 'kps', dll
+
+        $sevenDaysAgo = date('Y-m-d H:i:s', strtotime('-7 days'));
+
+        $broadcasts = $model
+            ->groupStart()
+            ->where('untuk', 'industri')
+            ->orWhere('untuk', 'semua')
+            ->groupEnd()
+            ->where('created_at >=', $sevenDaysAgo)
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
+
+
 
         // Get industrial supervisor data
         $pembimbingModel = new PembimbingIndustri();
@@ -64,6 +81,7 @@ class PembimbingIndustriController extends BaseController
             'laporanDisetujui'      => $jumlahLaporanDiterima,
             'laporanMenunggu'       => $jumlahLaporanMenunggu,
             'laporanDitolak'        => $jumlahLaporanDitolak,
+            'broadcasts'        => $broadcasts
         ]);
     }
 
@@ -105,12 +123,26 @@ class PembimbingIndustriController extends BaseController
         $industriModel = new PembimbingIndustri();
         $pembimbingId = session()->get('pembimbing_id');
 
-        $profil = $industriModel->find($pembimbingId); // atau where('pembimbing_id', $pembimbingId)
+        $profil = $industriModel->find($pembimbingId);
         return view('industri/edit_profile', ['profil' => $profil]);
     }
 
     public function updateProfil()
     {
+        $validation = \Config\Services::validation();
+
+        $rules = [
+            'nama'       => 'required',
+            'no_telepon' => 'required|numeric|min_length[10]',
+            'email'      => 'required|valid_email',
+            'perusahaan' => 'required',
+            'nip'        => 'required'
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $validation->getErrors());
+        }
+
         $industriModel = new PembimbingIndustri();
         $userId = session()->get('user_id');
 
@@ -123,8 +155,10 @@ class PembimbingIndustriController extends BaseController
         ];
 
         $industriModel->update($userId, $data);
+
         return redirect()->to('/industri/dashboard')->with('success', 'Profil berhasil diperbarui.');
     }
+
     public function gantiPassword()
     {
         return view('industri/ganti_password');

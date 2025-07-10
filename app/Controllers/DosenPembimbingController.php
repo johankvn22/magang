@@ -28,6 +28,7 @@ public function index()
     $bimbinganModel = new Bimbingan();
     $logbookModel = new LogbookBimbingan();
     $penilaianModel = new PenilaianDosenModel();
+    $broadcastModel = new \App\Models\BroadcastModel(); // Tambahan model broadcast
 
     $bimbinganList = $bimbinganModel->where('dosen_id', $userId)->findAll();
     $mahasiswaIds = array_column($bimbinganList, 'mahasiswa_id');
@@ -63,6 +64,17 @@ public function index()
         $jumlahBelumDinilai = count($bimbinganIds) - $jumlahSudahDinilai;
     }
 
+    // === Ambil broadcast untuk role dosen ===
+    $sevenDaysAgo = date('Y-m-d H:i:s', strtotime('-7 days'));
+    $broadcasts = $broadcastModel
+        ->groupStart()
+            ->where('untuk', 'dosen')
+            ->orWhere('untuk', 'semua')
+        ->groupEnd()
+        ->where('created_at >=', $sevenDaysAgo)
+        ->orderBy('created_at', 'DESC')
+        ->findAll();
+
     return view('dosen/dashboard', [
         'profilLengkap'             => $profilLengkap,
         'pedoman'                   => $pedoman,
@@ -72,8 +84,10 @@ public function index()
         'jumlahLaporanMenunggu'     => $jumlahLaporanMenunggu,
         'jumlahSudahDinilai'        => $jumlahSudahDinilai,
         'jumlahBelumDinilai'        => $jumlahBelumDinilai,
+        'broadcasts'                => $broadcasts
     ]);
 }
+
 
     // Fungsi untuk edit profil
     public function editProfile()
