@@ -43,11 +43,12 @@ if (getcwd() . DIRECTORY_SEPARATOR !== FCPATH) {
  */
 
 // LOAD OUR PATHS CONFIG FILE
-// SUDAH DIUBAH untuk menyesuaikan struktur di hosting
-require FCPATH . 'app/Config/Paths.php';
+require realpath(__DIR__ . '/../app/Config/Paths.php');
 
 // LOAD COMPOSER AUTOLOADER
-require FCPATH . 'vendor/autoload.php';
+require realpath(__DIR__ . '/../vendor/autoload.php');
+
+$paths = new Config\Paths();
 
 $paths = new Config\Paths();
 
