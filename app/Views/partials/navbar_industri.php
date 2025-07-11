@@ -12,6 +12,9 @@
         <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('industri/list-nilai'); ?>">Nilai Mahasiswa</a></li>
         <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('industri/review-kinerja/daftar'); ?>">Review Kinerja Mahasiswa</a></li>
 
+        <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('industri/review-kinerja/daftar'); ?>">Rivew Kinerja Mahasiswa</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="<?= base_url('industri/permintaan-bimbingan'); ?>">Permintaan Bimbingan</a></li>
+        
       </ul>
     </div>
   </div>

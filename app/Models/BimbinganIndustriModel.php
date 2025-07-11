@@ -12,7 +12,7 @@ class BimbinganIndustriModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['mahasiswa_id', 'pembimbing_id', 'created_at', 'updated_at'];
+    protected $allowedFields = ['mahasiswa_id', 'pembimbing_id', 'status', 'created_at', 'updated_at'];
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
 

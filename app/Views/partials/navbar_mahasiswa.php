@@ -8,6 +8,9 @@
         <li class="nav-item">
           <a class="nav-link text-white" href="<?= base_url('/mahasiswa/dashboard'); ?>">Dashboard</a>
         </li>
+                <li class="nav-item">
+          <a class="nav-link text-white" href="<?= base_url('/mahasiswa/pilih-pembimbing'); ?>">Pilih Pembimbing Industri</a>
+        </li>
         <li class="nav-item">
           <a class="nav-link text-white" href="<?= base_url('/mahasiswa/logbook'); ?>">Logbook Bimbingan</a>
         </li>
@@ -17,6 +20,7 @@
         <li class="nav-item">
           <a class="nav-link text-white" href="<?= base_url('/mahasiswa/user-requirement'); ?>">User Requirement</a>
         </li>
+
       </ul>
     </div>
   </div>
