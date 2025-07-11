@@ -246,4 +246,178 @@ public function edit()
     {
         return view('mahasiswa/ganti_password');
     }
+
+public function pilihPembimbing()
+{
+    if (!session()->get('logged_in') || session()->get('role') != 'mahasiswa') {
+        return redirect()->to('/login')->with('error', 'Silakan login sebagai mahasiswa terlebih dahulu');
+    }
+
+    $userModel = new \App\Models\UserModel();
+    $mahasiswaModel = new \App\Models\MahasiswaModel();
+    $bimbinganModel = new \App\Models\BimbinganIndustriModel();
+
+    $user = $userModel->find(session()->get('user_id'));
+    $mahasiswa = $mahasiswaModel->where('nim', $user['nomor_induk'])->first();
+
+    if (!$mahasiswa) {
+        return redirect()->back()->with('error', 'Data mahasiswa tidak ditemukan.');
+    }
+
+    // ✅ Fix: select field lengkap termasuk bimbingan_id
+ $pengajuan = $bimbinganModel
+    ->select('
+        bimbingan_industri.bimbingan_industri_id,
+        bimbingan_industri.status,
+        pembimbing_industri.nama as nama_pembimbing,
+        pembimbing_industri.perusahaan,
+        pembimbing_industri.email,
+        pembimbing_industri.no_telepon
+    ')
+    ->join('pembimbing_industri', 'pembimbing_industri.pembimbing_id = bimbingan_industri.pembimbing_id', 'left')
+    ->where('bimbingan_industri.mahasiswa_id', $mahasiswa['mahasiswa_id'])
+    ->orderBy('bimbingan_industri.created_at', 'DESC')
+    ->first();
+// dd($pengajuan);
+
+
+    $pembimbing = (new \App\Models\PembimbingIndustri())->findAll();
+
+    return view('mahasiswa/pilih_pembimbing', [
+        'pembimbing' => $pembimbing,
+        'pengajuan' => $pengajuan,
+        'mahasiswa_id' => $mahasiswa['mahasiswa_id'],
+    ]);
+}
+
+
+
+    public function ajukanBimbingan()
+    {
+        // Validasi session dan role
+        if (!session()->get('logged_in') || session()->get('role') != 'mahasiswa') {
+            return redirect()->to('/login')->with('error', 'Silakan login sebagai mahasiswa terlebih dahulu');
+        }
+
+        $bimbinganModel = new \App\Models\BimbinganIndustriModel();
+        
+        // Ambil data mahasiswa berdasarkan user yang login
+        $userModel = new \App\Models\UserModel();
+        $user = $userModel->find(session()->get('user_id'));
+        
+        if (!$user) {
+            return redirect()->to('/login')->with('error', 'Data user tidak ditemukan');
+        }
+
+        // Ambil mahasiswa_id dari tabel mahasiswa berdasarkan nomor induk
+        $mahasiswaModel = new \App\Models\MahasiswaModel();
+        $mahasiswa = $mahasiswaModel->where('nim', $user['nomor_induk'])->first();
+        
+        if (!$mahasiswa) {
+            return redirect()->back()->with('error', 'Data mahasiswa tidak ditemukan. Hubungi admin.');
+        }
+
+        $mahasiswaId = $mahasiswa['mahasiswa_id'];
+        $pembimbingId = $this->request->getPost('pembimbing_id');
+
+        // Debug untuk memastikan data ada
+        log_message('debug', 'Mahasiswa ID: ' . $mahasiswaId);
+        log_message('debug', 'Pembimbing ID: ' . $pembimbingId);
+
+        // Validasi input
+        if (!$mahasiswaId || !$pembimbingId) {
+            return redirect()->back()->with('error', 'Data tidak lengkap. Pastikan Anda sudah login dan memilih pembimbing.');
+        }
+
+        // Cek apakah mahasiswa sudah pernah mengajukan
+        $sudahAda = $bimbinganModel->where('mahasiswa_id', $mahasiswaId)->first();
+        if ($sudahAda) {
+            return redirect()->back()->with('error', 'Anda sudah mengajukan pembimbing sebelumnya.');
+        }
+
+        try {
+            $result = $bimbinganModel->insert([
+                'mahasiswa_id' => $mahasiswaId,
+                'pembimbing_id' => $pembimbingId,
+                'status' => 'pending',
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
+
+            if ($result) {
+                return redirect()->to('/mahasiswa/pilih-pembimbing')->with('success', 'Pengajuan berhasil dikirim. Menunggu persetujuan dari pembimbing.');
+            } else {
+                return redirect()->back()->with('error', 'Gagal mengirim pengajuan. Silakan coba lagi.');
+            }
+
+        } catch (\Exception $e) {
+            log_message('error', 'Error saat mengajukan bimbingan: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem. Silakan coba lagi.');
+        }
+    }
+
+    // Method untuk melihat status pengajuan
+    public function statusPengajuan()
+    {
+        // Validasi session dan role
+        if (!session()->get('logged_in') || session()->get('role') != 'mahasiswa') {
+            return redirect()->to('/login')->with('error', 'Silakan login sebagai mahasiswa terlebih dahulu');
+        }
+
+        // Ambil data mahasiswa berdasarkan user yang login
+        $userModel = new \App\Models\UserModel();
+        $user = $userModel->find(session()->get('user_id'));
+        
+        if (!$user) {
+            return redirect()->to('/login')->with('error', 'Data user tidak ditemukan');
+        }
+
+        $mahasiswaModel = new \App\Models\MahasiswaModel();
+        $mahasiswa = $mahasiswaModel->where('nim', $user['nomor_induk'])->first();
+        
+        if (!$mahasiswa) {
+            return redirect()->back()->with('error', 'Data mahasiswa tidak ditemukan. Hubungi admin.');
+        }
+
+        $bimbinganModel = new \App\Models\BimbinganIndustriModel();
+        $pengajuan = $bimbinganModel->select('bimbingan_industri.*, pembimbing_industri.nama as nama_pembimbing, pembimbing_industri.perusahaan')
+            ->join('pembimbing_industri', 'pembimbing_industri.pembimbing_id = bimbingan_industri.pembimbing_id')
+            ->where('bimbingan_industri.mahasiswa_id', $mahasiswa['mahasiswa_id'])
+            ->first();
+
+        return view('mahasiswa/status_pengajuan', ['pengajuan' => $pengajuan]);
+    }
+
+public function batalkanPengajuan($id)
+{
+    if (!session()->get('logged_in') || session()->get('role') != 'mahasiswa') {
+        return redirect()->to('/login')->with('error', 'Silakan login terlebih dahulu');
+    }
+
+    $bimbinganModel = new \App\Models\BimbinganIndustriModel();
+    $pengajuan = $bimbinganModel->find($id);
+
+    if (!$pengajuan) {
+        return redirect()->back()->with('error', 'Pengajuan tidak ditemukan');
+    }
+
+    // Pastikan hanya mahasiswa yang bisa hapus pengajuan miliknya sendiri
+    $userModel = new \App\Models\UserModel();
+    $mahasiswaModel = new \App\Models\MahasiswaModel();
+    $user = $userModel->find(session()->get('user_id'));
+    $mahasiswa = $mahasiswaModel->where('nim', $user['nomor_induk'])->first();
+
+    if (!$mahasiswa || $pengajuan['mahasiswa_id'] != $mahasiswa['mahasiswa_id']) {
+        return redirect()->back()->with('error', 'Anda tidak berhak menghapus pengajuan ini');
+    }
+
+    try {
+        $bimbinganModel->delete($id);
+        return redirect()->to('/mahasiswa/pilih-pembimbing')->with('success', 'Pengajuan berhasil dibatalkan dan dihapus');
+    } catch (\Exception $e) {
+        log_message('error', 'Gagal menghapus pengajuan: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Terjadi kesalahan saat menghapus pengajuan');
+    }
+}
+
+
 }

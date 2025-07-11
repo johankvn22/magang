@@ -147,4 +147,116 @@ class PembimbingIndustriController extends BaseController
 
         return redirect()->to('/industri/dashboard')->with('success', 'Password berhasil diubah.');
     }
+
+public function daftarPermintaan()
+    {
+        // Validasi session dan role
+        if (!session()->get('logged_in') || session()->get('role') != 'pembimbing_industri') {
+            return redirect()->to('/login')->with('error', 'Silakan login sebagai pembimbing industri terlebih dahulu');
+        }
+
+        $pembimbingId = session()->get('pembimbing_id');
+
+        if (!$pembimbingId) {
+            return redirect()->to('/login')->with('error', 'Data pembimbing tidak ditemukan');
+        }
+
+        $model = new \App\Models\BimbinganIndustriModel();
+        $pengajuan = $model->select('
+            bimbingan_industri.*,
+            mahasiswa.nama_lengkap as nama_mahasiswa,
+            mahasiswa.email,
+            mahasiswa.nim,
+            mahasiswa.foto_profil
+        ')
+            ->join('mahasiswa', 'mahasiswa.mahasiswa_id = bimbingan_industri.mahasiswa_id')
+            ->where('bimbingan_industri.pembimbing_id', $pembimbingId)
+            ->where('bimbingan_industri.status', 'pending')
+            ->findAll();
+
+        return view('industri/permintaan_bimbingan', ['pengajuan' => $pengajuan]);
+    }
+
+    public function setujui($id)
+    {
+        // Validasi session dan role
+        if (!session()->get('logged_in') || session()->get('role') != 'pembimbing_industri') {
+            return redirect()->to('/login')->with('error', 'Silakan login sebagai pembimbing industri terlebih dahulu');
+        }
+
+        $model = new \App\Models\BimbinganIndustriModel();
+        
+        // Validasi apakah data ada dan statusnya pending
+        $pengajuan = $model->find($id);
+        if (!$pengajuan) {
+            return redirect()->back()->with('error', 'Data pengajuan tidak ditemukan.');
+        }
+
+        if ($pengajuan['status'] !== 'pending') {
+            return redirect()->back()->with('error', 'Pengajuan sudah diproses sebelumnya.');
+        }
+
+        // Pastikan pembimbing yang login adalah pembimbing yang bersangkutan
+        if ($pengajuan['pembimbing_id'] != session()->get('pembimbing_id')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengubah pengajuan ini.');
+        }
+
+        try {
+            $result = $model->update($id, [
+                'status' => 'disetujui',
+                'tanggal_disetujui' => date('Y-m-d H:i:s')
+            ]);
+
+            if ($result) {
+                return redirect()->back()->with('success', 'Permintaan berhasil disetujui.');
+            } else {
+                return redirect()->back()->with('error', 'Gagal menyetujui permintaan.');
+            }
+
+        } catch (\Exception $e) {
+            log_message('error', 'Error saat menyetujui pengajuan: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem.');
+        }
+    }
+
+    public function tolak($id)
+    {
+        // Validasi session dan role
+        if (!session()->get('logged_in') || session()->get('role') != 'pembimbing_industri') {
+            return redirect()->to('/login')->with('error', 'Silakan login sebagai pembimbing industri terlebih dahulu');
+        }
+
+        $model = new \App\Models\BimbinganIndustriModel();
+        
+        // Validasi apakah data ada dan statusnya pending
+        $pengajuan = $model->find($id);
+        if (!$pengajuan) {
+            return redirect()->back()->with('error', 'Data pengajuan tidak ditemukan.');
+        }
+
+        if ($pengajuan['status'] !== 'pending') {
+            return redirect()->back()->with('error', 'Pengajuan sudah diproses sebelumnya.');
+        }
+
+        // Pastikan pembimbing yang login adalah pembimbing yang bersangkutan
+        if ($pengajuan['pembimbing_id'] != session()->get('pembimbing_id')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengubah pengajuan ini.');
+        }
+
+        try {
+            $result = $model->delete($id);
+
+            if ($result) {
+                return redirect()->back()->with('success', 'Pengajuan berhasil ditolak dan dihapus.');
+            } else {
+                return redirect()->back()->with('error', 'Gagal menolak pengajuan.');
+            }
+
+        } catch (\Exception $e) {
+            log_message('error', 'Error saat menolak pengajuan: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem.');
+        }
+    }
 }
+
+

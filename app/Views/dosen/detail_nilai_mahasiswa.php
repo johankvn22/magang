@@ -32,9 +32,13 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-4">
                             <div class="flex-shrink-0">
-                                <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
-                                    <i class="fas fa-user fa-2x text-primary"></i>
-                                </div>
+                <!-- Foto Profil -->
+                <div class="mb-3 text-center">
+                    <img src="<?= base_url('uploads/foto_profil/' . esc($mahasiswa['foto_profil'])) ?>"
+                         alt="Foto Profil Mahasiswa"
+                         class="img-thumbnail rounded-circle"
+                         style="width: 150px; height: 150px; object-fit: cover;">
+                </div>
                             </div>
                             <div class="ms-3" style="word-break: break-word; max-width: calc(100% - 60px);">
                                 <h4 class="mb-0"><?= esc($mahasiswa['nama_lengkap']) ?></h4>

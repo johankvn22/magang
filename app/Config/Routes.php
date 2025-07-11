@@ -62,6 +62,9 @@ $routes->get('/admin/pemantauan-industri', 'AdminController::pemantauanIndustri'
 
 $routes->group('mahasiswa', function ($routes) {
     $routes->get('dashboard', 'MahasiswaController::index');
+    $routes->get('pilih-pembimbing', 'MahasiswaController::pilihPembimbing');
+$routes->post('ajukan-bimbingan', 'MahasiswaController::ajukanBimbingan');
+$routes->post('batalkan-pengajuan/(:num)', 'MahasiswaController::batalkanPengajuan/$1');
 
     // Logbook Bimbingan Mahasiswa
     $routes->get('logbook', 'LogbookController::index');
@@ -224,6 +227,9 @@ $routes->group('panitia', ['filter' => 'auth'], function ($routes) {
 // ROUTE UNTUK INDUSTRI
 $routes->group('industri', ['filter' => 'auth'], function ($routes) {
     $routes->get('dashboard', 'PembimbingIndustriController::dashboard');
+    $routes->get('permintaan-bimbingan', 'PembimbingIndustriController::daftarPermintaan');
+    $routes->get('setujui/(:num)', 'PembimbingIndustriController::setujui/$1');
+    $routes->get('tolak/(:num)', 'PembimbingIndustriController::tolak/$1');
 
     // 🔧 Edit Profil
     $routes->get('edit-profil', 'PembimbingIndustriController::editProfil');

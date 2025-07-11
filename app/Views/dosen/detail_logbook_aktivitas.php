@@ -26,59 +26,67 @@
             <div class="row">
                 <!-- Student Info Column -->
                 <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">Nama Mahasiswa</label>
-                        <p class="fw-medium mb-0"><?= esc($mahasiswa['nama_lengkap']) ?></p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">NIM</label>
-                        <p class="fw-medium mb-0"><?= esc($mahasiswa['nim']) ?></p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">Program Studi</label>
-                        <p class="fw-medium mb-0"><?= esc($mahasiswa['program_studi']) ?></p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">Kelas</label>
-                        <p class="fw-medium mb-0"><?= esc($mahasiswa['kelas']) ?></p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">Kontak</label>
-                        <p class="fw-medium mb-0"><?= esc($mahasiswa['no_hp']) ?> | <?= esc($mahasiswa['email']) ?></p>
-                    </div>
+                <!-- Foto Profil -->
+                <div class="mb-3 text-center">
+                    <img src="<?= base_url('uploads/foto_profil/' . esc($mahasiswa['foto_profil'])) ?>"
+                         alt="Foto Profil Mahasiswa"
+                         class="img-thumbnail rounded-circle"
+                         style="width: 150px; height: 150px; object-fit: cover;">
                 </div>
-                
-                <!-- Internship Info Column -->
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">Perusahaan</label>
-                        <p class="fw-medium mb-0"><?= esc($mahasiswa['nama_perusahaan']) ?> (<?= esc($mahasiswa['divisi']) ?>)</p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">Durasi Magang</label>
-                        <p class="fw-medium mb-0"><?= esc($mahasiswa['durasi_magang']) ?> Bulan</p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">Periode Magang</label>
-                        <p class="fw-medium mb-0">
-                            <?= date('d M Y', strtotime($mahasiswa['tanggal_mulai'])) ?> - <?= date('d M Y', strtotime($mahasiswa['tanggal_selesai'])) ?>
-                        </p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">Pembimbing Perusahaan</label>
-                        <p class="fw-medium mb-0">
-                            <?= esc($mahasiswa['nama_pembimbing_perusahaan']) ?><br>
-                            <?= esc($mahasiswa['no_hp_pembimbing_perusahaan']) ?> | <?= esc($mahasiswa['email_pembimbing_perusahaan']) ?>
-                        </p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small mb-1">Judul Magang</label>
-                        <p class="fw-medium mb-0"><?= esc($mahasiswa['judul_magang']) ?></p>
-                    </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small mb-1">Nama Mahasiswa</label>
+                    <p class="fw-medium mb-0"><?= esc($mahasiswa['nama_lengkap']) ?></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small mb-1">NIM</label>
+                    <p class="fw-medium mb-0"><?= esc($mahasiswa['nim']) ?></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small mb-1">Program Studi</label>
+                    <p class="fw-medium mb-0"><?= esc($mahasiswa['program_studi']) ?></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small mb-1">Kelas</label>
+                    <p class="fw-medium mb-0"><?= esc($mahasiswa['kelas']) ?></p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small mb-1">Kontak</label>
+                    <p class="fw-medium mb-0"><?= esc($mahasiswa['no_hp']) ?> | <?= esc($mahasiswa['email']) ?></p>
+                </div>
+            </div>
+
+            <!-- Internship Info Column -->
+            <div class="col-md-6">
+                <div class="mb-3">
+                    <label class="form-label text-muted small mb-1">Perusahaan</label>
+                    <p class="fw-medium mb-0"><?= esc($mahasiswa['nama_perusahaan']) ?> (<?= esc($mahasiswa['divisi']) ?>)</p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small mb-1">Durasi Magang</label>
+                    <p class="fw-medium mb-0"><?= esc($mahasiswa['durasi_magang']) ?> Bulan</p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small mb-1">Periode Magang</label>
+                    <p class="fw-medium mb-0">
+                        <?= date('d M Y', strtotime($mahasiswa['tanggal_mulai'])) ?> - <?= date('d M Y', strtotime($mahasiswa['tanggal_selesai'])) ?>
+                    </p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small mb-1">Pembimbing Perusahaan</label>
+                    <p class="fw-medium mb-0">
+                        <?= esc($mahasiswa['nama_pembimbing_perusahaan']) ?><br>
+                        <?= esc($mahasiswa['no_hp_pembimbing_perusahaan']) ?> | <?= esc($mahasiswa['email_pembimbing_perusahaan']) ?>
+                    </p>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small mb-1">Judul Magang</label>
+                    <p class="fw-medium mb-0"><?= esc($mahasiswa['judul_magang']) ?></p>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Logbook Summary -->
     <?php
