@@ -1,3 +1,16 @@
+### 🎓 Internship Management Information System (Skripsi)
+> *“Perancangan Website Sistem Informasi Pengelolaan Magang Prodi Teknik Informatika”*  
+A web-based system built with **PHP (CodeIgniter 4)** and **MySQL** to manage internship administration digitally — from registration to evaluation.  
+💡 Roles: System Analyst, Fullstack Developer, Documentation Lead  
+
+🔗 **Repository:** [github.com/johankvn22/magang](https://github.com/johankvn22/magang)  
+🌐 **Live Demo:** [wwgi.42web.io](https://wwgi.42web.io/index.php/login)
+
+📸 **Preview Dashboard:**  
+<img src="/magang_dashboard1.png" width="700"> <img src="/magang_dashboard2.png" width="700"> <img src="/magang_dashboard3.png" width="700">
+
+---
+
 # CodeIgniter 4 Application Starter
 
 ## What is CodeIgniter?
