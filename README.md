@@ -7,7 +7,7 @@ A web-based system built with **PHP (CodeIgniter 4)** and **MySQL** to manage in
 🌐 **Live Demo:** [wwgi.42web.io](https://wwgi.42web.io/index.php/login)
 
 📸 **Preview Dashboard:**  
-<img src="/magang_dashboard1.png" width="700"> <img src="/magang_dashboard2.png" width="700"> <img src="/magang_dashboard3.png" width="700">
+<img src="johankvn22/magang_dashboard1.png" width="700"> <img src="/magang_dashboard2.png" width="700"> <img src="/magang_dashboard3.png" width="700">
 
 ---
 
